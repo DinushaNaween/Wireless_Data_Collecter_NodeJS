@@ -1,4 +1,4 @@
-const sql = require('../../config/db.config');
+const sql = require('../config/db.config');
 
 const Privilege = function(privilege) {
   this.privilegeDescription = privilege.privilegeDescription;
