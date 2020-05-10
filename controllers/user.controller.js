@@ -9,6 +9,7 @@ exports.create = (req, res) => {
   }
 
   const user = new User({
+    email: req.body.email,
     userName: req.body.userName,
     firstName: req.body.firstName,
     lastName: req.body.lastName,
@@ -66,7 +67,7 @@ exports.update = (req, res) => {
 
   req.body.lastModifiedDateTime = new Date();
 
-  User.updateById(req.params.userId, new Role(req.body), (err, data) => {
+  User.updateById(req.params.userId, new User(req.body), (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
         res.status(404).send({

@@ -12,9 +12,10 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Data Collector...' });
 });
 
-require('./routes/routes/role.routes')(app);
-require('./routes/routes/privilege.routes')(app);
-require('./routes/routes/rolePrivilege.routes')(app);
+require('./routes/role.routes')(app);
+require('./routes/privilege.routes')(app);
+require('./routes/rolePrivilege.routes')(app);
+require('./routes/user.routes')(app);
 
 app.listen(8080, () => {
   console.log('Server is listning on port 8080.');

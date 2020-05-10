@@ -1,13 +1,14 @@
 const sql = require('../config/db.config');
 
 const User = function (user) {
+  this.email = user.email;
   this.userName = user.userName;
   this.firstName = user.firstName;
   this.lastName = user.lastName;
   this.loginPassword = user.loginPassword;
   this.roleId = user.roleId;
   this.disabled = user.disabled;
-  this.lastModifiedUser = req.body.lastModifiedUser;
+  this.lastModifiedUser = user.lastModifiedUser;
   this.lastModifiedDateTime = user.lastModifiedDateTime;
 };
 
@@ -61,7 +62,7 @@ User.findById = (userId, result) => {
 
 // update a user
 User.updateById = (userId, user, result) => {
-  sql.query('UPDATE user SET userName = ?, firstName = ?, lastName = ?, loginPassword = ?, roleId = ?, disabled = ?, lastModifiedDateTime = ? WHERE roleId = ?', [user.userName, user.firstName, user.lastName, user.loginPassword, user.roleId, user.disabled, user.lastModifiedDateTime, userId], (err, res) => {
+  sql.query('UPDATE user SET email = ?, userName = ?, firstName = ?, lastName = ?, loginPassword = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.email, user.userName, user.firstName, user.lastName, user.loginPassword, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

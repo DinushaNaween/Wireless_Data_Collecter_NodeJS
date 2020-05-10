@@ -64,6 +64,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`user` (
   `loginPassword` VARCHAR(45) NOT NULL ,
   `roleId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`userId`),
   FOREIGN KEY (`roleId`)
   REFERENCES `wdc`.`role` (`roleId`)
