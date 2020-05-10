@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const bcrypt = require('bcrypt');
 
 // create and save new user
 exports.create = (req, res) => {
@@ -8,24 +9,34 @@ exports.create = (req, res) => {
     });
   }
 
-  const user = new User({
-    email: req.body.email,
-    userName: req.body.userName,
-    firstName: req.body.firstName,
-    lastName: req.body.lastName,
-    loginPassword: req.body.loginPassword,
-    roleId: req.body.roleId,
-    disabled: req.body.disabled,
-    lastModifiedUser: req.body.lastModifiedUser,
-    lastModifiedDateTime: new Date()
-  });
+  console.log(SALTROUNDS);
 
-  User.create(user, (err, data) => {
+  bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
     if (err) {
       res.status(500).send({
         message: err.message || 'Some error occurred while creating the user.'
       });
-    } else res.send(data);
+    } else {
+      const user = new User({
+        email: req.body.email,
+        userName: req.body.userName,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        loginPassword: hash,
+        roleId: req.body.roleId,
+        disabled: req.body.disabled,
+        lastModifiedUser: req.body.lastModifiedUser,
+        lastModifiedDateTime: new Date()
+      });
+
+      User.create(user, (err, data) => {
+        if (err) {
+          res.status(500).send({
+            message: err.message || 'Some error occurred while creating the user.'
+          });
+        } else res.send(data);
+      });
+    }
   });
 };
 
@@ -65,20 +76,29 @@ exports.update = (req, res) => {
     });
   }
 
-  req.body.lastModifiedDateTime = new Date();
-
-  User.updateById(req.params.userId, new User(req.body), (err, data) => {
+  bcrypt.hash(req.body.loginPassword, process.env.SALTROUNDS, function(err, hash) {
     if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: 'Not found user with id ' + req.params.userId
-        });
-      } else {
-        res.status(500).send({
-          message: 'Error updating user with id ' + req.params.userId
-        });
-      }
-    } else res.send(data);
+      res.status(500).send({
+        message: err.message || 'Some error occurred while updating the user.'
+      });
+    } else {
+      req.body.loginPassword = hash;
+      req.body.lastModifiedDateTime = new Date();
+
+      User.updateById(req.params.userId, new User(req.body), (err, data) => {
+        if (err) {
+          if (err.kind === 'not_found') {
+            res.status(404).send({
+              message: 'Not found user with id ' + req.params.userId
+            });
+          } else {
+            res.status(500).send({
+              message: 'Error updating user with id ' + req.params.userId
+            });
+          }
+        } else res.send(data);
+      })
+    }
   })
 };
 
@@ -131,6 +151,6 @@ exports.disable = (req, res) => {
           message: 'Error updating user with id ' + req.params.userId
         });
       }
-    } else res.send({ message: 'Disabled user with id: ' + data.id +'.' });
+    } else res.send({ message: 'Disabled user with id: ' + data.id + '.' });
   })
 };

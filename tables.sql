@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`user` (
   `userName` VARCHAR(45) NOT NULL ,
   `firstName` VARCHAR(45) NOT NULL ,
   `lastName` VARCHAR(45) NOT NULL ,
-  `loginPassword` VARCHAR(45) NOT NULL ,
+  `loginPassword` LONGTEXT NOT NULL ,
   `roleId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,

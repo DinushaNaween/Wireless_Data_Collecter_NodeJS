@@ -1,9 +1,9 @@
 const mysql = require('mysql');
 
-const HOST = 'localhost';
-const USER = 'root';
-const PASSWORD = '1234';
-const DB = 'wdc';
+const HOST = process.env.HOST;
+const USER = process.env.USER;
+const PASSWORD = process.env.PASSWORD;
+const DB = process.env.DB;
 
 const connection = mysql.createConnection({
   host: HOST,
