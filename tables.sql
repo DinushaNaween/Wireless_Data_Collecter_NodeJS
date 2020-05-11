@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`collection` (
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
   `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`collectionId`) ,
-  FOREIGN KEY (`userId`)
+  FOREIGN KEY (`createdUserId`)
   REFERENCES `wdc`.`user` (`userId`)
 	ON DELETE NO ACTION
 	ON UPDATE CASCADE)
@@ -129,6 +129,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`parentNode` (
   `noOfNodes` INT ZEROFILL NOT NULL ,
   `unitId` INT NOT NULL ,
   `collectionId` INT NOT NULL ,
+  `createdUserId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
   `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
