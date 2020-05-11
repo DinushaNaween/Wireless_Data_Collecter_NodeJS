@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`collection` (
   `collectionName` VARCHAR(45) NOT NULL ,
   `collectionLocation` VARCHAR(45) NOT NULL ,
   `noOfUnits` INT ZEROFILL NULL ,
-  `userId` INT NOT NULL ,
+  `createdUserId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
   `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,

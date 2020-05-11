@@ -76,7 +76,7 @@ exports.update = (req, res) => {
     });
   }
 
-  bcrypt.hash(req.body.loginPassword, process.env.SALTROUNDS, function(err, hash) {
+  bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
     if (err) {
       res.status(500).send({
         message: err.message || 'Some error occurred while updating the user.'
