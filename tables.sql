@@ -103,12 +103,17 @@ CREATE TABLE IF NOT EXISTS `wdc`.`unit` (
   `unitLocation` VARCHAR(45) NOT NULL ,
   `noOfParentNodes` INT ZEROFILL NULL ,
   `collectionId` INT NOT NULL ,
+  `createdUserId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
   `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`unitId`) ,
   FOREIGN KEY (`collectionId`)
   REFERENCES `wdc`.`collection` (`collectionId`)
+  ON DELETE NO ACTION
+	ON UPDATE CASCADE,
+  FOREIGN KEY (`createdUserId`)
+  REFERENCES `wdc`.`user` (`userId`)
 	ON DELETE NO ACTION
 	ON UPDATE CASCADE)
   ENGINE = InnoDB
