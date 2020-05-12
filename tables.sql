@@ -151,6 +151,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`parentNode` (
 CREATE TABLE IF NOT EXISTS `wdc`.`node` (
   `nodeId` INT NOT NULL AUTO_INCREMENT ,
   `parentNodeId` INT NOT NULL ,
+  `createdUserId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
   `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,

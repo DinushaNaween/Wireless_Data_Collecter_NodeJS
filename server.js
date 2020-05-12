@@ -19,6 +19,7 @@ require('./routes/user.routes')(app);
 require('./routes/collection.routes')(app);
 require('./routes/unit.routes')(app);
 require('./routes/parentNode.routes')(app);
+require('./routes/node.routes')(app);
 
 app.listen(8080, () => {
   console.log('Server is listning on port 8080.');
