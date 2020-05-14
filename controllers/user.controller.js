@@ -9,8 +9,6 @@ exports.create = (req, res) => {
     });
   }
 
-  console.log(SALTROUNDS);
-
   bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
     if (err) {
       res.status(500).send({
