@@ -105,3 +105,4 @@ exports.modifyColumnByTableName = (tableName, columns, result) => {
     });
   });
 };
+
