@@ -17,21 +17,19 @@ const sqlConnection = mysql.createConnection({
 sqlConnection.connect(error => {
   if(error) throw error;
 
-  console.log('Successfully connected to the database \"wdc\"');
+  console.log('Successfully connected to the database \'wdc\'');
 });
 
-const DataTable = function (dataTable){};
-
 // create new data table for a new node
-DataTable.createNewDataTable = (nodeId, columns, result) => {
+exports.createNewDataTable = (nodeId, columns, result) => {
   let columnsArray = [];
-  let tableName = "Data_" + nodeId;
+  let tableName = 'Data_' + nodeId;
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(columns[i].column + " " + columns[i].type + "(" + columns[i].size + ")");
+    columnsArray.push(columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ')');
   }
 
-  sqlConnection.query("CREATE TABLE " + tableName +" (dataId INT NOT NULL AUTO_INCREMENT, nodeId INT NOT NULL, " + columnsArray.join() + ", " + "isValidated INT(2) ZEROFILL NULL, disabled INT(2) ZEROFILL NULL, savedDateTime DATETIME NULL DEFAULT NULL, PRIMARY KEY(dataId), FOREIGN KEY(nodeId) REFERENCES `wdc`.`node` (`nodeId`) ON DELETE NO ACTION ON UPDATE CASCADE) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8", (err, res) => {
+  sqlConnection.query('CREATE TABLE ' + tableName +' (dataId INT NOT NULL AUTO_INCREMENT, nodeId INT NOT NULL, ' + columnsArray.join() + ', ' + 'isValidated INT(2) ZEROFILL NULL, disabled INT(2) ZEROFILL NULL, savedDateTime DATETIME NULL DEFAULT NULL, PRIMARY KEY(dataId), FOREIGN KEY(nodeId) REFERENCES `wdc`.`node` (`nodeId`) ON DELETE NO ACTION ON UPDATE CASCADE) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8', (err, res) => {
     if (err) {
       if (debug) console.log('Error on creating table: ', err);
       result(err, null);
@@ -39,69 +37,71 @@ DataTable.createNewDataTable = (nodeId, columns, result) => {
     }
 
     commonService.getTableInfo(tableName, (err, data) => {
-      if (data) {
-        result(null, data);
+      if (err) {
+        result(err, null);
         return;
       }
-    })
+
+      result(null, data);
+      return;
+    });
 
     if (debug) console.log('Data table created successfully');
-  })
-};
-
-// get table details by table name
-DataTable.getTableInfoByTableName = (tableName, result) => {
-  sqlConnection.query('SHOW COLUMNS FROM ' + tableName, (err, res) => {
-    if (err) {
-      if (debug) console.log('Error: ', err);
-      result(err, null);
-      return;
-    }
-
-    const columnsFromTable = [];
-
-    for (let i = 0; i < res.length; i++) {
-      columnsFromTable.push(res[i].Field);
-    }
-  
-    if (debug) console.log(columnsFromTable);
-    res.push(columnsFromTable);
-    result(null, res);
-    return
   });
 };
 
 // add columns by table name
-DataTable.addColumnToTableByTableName = (tableName, columns, result) => {
+exports.addColumnToTableByTableName = (tableName, columns, result) => {
   let columnsArray = [];
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(columns[i].column + " " + columns[i].type + "(" + columns[i].size + ")" + "AFTER nodeId");
+    columnsArray.push(' ADD ' + columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ') AFTER nodeId');
   }
 
-  sqlConnection.query('ALTER TABLE ' + tableName + ' ADD ' + columnsArray.join(), (err, res) => {
+  sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(', '), (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
 
-    DataTable.getTableInfoByTableName(tableName, (err, data) => {
+    commonService.getTableInfo(tableName, (err, data) => {
       if (err) {
-        if (debug) console.log('Error on getting updated table info: ', err);
+        result(err, null);
+        return;
       }
 
-      if (debug) console.log(data)
-      res.push(data);
-    })
+      result(null, data);
+      return;
+    });
   
-    if (debug) console.log(res);
-    result(null, res);
-    return
-  })
-}
+    if (debug) console.log('Table modified successfully')
+  });
+};
 
-// delete column by table name
-// DataTable.deleteColumnToTableByTableName = (tableName, columns, result)
+// modify column by table name
+exports.modifyColumnByTableName = (tableName, columns, result) => {
 
-module.exports = DataTable;
+  let columnsArray = [];
+
+  for (let i = 0; i < columns.length; i++) {
+    columnsArray.push(' MODIFY ' + columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ')')
+  }
+
+  sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      erros.push(err.message);
+    }
+
+    commonService.getTableInfo(tableName, (err, data) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+  
+      result(null, data);
+      return;
+    });
+  });
+};
