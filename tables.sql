@@ -166,20 +166,42 @@ CREATE TABLE IF NOT EXISTS `wdc`.`node` (
 -- -----------------------------------------------------
 -- Table `wdc`.`data`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `wdc`.`data` (
-  `dataId` INT NOT NULL AUTO_INCREMENT ,
-  `data1` VARCHAR(45) NULL ,
-  `data2` VARCHAR(45) NULL ,
-  `data3` VARCHAR(45) NULL ,
-  `data4` VARCHAR(45) NULL ,
-  `nodeId` INT NOT NULL ,
-  `validated` INT(1) ZEROFILL NULL ,
+-- CREATE TABLE IF NOT EXISTS `wdc`.`data` (
+--   `dataId` INT NOT NULL AUTO_INCREMENT ,
+--   `data1` VARCHAR(45) NULL ,
+--   `data2` VARCHAR(45) NULL ,
+--   `data3` VARCHAR(45) NULL ,
+--   `data4` VARCHAR(45) NULL ,
+--   `nodeId` INT NOT NULL ,
+--   `isValidated` INT(1) ZEROFILL NULL ,
+--   `disabled` INT(1) ZEROFILL NULL ,
+--   `savedDateTime` DATETIME NULL DEFAULT NULL,
+--   PRIMARY KEY (`dataId`) ,
+--   FOREIGN KEY (`nodeId`)
+--   REFERENCES `wdc`.`node` (`nodeId`)
+-- 	ON DELETE NO ACTION
+-- 	ON UPDATE CASCADE)
+--   ENGINE = InnoDB
+--   DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table `wdc`.`sensor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`sensor` (
+  `sensorId` INT NOT NULL AUTO_INCREMENT ,
+  `sensorName` VARCHAR(45) NULL ,
+  `sensorDiscription` VARCHAR(45) NULL ,
+  `dataType` VARCHAR(45) NULL ,
+  `dataSize` VARCHAR(45) NULL ,
+  `sensingRange` VARCHAR(45) NULL ,
+  `technology` VARCHAR(45) NULL ,
+  `workingVoltage` VARCHAR(45) NULL ,
+  `dimensions` VARCHAR(45) NULL ,
+  `specialFact` VARCHAR(80) NULL ,
+  `sensorImageURL` VARCHAR(80) NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `savedDateTime` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`dataId`) ,
-  FOREIGN KEY (`nodeId`)
-  REFERENCES `wdc`.`node` (`nodeId`)
-	ON DELETE NO ACTION
-	ON UPDATE CASCADE)
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`sensorId`))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
