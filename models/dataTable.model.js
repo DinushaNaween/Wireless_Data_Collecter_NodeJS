@@ -20,7 +20,7 @@ sqlConnection.connect(error => {
   console.log('Successfully connected to the database \'wdc\'');
 });
 
-// create new data table for a new node
+// Create new data table for a new node
 exports.createNewDataTable = (nodeId, columns, result) => {
   let columnsArray = [];
   let tableName = 'Data_' + nodeId;
@@ -50,7 +50,7 @@ exports.createNewDataTable = (nodeId, columns, result) => {
   });
 };
 
-// add columns by table name
+// Add columns by table name
 exports.addColumnToTableByTableName = (tableName, columns, result) => {
   let columnsArray = [];
 
@@ -79,7 +79,7 @@ exports.addColumnToTableByTableName = (tableName, columns, result) => {
   });
 };
 
-// modify column by table name
+// Modify columns by table name
 exports.modifyColumnByTableName = (tableName, columns, result) => {
 
   let columnsArray = [];
@@ -91,7 +91,8 @@ exports.modifyColumnByTableName = (tableName, columns, result) => {
   sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
-      erros.push(err.message);
+      result(err, null);
+      return;
     }
 
     commonService.getTableInfo(tableName, (err, data) => {
@@ -106,3 +107,30 @@ exports.modifyColumnByTableName = (tableName, columns, result) => {
   });
 };
 
+// Drop a columns by table name
+exports.dropColumnByTableName = (tableName, columns, result) => {
+
+  let columnsArray = [];
+
+  for (let i = 0; i < columns.length; i++) {
+    columnsArray.push(' DROP COLUMN ' + columns[i]);
+  }
+
+  sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    commonService.getTableInfo(tableName, (err, data) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+  
+      result(null, data);
+      return;
+    });
+  });
+};
