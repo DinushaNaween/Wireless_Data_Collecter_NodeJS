@@ -91,3 +91,26 @@ exports.dropColumnByTableName = (req, res) => {
       });
   })
 };
+
+// Rename columns by table name
+exports.renameColumnByTableName = (req, res) => {
+  if (!req.body.columns) {
+    res.status(400).json({
+      state: false,
+      message: 'Content can not be empty!'
+    });
+  }
+
+  DataTable.renameColumnByTableName(req.params.tableName, req.body.columns, (err, data) => {
+    if (err) {
+      res.status(500).json({
+        state: false,
+        message: err.message || 'Some error occurred while updating the data table.'
+      });
+    } else 
+      res.status(200).json({
+        state: true,
+        table_data: data
+      });
+  })
+}

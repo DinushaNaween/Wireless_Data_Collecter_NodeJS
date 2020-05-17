@@ -13,4 +13,7 @@ module.exports = app => {
 
   // Drop columns by table name
   app.put('/dataTable/dropColumn/:tableName', dataTable.dropColumnByTableName);
+
+  // Rename columns by table name
+  app.put('/dataTable/renameColumn/:tableName', dataTable.renameColumnByTableName);
 }

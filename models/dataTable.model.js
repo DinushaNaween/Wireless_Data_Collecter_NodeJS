@@ -134,3 +134,30 @@ exports.dropColumnByTableName = (tableName, columns, result) => {
     });
   });
 };
+
+// Rename columns by table name
+exports.renameColumnByTableName = (tableName, columns, result) => {
+  let columnsArray = [];
+
+  for (let i = 0; i < columns.length; i++) {
+    columnsArray.push(' CHANGE COLUMN ' + columns[i].column + ' ' + columns[i].newName + ' ' + columns[i].type + '(' + columns[i].size + ')');
+  }
+
+  sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    commonService.getTableInfo(tableName, (err, data) => {
+      if (err) {
+        result(err, null);
+        return;
+      }
+  
+      result(null, data);
+      return;
+    });
+  });
+};
