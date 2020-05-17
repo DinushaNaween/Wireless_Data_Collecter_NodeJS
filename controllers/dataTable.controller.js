@@ -89,7 +89,7 @@ exports.dropColumnByTableName = (req, res) => {
         state: true,
         table_data: data
       });
-  })
+  });
 };
 
 // Rename columns by table name
@@ -111,6 +111,22 @@ exports.renameColumnByTableName = (req, res) => {
       res.status(200).json({
         state: true,
         table_data: data
+      });
+  });
+};
+
+// Get all data table names
+exports.getAllDataTableNames = (req, res) => {
+  DataTable.getAllDataTables((err, data) => {
+    if (err) {
+      res.status(500).json({
+        state: false,
+        message: err.message || 'Some error occurred while getting data table names.'
+      });
+    } else 
+      res.status(200).json({
+        state: true,
+        table_names: data
       });
   })
 }

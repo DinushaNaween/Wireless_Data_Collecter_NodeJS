@@ -161,3 +161,24 @@ exports.renameColumnByTableName = (tableName, columns, result) => {
     });
   });
 };
+
+// Get all data table names
+exports.getAllDataTables = (result) => {
+
+  let tableNames = [];
+
+  sqlConnection.query('SELECT table_name FROM information_schema.tables WHERE table_name LIKE \"data_%\"', (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    for (let i = 0; i < res.length; i++) {
+      tableNames.push(res[i].table_name);
+    }
+
+    result(null, tableNames);
+    return
+  });
+};

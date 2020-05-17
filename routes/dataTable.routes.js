@@ -16,4 +16,7 @@ module.exports = app => {
 
   // Rename columns by table name
   app.put('/dataTable/renameColumn/:tableName', dataTable.renameColumnByTableName);
+
+  // Get all data table names
+  app.get('/dataTable', dataTable.getAllDataTableNames);
 }
