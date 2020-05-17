@@ -48,15 +48,14 @@ Rename USER or PASSWORD or any above details according to your mysql credentials
 4. Open mysql with MySQL Workbench or with CMD.
 5. create database named with 'wdc'.
 6. Add source file of [tables.sql](https://github.com/DinushaNaween/Wireless_Data_Collector_NodeJS/blob/master/tables.sql).
-7. Run 
+7. Run this command to install npm packages.
 
-```
+```bash
 npm install --save
 ```
-to install npm packages.
+    
+8. Run this command to start server.
 
-8. Run
-```
+```bash
 npm start
 ```
-to start server.
