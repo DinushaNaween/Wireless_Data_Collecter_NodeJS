@@ -3,7 +3,7 @@ const Unit = require('../models/unit.model');
 // create and save new unit
 exports.create = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -22,10 +22,16 @@ exports.create = (req, res) => {
 
   Unit.create(unit, (err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while creating the unit.'
       });
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        created_unit: data
+      });
+    }
   });
 };
 
@@ -33,10 +39,16 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   Unit.getAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while retrieving the units.'
       });
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        units: data
+      });
+    }
   });
 };
 
@@ -45,22 +57,29 @@ exports.findById = (req, res) => {
   Unit.findById(req.params.unitId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found unit with id ' + req.params.unitId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error retrieving unit with id ' + req.params.unitId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        unit: data
+      });
+    }
   });
 };
 
 // update a unit
 exports.update = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -71,15 +90,22 @@ exports.update = (req, res) => {
   Unit.updateById(req.params.unitId, new Unit(req.body), (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found unit with id ' + req.params.unitId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error updating unit with id ' + req.params.unitId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        updated_unit: data
+      });
+    }
   })
 };
 
@@ -88,15 +114,22 @@ exports.remove = (req, res) => {
   Unit.remove(req.params.unitId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found unit with id ' + req.params.unitId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Could not delete unit with id ' + req.params.unitId
         });
       }
-    } else res.send({ message: 'Unit deleted successfully!' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'Unit deleted successfully'
+      });
+    }
   });
 };
 
@@ -104,17 +137,23 @@ exports.remove = (req, res) => {
 exports.removeAll = (req, res) => {
   Unit.removeAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while deleting all units.'
       });
-    } else res.send({ message: 'All units deleted successfully.' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'All units deleted successfully'
+      });
+    }
   })
 };
 
 // disable a unit
 exports.disable = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -125,14 +164,21 @@ exports.disable = (req, res) => {
   Unit.disable(req.params.unitId, req.body, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found unit with id ' + req.params.unitId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error updating unit with id ' + req.params.unitId
         });
       }
-    } else res.send({ message: 'Disabled unit with id: ' + data.id +'.' });
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'Disabled unit with id: ' + data.id +'.'
+      });
+    }
   })
 };

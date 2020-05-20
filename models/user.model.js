@@ -12,7 +12,7 @@ const User = function (user) {
   this.lastModifiedDateTime = user.lastModifiedDateTime;
 };
 
-// create and save new user
+// Create and save new user
 User.create = (newUser, result) => {
   sql.query('INSERT INTO user SET ?', newUser, (err, res) => {
     if (err) {
@@ -26,7 +26,9 @@ User.create = (newUser, result) => {
   });
 };
 
-// get all users from database
+
+
+// Get all users from database
 User.getAll = (result) => {
   sql.query('SELECT * FROM user', (err, res) => {
     if (err) {
@@ -41,7 +43,7 @@ User.getAll = (result) => {
   });
 };
 
-// get user by id
+// Get user by id
 User.findById = (userId, result) => {
   sql.query('SELECT * FROM user WHERE userId =' + userId, (err, res) => {
     if (err) {
@@ -60,7 +62,7 @@ User.findById = (userId, result) => {
   });
 };
 
-// update a user
+// Update a user
 User.updateById = (userId, user, result) => {
   sql.query('UPDATE user SET email = ?, userName = ?, firstName = ?, lastName = ?, loginPassword = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.email, user.userName, user.firstName, user.lastName, user.loginPassword, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
@@ -79,7 +81,7 @@ User.updateById = (userId, user, result) => {
   });
 };
 
-// delete a user by id
+// Delete a user by id
 User.remove = (userId, result) => {
   sql.query('DELETE FROM user WHERE userId = ?', userId, (err, res) => {
     if (err) {
@@ -98,7 +100,7 @@ User.remove = (userId, result) => {
   });
 };
 
-// delete all users
+// Delete all users
 User.removeAll = result => {
   sql.query('DELETE FROM user', (err, res) => {
     if (err) {
@@ -112,7 +114,7 @@ User.removeAll = result => {
   });
 };
 
-// disable a user
+// Disable a user
 User.disable = (userId, user, result) => {
   sql.query('UPDATE user SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
@@ -131,22 +133,17 @@ User.disable = (userId, user, result) => {
   })
 };
 
+// User find by email
 User.findByEmail = (userEmail, result) => {
-  sql.query('SELECT email FROM user WHERE email = ?', [userEmail], (err, res) => {
+  sql.query('SELECT * FROM user WHERE email = ?', [userEmail], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
-
-    if (res.length == 0) {
-      result(null, 0);
-      return;
-    } else {
-      result(null, 1);
-      return;
-    }
-    
+    console.log(res);
+    result(null, res);
+    return;
   })
 }
 

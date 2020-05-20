@@ -17,7 +17,7 @@ const connection = mysql.createConnection({
 connection.connect(error => {
   if(error) throw error;
 
-  console.log('Successfully connected to the database \"wdc\"');
+  console.log('Successfully connected to the database \'wdc\'');
 });
 
 module.exports = connection;

@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt');
 // create and save new user
 exports.create = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -12,16 +12,16 @@ exports.create = (req, res) => {
 
   User.findByEmail(req.body.email, (err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while creating the user.'
       });
     }
 
-    if (data == 0) {
+    if (data.length == 0) {
       bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
         if (err) {
-          res.status(500).send({
+          res.status(500).json({
             state: false,
             message: err.message || 'Some error occurred while creating the user.'
           });
@@ -40,16 +40,21 @@ exports.create = (req, res) => {
     
           User.create(user, (err, data) => {
             if (err) {
-              res.status(500).send({
-                state: true,
+              res.status(500).json({
+                state: false,
                 message: err.message || 'Some error occurred while creating the user.'
               });
-            } else res.send(data);
+            } else {
+              res.status(200).json({
+                state: true,
+                created_user: data
+              })
+            }
           });
         }
       });
-    } else if (data == 1) {
-      res.status(302).send({
+    } else if (data) {
+      res.status(302).json({
         state: false,
         exist: true,
         message: 'Email found.'
@@ -58,14 +63,32 @@ exports.create = (req, res) => {
   })
 };
 
+// Login user
+exports.login = (req, res) => {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).json({
+      state: false,
+      message: 'Content can not be empty!'
+    });
+  }
+
+
+}
+
 // get all users from database
 exports.getAll = (req, res) => {
   User.getAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while retrieving the users.'
       });
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        users: data
+      });
+    }
   });
 };
 
@@ -74,29 +97,38 @@ exports.findById = (req, res) => {
   User.findById(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error retrieving user with id ' + req.params.userId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        user: data
+      });
+    }
   });
 };
 
 // update a user
 exports.update = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
 
   bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while updating the user.'
       });
     } else {
@@ -106,15 +138,22 @@ exports.update = (req, res) => {
       User.updateById(req.params.userId, new User(req.body), (err, data) => {
         if (err) {
           if (err.kind === 'not_found') {
-            res.status(404).send({
+            res.status(404).json({
+              state: false,
               message: 'Not found user with id ' + req.params.userId
             });
           } else {
-            res.status(500).send({
+            res.status(500).json({
+              state: false,
               message: 'Error updating user with id ' + req.params.userId
             });
           }
-        } else res.send(data);
+        } else {
+          res.status(200).json({
+            state: true,
+            updated_user: data
+          });
+        }
       })
     }
   })
@@ -125,15 +164,22 @@ exports.remove = (req, res) => {
   User.remove(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Could not delete user with id ' + req.params.userId
         });
       }
-    } else res.send({ message: 'User deleted successfully!' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'User deleted successfully'
+      });
+    }
   });
 };
 
@@ -141,17 +187,24 @@ exports.remove = (req, res) => {
 exports.removeAll = (req, res) => {
   User.removeAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while deleting all users.'
       });
-    } else res.send({ message: 'All users deleted successfully.' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'All users deleted successfully'
+      });
+    }
   })
 };
 
 // disable a user
 exports.disable = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -161,14 +214,21 @@ exports.disable = (req, res) => {
   User.disable(req.params.userId, req.body, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error updating user with id ' + req.params.userId
         });
       }
-    } else res.send({ message: 'Disabled user with id: ' + data.id + '.' });
+    } else {
+      res.status(200).json({ 
+        state: true,
+        message: 'Disabled user with id: ' + data.id + '.' 
+      });
+    }
   })
 };

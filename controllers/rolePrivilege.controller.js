@@ -3,7 +3,7 @@ const RolePrivilege = require('../models/rolePrivilege.model');
 // create and save new role privilege
 exports.create = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -19,10 +19,16 @@ exports.create = (req, res) => {
 
   RolePrivilege.create(rolePrivilege, (err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while creating the role privilege.'
       });
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        created_rolePrivilege: data
+      });
+    }
   });
 };
 
@@ -30,10 +36,16 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   RolePrivilege.getAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while retrieving the role privileges.'
       });
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        rolePrivileges: data
+      });
+    }
   });
 };
 
@@ -42,22 +54,29 @@ exports.findById = (req, res) => {
   RolePrivilege.findById(req.params.rolePrivilegeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found role privilege with id ' + req.params.rolePrivilegeId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error retrieving role privilege with id ' + req.params.rolePrivilegeId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        rolePrivilege: data
+      });
+    }
   });
 };
 
 // update a role privilege
 exports.update = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -68,15 +87,22 @@ exports.update = (req, res) => {
   RolePrivilege.updateById(req.params.rolePrivilegeId, new RolePrivilege(req.body), (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found role privilege with id ' + req.params.rolePrivilegeId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error updating role privilege with id ' + req.params.rolePrivilegeId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        updated_rolePrivilege: data
+      });
+    }
   })
 };
 
@@ -85,15 +111,22 @@ exports.remove = (req, res) => {
   RolePrivilege.remove(req.params.rolePrivilegeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found role privilege with id ' + req.params.rolePrivilegeId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Could not delete role privilege with id ' + req.params.rolePrivilegeId
         });
       }
-    } else res.send({ message: 'Role privilege deleted successfully!' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'Role privilege deleted successfully'
+      });
+    }
   });
 };
 
@@ -101,17 +134,23 @@ exports.remove = (req, res) => {
 exports.removeAll = (req, res) => {
   RolePrivilege.removeAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while deleting all role privileges.'
       });
-    } else res.send({ message: 'All role privileges deleted successfully.' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'All role privileges deleted successfully'
+      });
+    }
   })
 };
 
 // disable a role privilege
 exports.disable = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    res.status(400).send({
+    res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -122,14 +161,21 @@ exports.disable = (req, res) => {
   RolePrivilege.disable(req.params.rolePrivilegeId, req.body, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found role privilege with id ' + req.params.rolePrivilegeId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error updating role privilege with id ' + req.params.rolePrivilegeId
         });
       }
-    } else res.send({ message: 'Disabled role privilege with id: ' + data.id +'.' });
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'Disabled role privilege with id: ' + data.id +'.'
+      });
+    }
   })
 };
