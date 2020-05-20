@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // create and save new user
 exports.create = (req, res) => {
@@ -72,8 +73,57 @@ exports.login = (req, res) => {
     });
   }
 
+  User.findByEmail(req.body.email, (err, user) => {
+    if (err) {
+      res.status(500).json({
+        state: false,
+        message: err.message || 'Some error occurred while finding the user.'
+      });
+    }
 
-}
+    let userObject = new User({
+      userId: user[0].userId,
+      email: user[0].email,
+      userName: user[0].userName,
+      firstName: user[0].firstName,
+      lastName: user[0].lastName, 
+      loginPassword: user[0].loginPassword,
+      roleId: user[0].roleId,
+      disabled: user[0].disabled,
+      lastModifiedUser: user[0].lastModifiedUser,
+      lastModifiedDateTime: user[0].lastModifiedDateTime
+    });
+
+    if (user.length != 0) {
+      bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+        if (err) {
+          res.status(500).json({
+            state: false,
+            message: err.message || 'Some error occurred while finding the user.'
+          });
+        }
+
+        console.log(result);
+
+        if (result) {
+          jwt.sign({userObject}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
+            if (err) {
+              res.status(500).json({
+                state: false,
+                message: err.message || 'Some error occurred while creating token.'
+              });
+            } else {
+              res.status(200).json({
+                state: true,
+                token: token
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+};
 
 // get all users from database
 exports.getAll = (req, res) => {
