@@ -9,59 +9,59 @@ exports.create = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
+  } else {
+    User.findByEmail(req.body.email, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while creating the user.'
+        });
+      }
+  
+      if (data.length == 0) {
+        bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
+          if (err) {
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while creating the user.'
+            });
+          } else {
+            const user = new User({
+              email: req.body.email, 
+              userName: req.body.userName,
+              firstName: req.body.firstName,
+              lastName: req.body.lastName, 
+              loginPassword: hash,
+              roleId: req.body.roleId,
+              disabled: req.body.disabled,
+              lastModifiedUser: req.body.lastModifiedUser,
+              lastModifiedDateTime: new Date()
+            });
+      
+            User.create(user, (err, data) => {
+              if (err) {
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while creating the user.'
+                });
+              } else {
+                res.status(200).json({
+                  state: true,
+                  created_user: data
+                })
+              }
+            });
+          }
+        });
+      } else if (data) {
+        res.status(302).json({
+          state: false,
+          exist: true,
+          message: 'Email found.'
+        });
+      }
+    })
   }
-
-  User.findByEmail(req.body.email, (err, data) => {
-    if (err) {
-      res.status(500).json({
-        state: false,
-        message: err.message || 'Some error occurred while creating the user.'
-      });
-    }
-
-    if (data.length == 0) {
-      bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
-        if (err) {
-          res.status(500).json({
-            state: false,
-            message: err.message || 'Some error occurred while creating the user.'
-          });
-        } else {
-          const user = new User({
-            email: req.body.email,
-            userName: req.body.userName,
-            firstName: req.body.firstName,
-            lastName: req.body.lastName, 
-            loginPassword: hash,
-            roleId: req.body.roleId,
-            disabled: req.body.disabled,
-            lastModifiedUser: req.body.lastModifiedUser,
-            lastModifiedDateTime: new Date()
-          });
-    
-          User.create(user, (err, data) => {
-            if (err) {
-              res.status(500).json({
-                state: false,
-                message: err.message || 'Some error occurred while creating the user.'
-              });
-            } else {
-              res.status(200).json({
-                state: true,
-                created_user: data
-              })
-            }
-          });
-        }
-      });
-    } else if (data) {
-      res.status(302).json({
-        state: false,
-        exist: true,
-        message: 'Email found.'
-      });
-    }
-  })
 };
 
 // Login user
@@ -102,8 +102,6 @@ exports.login = (req, res) => {
             message: err.message || 'Some error occurred while finding the user.'
           });
         }
-
-        console.log(result);
 
         if (result) {
           jwt.sign({userObject}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
