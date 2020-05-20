@@ -2,8 +2,9 @@ const Collection = require('../models/collection.model');
 
 // create and save new collection
 exports.create = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -57,8 +58,9 @@ exports.findById = (req, res) => {
 
 // update a collection
 exports.update = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -110,8 +112,9 @@ exports.removeAll = (req, res) => {
 
 // disable a collection
 exports.disable = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }

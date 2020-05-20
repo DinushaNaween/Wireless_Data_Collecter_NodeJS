@@ -2,8 +2,8 @@ const DataTable = require('../models/dataTable.model');
 
 // Create new data table for a new node
 exports.createNewDataTable = (req, res) => {
-  if (!req.body.columns) {
-    res.status(400).json({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -25,8 +25,8 @@ exports.createNewDataTable = (req, res) => {
 
 // Add columns by table name
 exports.addColumnToTableByTableName = (req, res) => {
-  if (!req.body.columns) {
-    res.status(400).json({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -48,8 +48,8 @@ exports.addColumnToTableByTableName = (req, res) => {
 
 // Modify columns by table name
 exports.modifyColumnByTableName = (req, res) => {
-  if (!req.body.columns) {
-    res.status(400).json({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -71,8 +71,8 @@ exports.modifyColumnByTableName = (req, res) => {
 
 // Drop columns by table name
 exports.dropColumnByTableName = (req, res) => {
-  if (!req.body.columns) {
-    res.status(400).json({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
     });
@@ -94,8 +94,8 @@ exports.dropColumnByTableName = (req, res) => {
 
 // Rename columns by table name
 exports.renameColumnByTableName = (req, res) => {
-  if (!req.body.columns) {
-    res.status(400).json({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
     });

@@ -2,8 +2,9 @@ const Role = require('../models/role.model');
 
 // create and save new role
 exports.create = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -54,8 +55,9 @@ exports.findById = (req, res) => {
 
 // update a role
 exports.update = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -107,12 +109,12 @@ exports.removeAll = (req, res) => {
 
 // disable a role
 exports.disable = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
-
   req.body.lastModifiedDateTime = new Date();
 
   Role.disable(req.params.roleId, req.body, (err, data) => {

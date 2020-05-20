@@ -2,8 +2,9 @@ const ParentNode = require('../models/parentNode.model');
 
 // create and save new parent node
 exports.create = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -59,8 +60,9 @@ exports.findById = (req, res) => {
 
 // update a parent node
 exports.update = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
@@ -112,8 +114,9 @@ exports.removeAll = (req, res) => {
 
 // disable a parent node
 exports.disable = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
