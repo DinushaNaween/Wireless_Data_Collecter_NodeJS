@@ -131,4 +131,23 @@ User.disable = (userId, user, result) => {
   })
 };
 
+User.findByEmail = (userEmail, result) => {
+  sql.query('SELECT email FROM user WHERE email = ?', [userEmail], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length == 0) {
+      result(null, 0);
+      return;
+    } else {
+      result(null, 1);
+      return;
+    }
+    
+  })
+}
+
 module.exports = User;

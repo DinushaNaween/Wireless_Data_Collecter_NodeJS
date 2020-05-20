@@ -3,39 +3,59 @@ const bcrypt = require('bcrypt');
 
 // create and save new user
 exports.create = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
   }
 
-  bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
+  User.findByEmail(req.body.email, (err, data) => {
     if (err) {
       res.status(500).send({
+        state: false,
         message: err.message || 'Some error occurred while creating the user.'
       });
-    } else {
-      const user = new User({
-        email: req.body.email,
-        userName: req.body.userName,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        loginPassword: hash,
-        roleId: req.body.roleId,
-        disabled: req.body.disabled,
-        lastModifiedUser: req.body.lastModifiedUser,
-        lastModifiedDateTime: new Date()
-      });
+    }
 
-      User.create(user, (err, data) => {
+    if (data == 0) {
+      bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
         if (err) {
           res.status(500).send({
+            state: false,
             message: err.message || 'Some error occurred while creating the user.'
           });
-        } else res.send(data);
+        } else {
+          const user = new User({
+            email: req.body.email,
+            userName: req.body.userName,
+            firstName: req.body.firstName,
+            lastName: req.body.lastName, 
+            loginPassword: hash,
+            roleId: req.body.roleId,
+            disabled: req.body.disabled,
+            lastModifiedUser: req.body.lastModifiedUser,
+            lastModifiedDateTime: new Date()
+          });
+    
+          User.create(user, (err, data) => {
+            if (err) {
+              res.status(500).send({
+                state: true,
+                message: err.message || 'Some error occurred while creating the user.'
+              });
+            } else res.send(data);
+          });
+        }
+      });
+    } else if (data == 1) {
+      res.status(302).send({
+        state: false,
+        exist: true,
+        message: 'Email found.'
       });
     }
-  });
+  })
 };
 
 // get all users from database
