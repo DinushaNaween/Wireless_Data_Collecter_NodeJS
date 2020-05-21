@@ -7,28 +7,28 @@ exports.create = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
+  } else {
+    const role = new Role({
+      roleName: req.body.roleName,
+      disabled: req.body.disabled,
+      lastModifiedUser: req.body.lastModifiedUser,
+      lastModifiedDateTime: new Date()
+    });
+  
+    Role.create(role, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while creating the role.'
+        });
+      } else {
+        res.status(200).json({
+          state: true,
+          created_role: data
+        });
+      }
+    });
   }
-
-  const role = new Role({
-    roleName: req.body.roleName,
-    disabled: req.body.disabled,
-    lastModifiedUser: req.body.lastModifiedUser,
-    lastModifiedDateTime: new Date()
-  });
-
-  Role.create(role, (err, data) => {
-    if (err) {
-      res.status(500).json({
-        state: false,
-        message: err.message || 'Some error occurred while creating the role.'
-      });
-    } else {
-      res.status(200).json({
-        state: true,
-        created_role: data
-      });
-    }
-  });
 };
 
 // get all roles from database
@@ -79,30 +79,30 @@ exports.update = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
+  } else {
+    req.body.lastModifiedDateTime = new Date();
 
-  req.body.lastModifiedDateTime = new Date();
-
-  Role.updateById(req.params.roleId, new Role(req.body), (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).json({
-          state: false,
-          message: 'Not found role with id ' + req.params.roleId
-        });
+    Role.updateById(req.params.roleId, new Role(req.body), (err, data) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).json({
+            state: false,
+            message: 'Not found role with id ' + req.params.roleId
+          });
+        } else {
+          res.status(500).json({
+            state: false,
+            message: 'Error updating role with id ' + req.params.roleId
+          });
+        }
       } else {
-        res.status(500).json({
-          state: false,
-          message: 'Error updating role with id ' + req.params.roleId
+        res.status(200).json({
+          state: true,
+          updated_role: data
         });
       }
-    } else {
-      res.status(200).json({
-        state: true,
-        updated_role: data
-      });
-    }
-  })
+    })
+  }
 };
 
 // delete a role by id
@@ -153,27 +153,28 @@ exports.disable = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
-  req.body.lastModifiedDateTime = new Date();
+  } else {
+    req.body.lastModifiedDateTime = new Date();
 
-  Role.disable(req.params.roleId, req.body, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).json({
-          state: false,
-          message: 'Not found role with id ' + req.params.roleId
-        });
+    Role.disable(req.params.roleId, req.body, (err, data) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).json({
+            state: false,
+            message: 'Not found role with id ' + req.params.roleId
+          });
+        } else {
+          res.status(500).json({
+            state: false,
+            message: 'Error updating role with id ' + req.params.roleId
+          });
+        }
       } else {
-        res.status(500).json({
-          state: false,
-          message: 'Error updating role with id ' + req.params.roleId
+        res.status(200).json({
+          state: true,
+          message: 'Disabled role with id: ' + data.id +'.'
         });
       }
-    } else {
-      res.status(200).json({
-        state: true,
-        message: 'Disabled role with id: ' + data.id +'.'
-      });
-    }
-  })
+    })
+  }
 };

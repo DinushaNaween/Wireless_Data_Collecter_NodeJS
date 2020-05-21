@@ -7,31 +7,31 @@ exports.create = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
+  } else {
+    const collection = new Collection({
+      collectionName: req.body.collectionName,
+      collectionLocation: req.body.collectionLocation,
+      noOfUnits: req.body.noOfUnits,
+      createdUserId: req.body.createdUserId,
+      disabled: req.body.disabled,
+      lastModifiedUser: req.body.lastModifiedUser,
+      lastModifiedDateTime: new Date()
+    });
+  
+    Collection.create(collection, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while creating the collection.'
+        });
+      } else {
+        res.status(200).json({
+          state: true,
+          created_collection: data
+        });
+      }
+    });
   }
-
-  const collection = new Collection({
-    collectionName: req.body.collectionName,
-    collectionLocation: req.body.collectionLocation,
-    noOfUnits: req.body.noOfUnits,
-    createdUserId: req.body.createdUserId,
-    disabled: req.body.disabled,
-    lastModifiedUser: req.body.lastModifiedUser,
-    lastModifiedDateTime: new Date()
-  });
-
-  Collection.create(collection, (err, data) => {
-    if (err) {
-      res.status(500).json({
-        state: false,
-        message: err.message || 'Some error occurred while creating the collection.'
-      });
-    } else {
-      res.status(200).json({
-        state: true,
-        created_collection: data
-      });
-    }
-  });
 };
 
 // get all collections from database
@@ -82,30 +82,30 @@ exports.update = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
+  } else {
+    req.body.lastModifiedDateTime = new Date();
 
-  req.body.lastModifiedDateTime = new Date();
-
-  Collection.updateById(req.params.collectionId, new Collection(req.body), (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).json({
-          state: false,
-          message: 'Not found collection with id ' + req.params.collectionId
-        });
+    Collection.updateById(req.params.collectionId, new Collection(req.body), (err, data) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).json({
+            state: false,
+            message: 'Not found collection with id ' + req.params.collectionId
+          });
+        } else {
+          res.status(500).json({
+            state: false,
+            message: 'Error updating collection with id ' + req.params.collectionId
+          });
+        }
       } else {
-        res.status(500).json({
-          state: false,
-          message: 'Error updating collection with id ' + req.params.collectionId
+        res.status(200).json({
+          state: true,
+          updated_collection: data
         });
       }
-    } else {
-      res.status(200).json({
-        state: true,
-        updated_collection: data
-      });
-    }
-  })
+    })
+  }
 };
 
 // delete a collection by id
@@ -156,28 +156,28 @@ exports.disable = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
+  } else {
+    req.body.lastModifiedDateTime = new Date();
 
-  req.body.lastModifiedDateTime = new Date();
-
-  Collection.disable(req.params.collectionId, req.body, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).json({
-          state: false,
-          message: 'Not found collection with id ' + req.params.collectionId
-        });
+    Collection.disable(req.params.collectionId, req.body, (err, data) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).json({
+            state: false,
+            message: 'Not found collection with id ' + req.params.collectionId
+          });
+        } else {
+          res.status(500).json({
+            state: false,
+            message: 'Error updating collection with id ' + req.params.collectionId
+          });
+        }
       } else {
-        res.status(500).json({
-          state: false,
-          message: 'Error updating collection with id ' + req.params.collectionId
+        res.status(200).json({
+          state: true,
+          message: 'Disabled collection with id: ' + data.id +'.'
         });
       }
-    } else {
-      res.status(200).json({
-        state: true,
-        message: 'Disabled collection with id: ' + data.id +'.'
-      });
-    }
-  })
+    })
+  }
 };

@@ -71,56 +71,56 @@ exports.login = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
-
-  User.findByEmail(req.body.email, (err, user) => {
-    if (err) {
-      res.status(500).json({
-        state: false,
-        message: err.message || 'Some error occurred while finding the user.'
+  } else {
+    User.findByEmail(req.body.email, (err, user) => {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while finding the user.'
+        });
+      }
+  
+      let userObject = new User({
+        userId: user[0].userId,
+        email: user[0].email,
+        userName: user[0].userName,
+        firstName: user[0].firstName,
+        lastName: user[0].lastName, 
+        loginPassword: user[0].loginPassword,
+        roleId: user[0].roleId,
+        disabled: user[0].disabled,
+        lastModifiedUser: user[0].lastModifiedUser,
+        lastModifiedDateTime: user[0].lastModifiedDateTime
       });
-    }
-
-    let userObject = new User({
-      userId: user[0].userId,
-      email: user[0].email,
-      userName: user[0].userName,
-      firstName: user[0].firstName,
-      lastName: user[0].lastName, 
-      loginPassword: user[0].loginPassword,
-      roleId: user[0].roleId,
-      disabled: user[0].disabled,
-      lastModifiedUser: user[0].lastModifiedUser,
-      lastModifiedDateTime: user[0].lastModifiedDateTime
+  
+      if (user.length != 0) {
+        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+          if (err) {
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while finding the user.'
+            });
+          }
+  
+          if (result) {
+            jwt.sign({userObject}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
+              if (err) {
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while creating token.'
+                });
+              } else {
+                res.status(200).json({
+                  state: true,
+                  token: token
+                });
+              }
+            });
+          }
+        });
+      }
     });
-
-    if (user.length != 0) {
-      bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
-        if (err) {
-          res.status(500).json({
-            state: false,
-            message: err.message || 'Some error occurred while finding the user.'
-          });
-        }
-
-        if (result) {
-          jwt.sign({userObject}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
-            if (err) {
-              res.status(500).json({
-                state: false,
-                message: err.message || 'Some error occurred while creating token.'
-              });
-            } else {
-              res.status(200).json({
-                state: true,
-                token: token
-              });
-            }
-          });
-        }
-      });
-    }
-  });
+  }
 };
 
 // get all users from database
@@ -171,40 +171,40 @@ exports.update = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
-
-  bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
-    if (err) {
-      res.status(500).json({
-        state: false,
-        message: err.message || 'Some error occurred while updating the user.'
-      });
-    } else {
-      req.body.loginPassword = hash;
-      req.body.lastModifiedDateTime = new Date();
-
-      User.updateById(req.params.userId, new User(req.body), (err, data) => {
-        if (err) {
-          if (err.kind === 'not_found') {
-            res.status(404).json({
-              state: false,
-              message: 'Not found user with id ' + req.params.userId
-            });
+  } else {
+    bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while updating the user.'
+        });
+      } else {
+        req.body.loginPassword = hash;
+        req.body.lastModifiedDateTime = new Date();
+  
+        User.updateById(req.params.userId, new User(req.body), (err, data) => {
+          if (err) {
+            if (err.kind === 'not_found') {
+              res.status(404).json({
+                state: false,
+                message: 'Not found user with id ' + req.params.userId
+              });
+            } else {
+              res.status(500).json({
+                state: false,
+                message: 'Error updating user with id ' + req.params.userId
+              });
+            }
           } else {
-            res.status(500).json({
-              state: false,
-              message: 'Error updating user with id ' + req.params.userId
+            res.status(200).json({
+              state: true,
+              updated_user: data
             });
           }
-        } else {
-          res.status(200).json({
-            state: true,
-            updated_user: data
-          });
-        }
-      })
-    }
-  })
+        })
+      }
+    })
+  }
 };
 
 // delete a user by id
@@ -255,28 +255,28 @@ exports.disable = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  }
+  } else {
+    req.body.lastModifiedDateTime = new Date();
 
-  req.body.lastModifiedDateTime = new Date();
-
-  User.disable(req.params.userId, req.body, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).json({
-          state: false,
-          message: 'Not found user with id ' + req.params.userId
-        });
+    User.disable(req.params.userId, req.body, (err, data) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).json({
+            state: false,
+            message: 'Not found user with id ' + req.params.userId
+          });
+        } else {
+          res.status(500).json({
+            state: false,
+            message: 'Error updating user with id ' + req.params.userId
+          });
+        }
       } else {
-        res.status(500).json({
-          state: false,
-          message: 'Error updating user with id ' + req.params.userId
+        res.status(200).json({ 
+          state: true,
+          message: 'Disabled user with id: ' + data.id + '.' 
         });
       }
-    } else {
-      res.status(200).json({ 
-        state: true,
-        message: 'Disabled user with id: ' + data.id + '.' 
-      });
-    }
-  })
+    });
+  }
 };
