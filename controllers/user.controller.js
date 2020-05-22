@@ -1,10 +1,17 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const Logger = require('../logger/logger');
+const logger = new Logger('user');
 
 // create and save new user
 exports.create = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('create');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -12,6 +19,7 @@ exports.create = (req, res) => {
   } else {
     User.findByEmail(req.body.email, (err, data) => {
       if (err) {
+        logger.error('findByEmail', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the user.'
@@ -21,6 +29,7 @@ exports.create = (req, res) => {
       if (data.length == 0) {
         bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
           if (err) {
+            logger.error('bcrypt.hash', err.message);
             res.status(500).json({
               state: false,
               message: err.message || 'Some error occurred while creating the user.'
@@ -40,11 +49,13 @@ exports.create = (req, res) => {
       
             User.create(user, (err, data) => {
               if (err) {
+                logger.error('User.create', err.message);
                 res.status(500).json({
                   state: false,
                   message: err.message || 'Some error occurred while creating the user.'
                 });
               } else {
+                logger.info('user created');
                 res.status(200).json({
                   state: true,
                   created_user: data
@@ -54,10 +65,11 @@ exports.create = (req, res) => {
           }
         });
       } else if (data) {
+        logger.error('email exist')
         res.status(302).json({
           state: false,
           exist: true,
-          message: 'Email found.'
+          message: 'Email exist.'
         });
       }
     })
@@ -66,7 +78,12 @@ exports.create = (req, res) => {
 
 // Login user
 exports.login = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('login');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -74,28 +91,17 @@ exports.login = (req, res) => {
   } else {
     User.findByEmail(req.body.email, (err, user) => {
       if (err) {
+        logger.error('findByEmail', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while finding the user.'
         });
       }
   
-      let userObject = new User({
-        userId: user[0].userId,
-        email: user[0].email,
-        userName: user[0].userName,
-        firstName: user[0].firstName,
-        lastName: user[0].lastName, 
-        loginPassword: user[0].loginPassword,
-        roleId: user[0].roleId,
-        disabled: user[0].disabled,
-        lastModifiedUser: user[0].lastModifiedUser,
-        lastModifiedDateTime: user[0].lastModifiedDateTime
-      });
-  
       if (user.length != 0) {
         bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
+            logger.error('bcrypt.compare');
             res.status(500).json({
               state: false,
               message: err.message || 'Some error occurred while finding the user.'
@@ -103,20 +109,34 @@ exports.login = (req, res) => {
           }
   
           if (result) {
-            jwt.sign({userObject}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
+            jwt.sign({user}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
               if (err) {
+                logger.error('jwt.sign');
                 res.status(500).json({
                   state: false,
                   message: err.message || 'Some error occurred while creating token.'
                 });
               } else {
+                logger.info('token send')
                 res.status(200).json({
                   state: true,
                   token: token
                 });
               }
             });
+          } else {
+            logger.error('incorrect password');
+            res.status(400).json({
+              state: false,
+              message: 'Email or password is incorrect'
+            });
           }
+        });
+      } else {
+        logger.error('email not found');
+        res.status(400).json({
+          state: false,
+          message: 'Email or password is incorrect'
         });
       }
     });
@@ -125,13 +145,19 @@ exports.login = (req, res) => {
 
 // get all users from database
 exports.getAll = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('getAll');
+
   User.getAll((err, data) => {
     if (err) {
+      logger.error('getAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while retrieving the users.'
       });
     } else {
+      logger.info('success')
       res.status(200).json({
         state: true,
         users: data
@@ -142,20 +168,27 @@ exports.getAll = (req, res) => {
 
 // get user by id
 exports.findById = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('findById');
+
   User.findById(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('findById notFound');
         res.status(404).json({
           state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
+        logger.error('findById', err.message);
         res.status(500).json({
           state: false,
           message: 'Error retrieving user with id ' + req.params.userId
         });
       }
     } else {
+      logger.info('success');
       res.status(200).json({
         state: true,
         user: data
@@ -166,7 +199,12 @@ exports.findById = (req, res) => {
 
 // update a user
 exports.update = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('update');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty content');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -174,6 +212,7 @@ exports.update = (req, res) => {
   } else {
     bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
       if (err) {
+        logger.error('bcrypt.hash');
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while updating the user.'
@@ -185,17 +224,20 @@ exports.update = (req, res) => {
         User.updateById(req.params.userId, new User(req.body), (err, data) => {
           if (err) {
             if (err.kind === 'not_found') {
+              logger.error('updateById notFound');
               res.status(404).json({
                 state: false,
                 message: 'Not found user with id ' + req.params.userId
               });
             } else {
+              logger.error('updateById', err.message);
               res.status(500).json({
                 state: false,
                 message: 'Error updating user with id ' + req.params.userId
               });
             }
           } else {
+            logger.info('success');
             res.status(200).json({
               state: true,
               updated_user: data
@@ -209,20 +251,27 @@ exports.update = (req, res) => {
 
 // delete a user by id
 exports.remove = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('remove');
+
   User.remove(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('remove notFound');
         res.status(404).json({
           state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
+        logger.error('remove', err.message);
         res.status(500).json({
           state: false,
           message: 'Could not delete user with id ' + req.params.userId
         });
       }
     } else {
+      logger.info('success');
       res.status(200).json({
         state: true,
         message: 'User deleted successfully'
@@ -233,13 +282,19 @@ exports.remove = (req, res) => {
 
 // delete all users
 exports.removeAll = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('removeAll');
+
   User.removeAll((err, data) => {
     if (err) {
+      logger.error('removeAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while deleting all users.'
       });
     } else {
+      logger.info('success');
       res.status(200).json({
         state: true,
         message: 'All users deleted successfully'
@@ -250,7 +305,12 @@ exports.removeAll = (req, res) => {
 
 // disable a user
 exports.disable = (req, res) => {
+
+  logger.setReqData(req);
+  logger.info('disable');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty content');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -261,17 +321,20 @@ exports.disable = (req, res) => {
     User.disable(req.params.userId, req.body, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('disable notFound');
           res.status(404).json({
             state: false,
             message: 'Not found user with id ' + req.params.userId
           });
         } else {
+          logger.error('disable', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating user with id ' + req.params.userId
           });
         }
       } else {
+        logger.info('success');
         res.status(200).json({ 
           state: true,
           message: 'Disabled user with id: ' + data.id + '.' 
