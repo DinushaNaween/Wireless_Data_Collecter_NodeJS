@@ -1,9 +1,15 @@
-const express = require('express');
-const bodyParser = require('body-parser');
 require('dotenv').config();
 require('./config/global.config');
+const express = require('express');
+const bodyParser = require('body-parser');
+const winston = require('./middlewares/logger');
 
 const app = express();
+
+app.use( (req, res, done) => {
+  winston.logger
+  done();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
