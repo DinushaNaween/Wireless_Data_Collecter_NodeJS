@@ -2,24 +2,27 @@ module.exports = app => {
 
   const user = require('../controllers/user.controller');
 
-  // create new user
+  // Create new user
   app.post('/user', user.create);
 
-  // get all users
+  // User login
+  app.post('/user/login', user.login);
+
+  // Get all users
   app.get('/user', user.getAll);
 
-  // find user by id
+  // Find user by id
   app.get('/user/:userId', user.findById);
 
-  // update user by id
+  // Update user by id
   app.put('/user/:userId', user.update);
 
-  // delete user by id
+  // Delete user by id
   app.delete('/user/:userId', user.remove);
 
-  // delete all users
+  // Delete all users
   app.delete('/user', user.removeAll);
 
-  // disable a user
+  // Disable a user
   app.put('/user/disable/:userId', user.disable);
 }

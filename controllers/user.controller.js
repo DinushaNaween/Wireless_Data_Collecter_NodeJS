@@ -1,51 +1,142 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 // create and save new user
 exports.create = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).json({
+      state: false,
       message: 'Content can not be empty!'
     });
+  } else {
+    User.findByEmail(req.body.email, (err, data) => {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while creating the user.'
+        });
+      }
+  
+      if (data.length == 0) {
+        bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
+          if (err) {
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while creating the user.'
+            });
+          } else {
+            const user = new User({
+              email: req.body.email, 
+              userName: req.body.userName,
+              firstName: req.body.firstName,
+              lastName: req.body.lastName, 
+              loginPassword: hash,
+              roleId: req.body.roleId,
+              disabled: req.body.disabled,
+              lastModifiedUser: req.body.lastModifiedUser,
+              lastModifiedDateTime: new Date()
+            });
+      
+            User.create(user, (err, data) => {
+              if (err) {
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while creating the user.'
+                });
+              } else {
+                res.status(200).json({
+                  state: true,
+                  created_user: data
+                })
+              }
+            });
+          }
+        });
+      } else if (data) {
+        res.status(302).json({
+          state: false,
+          exist: true,
+          message: 'Email found.'
+        });
+      }
+    })
   }
+};
 
-  bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while creating the user.'
+// Login user
+exports.login = (req, res) => {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    res.status(400).json({
+      state: false,
+      message: 'Content can not be empty!'
+    });
+  } else {
+    User.findByEmail(req.body.email, (err, user) => {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while finding the user.'
+        });
+      }
+  
+      let userObject = new User({
+        userId: user[0].userId,
+        email: user[0].email,
+        userName: user[0].userName,
+        firstName: user[0].firstName,
+        lastName: user[0].lastName, 
+        loginPassword: user[0].loginPassword,
+        roleId: user[0].roleId,
+        disabled: user[0].disabled,
+        lastModifiedUser: user[0].lastModifiedUser,
+        lastModifiedDateTime: user[0].lastModifiedDateTime
       });
-    } else {
-      const user = new User({
-        email: req.body.email,
-        userName: req.body.userName,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        loginPassword: hash,
-        roleId: req.body.roleId,
-        disabled: req.body.disabled,
-        lastModifiedUser: req.body.lastModifiedUser,
-        lastModifiedDateTime: new Date()
-      });
-
-      User.create(user, (err, data) => {
-        if (err) {
-          res.status(500).send({
-            message: err.message || 'Some error occurred while creating the user.'
-          });
-        } else res.send(data);
-      });
-    }
-  });
+  
+      if (user.length != 0) {
+        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+          if (err) {
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while finding the user.'
+            });
+          }
+  
+          if (result) {
+            jwt.sign({userObject}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
+              if (err) {
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while creating token.'
+                });
+              } else {
+                res.status(200).json({
+                  state: true,
+                  token: token
+                });
+              }
+            });
+          }
+        });
+      }
+    });
+  }
 };
 
 // get all users from database
 exports.getAll = (req, res) => {
   User.getAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while retrieving the users.'
       });
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        users: data
+      });
+    }
   });
 };
 
@@ -54,50 +145,66 @@ exports.findById = (req, res) => {
   User.findById(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Error retrieving user with id ' + req.params.userId
         });
       }
-    } else res.send(data);
+    } else {
+      res.status(200).json({
+        state: true,
+        user: data
+      });
+    }
   });
 };
 
 // update a user
 exports.update = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
-  }
-
-  bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while updating the user.'
-      });
-    } else {
-      req.body.loginPassword = hash;
-      req.body.lastModifiedDateTime = new Date();
-
-      User.updateById(req.params.userId, new User(req.body), (err, data) => {
-        if (err) {
-          if (err.kind === 'not_found') {
-            res.status(404).send({
-              message: 'Not found user with id ' + req.params.userId
-            });
+  } else {
+    bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
+      if (err) {
+        res.status(500).json({
+          state: false,
+          message: err.message || 'Some error occurred while updating the user.'
+        });
+      } else {
+        req.body.loginPassword = hash;
+        req.body.lastModifiedDateTime = new Date();
+  
+        User.updateById(req.params.userId, new User(req.body), (err, data) => {
+          if (err) {
+            if (err.kind === 'not_found') {
+              res.status(404).json({
+                state: false,
+                message: 'Not found user with id ' + req.params.userId
+              });
+            } else {
+              res.status(500).json({
+                state: false,
+                message: 'Error updating user with id ' + req.params.userId
+              });
+            }
           } else {
-            res.status(500).send({
-              message: 'Error updating user with id ' + req.params.userId
+            res.status(200).json({
+              state: true,
+              updated_user: data
             });
           }
-        } else res.send(data);
-      })
-    }
-  })
+        })
+      }
+    })
+  }
 };
 
 // delete a user by id
@@ -105,15 +212,22 @@ exports.remove = (req, res) => {
   User.remove(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        res.status(404).json({
+          state: false,
           message: 'Not found user with id ' + req.params.userId
         });
       } else {
-        res.status(500).send({
+        res.status(500).json({
+          state: false,
           message: 'Could not delete user with id ' + req.params.userId
         });
       }
-    } else res.send({ message: 'User deleted successfully!' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'User deleted successfully'
+      });
+    }
   });
 };
 
@@ -121,34 +235,48 @@ exports.remove = (req, res) => {
 exports.removeAll = (req, res) => {
   User.removeAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      res.status(500).json({
+        state: false,
         message: err.message || 'Some error occurred while deleting all users.'
       });
-    } else res.send({ message: 'All users deleted successfully.' })
+    } else {
+      res.status(200).json({
+        state: true,
+        message: 'All users deleted successfully'
+      });
+    }
   })
 };
 
 // disable a user
 exports.disable = (req, res) => {
-  if (!req.body) {
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     res.status(400).send({
+      state: false,
       message: 'Content can not be empty!'
     });
-  }
+  } else {
+    req.body.lastModifiedDateTime = new Date();
 
-  req.body.lastModifiedDateTime = new Date();
-
-  User.disable(req.params.userId, req.body, (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: 'Not found user with id ' + req.params.userId
-        });
+    User.disable(req.params.userId, req.body, (err, data) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          res.status(404).json({
+            state: false,
+            message: 'Not found user with id ' + req.params.userId
+          });
+        } else {
+          res.status(500).json({
+            state: false,
+            message: 'Error updating user with id ' + req.params.userId
+          });
+        }
       } else {
-        res.status(500).send({
-          message: 'Error updating user with id ' + req.params.userId
+        res.status(200).json({ 
+          state: true,
+          message: 'Disabled user with id: ' + data.id + '.' 
         });
       }
-    } else res.send({ message: 'Disabled user with id: ' + data.id + '.' });
-  })
+    });
+  }
 };
