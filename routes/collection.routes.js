@@ -1,61 +1,61 @@
 module.exports = app => {
 
-  const collction = require('../controllers/collction.controller');
+  const collection = require('../controllers/collection.controller');
   const logger = require('../logger/logger');
 
-  // Create new collction
-  app.post('/collction', function (req, res, next) {
-    logger.reqLog(req, 'collction.create');
+  // Create new collection
+  app.post('/collection', function (req, res, next) {
+    logger.reqLog(req, 'collection.create');
     next()
   },
-    collction.create
+    collection.create
   );
 
-  // Get all collctions
-  app.get('/collction', function (req, res, next) {
-    logger.reqLog(req, 'collction.getAll');
+  // Get all collections
+  app.get('/collection', function (req, res, next) {
+    logger.reqLog(req, 'collection.getAll');
     next()
   },
-    collction.getAll
+    collection.getAll
   );
 
-  // Find collction by id
-  app.get('/collction/:collctionId', function (req, res, next) {
-    logger.reqLog(req, 'collction.findById');
+  // Find collection by id
+  app.get('/collection/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.findById');
     next()
   },
-    collction.findById
+    collection.findById
   );
 
-  // Update collction by id
-  app.put('/collction/:collctionId', function (req, res, next) {
-    logger.reqLog(req, 'collction.update');
+  // Update collection by id
+  app.put('/collection/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.update');
     next()
   },
-    collction.update
+    collection.update
   );
 
-  // Delete collction by id
-  app.delete('/collction/:collctionId', function (req, res, next) {
-    logger.reqLog(req, 'collction.remove');
+  // Delete collection by id
+  app.delete('/collection/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.remove');
     next()
   },
-    collction.remove
+    collection.remove
   );
 
-  // Delete all collctions
-  app.delete('/collction', function (req, res, next) {
-    logger.reqLog(req, 'collction.removeAll');
+  // Delete all collections
+  app.delete('/collection', function (req, res, next) {
+    logger.reqLog(req, 'collection.removeAll');
     next()
   },
-    collction.removeAll
+    collection.removeAll
   );
 
-  // Disable a collction
-  app.put('/collction/disable/:collctionId', function (req, res, next) {
-    logger.reqLog(req, 'collction.disable');
+  // Disable a collection
+  app.put('/collection/disable/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.disable');
     next()
   },
-    collction.disable
+    collection.disable
   );
 }
