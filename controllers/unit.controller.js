@@ -2,10 +2,7 @@ const Unit = require('../models/unit.model');
 const logger = require('../logger/logger');
 
 // create and save new unit
-exports.create = (req, res) => {
-
-  logger.reqLog(req, 'unit.create');
-
+exports.create = (req, res) => {  
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -44,9 +41,6 @@ exports.create = (req, res) => {
 
 // get all units from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'unit.getAll');
-
   Unit.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -66,9 +60,6 @@ exports.getAll = (req, res) => {
 
 // get unit by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'unit.findById');
-
   Unit.findById(req.params.unitId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -96,9 +87,6 @@ exports.findById = (req, res) => {
 
 // update a unit
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'unit.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -124,7 +112,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.error('update success');
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_unit: data
@@ -136,9 +124,6 @@ exports.update = (req, res) => {
 
 // delete a unit by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'unit.remove');
-
   Unit.remove(req.params.unitId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -166,9 +151,6 @@ exports.remove = (req, res) => {
 
 // delete all units
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'unit.removeAll');
-
   Unit.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -188,9 +170,6 @@ exports.removeAll = (req, res) => {
 
 // disable a unit
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'unit.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
