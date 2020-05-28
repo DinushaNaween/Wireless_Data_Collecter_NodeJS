@@ -43,6 +43,14 @@ module.exports = app => {
     user.update
   );
 
+  // Change email address
+  app.put('/user/changeEmail/:userId', function (req, res, next) {
+    logger.reqLog(req, 'user.changeEmailAddress');
+    next()
+  },
+    user.changeEmail
+  );
+
   // Delete user by id
   app.delete('/user/:userId', function (req, res, next) {
     logger.reqLog(req, 'user.remove');

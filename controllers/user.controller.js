@@ -2,10 +2,10 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const logger = require('../logger/logger');
-  
+
 // create and save new user
 exports.create = (req, res) => {
-  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
@@ -14,58 +14,66 @@ exports.create = (req, res) => {
   } else {
     User.findByEmail(req.body.email, (err, data) => {
       if (err) {
-        logger.error('findByEmail', err.message);
-        res.status(500).json({
-          state: false,
-          message: err.message || 'Some error occurred while creating the user.'
-        });
-      }
-  
-      if (data.length == 0) {
-        bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
-          if (err) {
-            logger.error('bcrypt.hash', err.message);
-            res.status(500).json({
-              state: false,
-              message: err.message || 'Some error occurred while creating the user.'
-            });
-          } else {
-            let user = new User({
-              email: req.body.email, 
-              userName: req.body.userName,
-              firstName: req.body.firstName,
-              lastName: req.body.lastName, 
-              loginPassword: hash,
-              roleId: req.body.roleId,
-              disabled: req.body.disabled,
-              lastModifiedUser: req.body.lastModifiedUser,
-              lastModifiedDateTime: new Date()
-            });
-      
-            User.create(user, (err, data) => {
-              if (err) {
-                logger.error('user.create', err.message);
-                res.status(500).json({
-                  state: false,
-                  message: err.message || 'Some error occurred while creating the user.'
-                });
-              } else {
-                logger.info('user created', data);
-                res.status(200).json({
-                  state: true,
-                  created_user: data
-                })
-              }
-            });
-          }
-        });
-      } else if (data) {
-        logger.error('email exist', {email: req.body.email});
-        res.status(302).json({
-          state: false,
-          exist: true,
-          message: 'Email exist.'
-        });
+        if (err.kind === 'not_found') {
+          logger.error('email notFound');
+          res.status(400).json({
+            state: false,
+            message: 'Email not found'
+          })
+        } else {
+          logger.error('findByEmail', err.message);
+          res.status(500).json({
+            state: false,
+            message: err.message || 'Some error occurred while finding the user.'
+          });
+        }
+      } else {
+        if (data.length == 0) {
+          bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
+            if (err) {
+              logger.error('bcrypt.hash', err.message);
+              res.status(500).json({
+                state: false,
+                message: err.message || 'Some error occurred while creating the user.'
+              });
+            } else {
+              let user = new User({
+                email: req.body.email,
+                userName: req.body.userName,
+                firstName: req.body.firstName,
+                lastName: req.body.lastName,
+                loginPassword: hash,
+                roleId: req.body.roleId,
+                disabled: req.body.disabled,
+                lastModifiedUser: req.body.lastModifiedUser,
+                lastModifiedDateTime: new Date()
+              });
+
+              User.create(user, (err, data) => {
+                if (err) {
+                  logger.error('user.create', err.message);
+                  res.status(500).json({
+                    state: false,
+                    message: err.message || 'Some error occurred while creating the user.'
+                  });
+                } else {
+                  logger.info('user created', data);
+                  res.status(200).json({
+                    state: true,
+                    created_user: data
+                  })
+                }
+              });
+            }
+          });
+        } else if (data) {
+          logger.error('email exist', { email: req.body.email });
+          res.status(302).json({
+            state: false,
+            exist: true,
+            message: 'Email exist.'
+          });
+        }
       }
     })
   }
@@ -73,7 +81,7 @@ exports.create = (req, res) => {
 
 // Login user
 exports.login = (req, res) => {
-  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
@@ -82,14 +90,22 @@ exports.login = (req, res) => {
   } else {
     User.findByEmail(req.body.email, (err, user) => {
       if (err) {
-        logger.error('findByEmail', err.message);
-        res.status(500).json({
-          state: false,
-          message: err.message || 'Some error occurred while finding the user.'
-        });
-      }
-  
-      if (user.length != 0) {
+        if (err.kind === 'not_found') {
+          logger.error('email notFound');
+          res.status(400).json({
+            state: false,
+            message: 'Email not found'
+          })
+        } else {
+          logger.error('findByEmail', err.message);
+          res.status(500).json({
+            state: false,
+            message: err.message || 'Some error occurred while finding the user.'
+          });
+        }
+      } 
+      
+      if (user.length == 1) {
         bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
             logger.error('bcrypt.compare');
@@ -98,9 +114,9 @@ exports.login = (req, res) => {
               message: err.message || 'Some error occurred while finding the user.'
             });
           }
-  
+
           if (result) {
-            jwt.sign({user}, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
+            jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
               if (err) {
                 logger.error('jwt.sign');
                 res.status(500).json({
@@ -124,7 +140,7 @@ exports.login = (req, res) => {
           }
         });
       } else {
-        logger.error('email not found');
+        logger.error('email found multiple times');
         res.status(400).json({
           state: false,
           message: 'Email or password is incorrect'
@@ -182,51 +198,117 @@ exports.findById = (req, res) => {
 
 // update a user
 exports.update = (req, res) => {
-  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
     });
   } else {
-    bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
+    req.body.lastModifiedDateTime = new Date();
+
+    User.updateById(req.params.userId, new User(req.body), (err, data) => {
       if (err) {
-        logger.error('bcrypt.hash');
+        if (err.kind === 'not_found') {
+          logger.error('updateById notFound');
+          res.status(404).json({
+            state: false,
+            message: 'Not found user with id ' + req.params.userId
+          });
+        } else {
+          logger.error('updateById', err.message);
+          res.status(500).json({
+            state: false,
+            message: 'Error updating user with id ' + req.params.userId
+          });
+        }
+      } else {
+        logger.info('update success');
+        res.status(200).json({
+          state: true,
+          updated_user: data
+        });
+      }
+    });
+  }
+};
+
+// Change email address
+exports.changeEmail = (req, res) => {
+  User.findByEmail(req.body.currentEmail, (err, user) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('email notFound');
+        res.status(400).json({
+          state: false,
+          message: 'Email not found'
+        })
+      } else {
+        logger.error('findByEmail', err.message);
         res.status(500).json({
           state: false,
-          message: err.message || 'Some error occurred while updating the user.'
+          message: err.message || 'Some error occurred while finding the user.'
         });
+      }
+    }
+
+    if (user.length == 1) {
+      if (req.params.userId != user[0].userId) { 
+        logger.error('userId does not match with email address');
+        res.status(500).json({
+          state: false,
+          message: 'UserId does not match with email address given.'
+        })
       } else {
-        req.body.loginPassword = hash;
-        req.body.lastModifiedDateTime = new Date();
-  
-        User.updateById(req.params.userId, new User(req.body), (err, data) => {
+        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
-            if (err.kind === 'not_found') {
-              logger.error('updateById notFound');
-              res.status(404).json({
-                state: false,
-                message: 'Not found user with id ' + req.params.userId
-              });
-            } else {
-              logger.error('updateById', err.message);
-              res.status(500).json({
-                state: false,
-                message: 'Error updating user with id ' + req.params.userId
-              });
-            }
-          } else {
-            logger.info('update success');
-            res.status(200).json({
-              state: true,
-              updated_user: data
+            logger.error('bcrypt.compare');
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while finding the user.'
             });
+          }
+
+          if (result) {
+            req.body.lastModifiedDateTime = new Date();
+
+            User.changeEmailAddress(req.params.userId, req.body, (err, data) => {
+              if (err) {
+                if (err.kind === 'not_found') {
+                  logger.error('email not found in database');
+                  res.status(400).json({
+                    state: false,
+                    message: 'Email not found'
+                  })
+                } else {
+                  logger.error('changeEmailAddress', err.message);
+                  res.status(500).json({
+                    state: false,
+                    message: err.message || 'Some error occured while updating email address'
+                  })
+                }
+              } 
+
+              if (data) {
+                logger.info('email changed success');
+                res.status(200).json({
+                  state: true,
+                  message: 'Email changed'
+                })
+              }
+            })
           }
         })
       }
-    })
-  }
-};
+    } else {
+      logger.error('email found multiple times');
+      res.status(200).json({
+        state: true,
+        message: 'Check email and try again'
+      })
+    }
+  })
+}
 
 // delete a user by id
 exports.remove = (req, res) => {
@@ -276,7 +358,7 @@ exports.removeAll = (req, res) => {
 
 // disable a user
 exports.disable = (req, res) => {
-  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
       state: false,
@@ -302,9 +384,9 @@ exports.disable = (req, res) => {
         }
       } else {
         logger.info('disable success');
-        res.status(200).json({ 
+        res.status(200).json({
           state: true,
-          message: 'Disabled user with id: ' + data.id + '.' 
+          message: 'Disabled user with id: ' + data.id + '.'
         });
       }
     });
