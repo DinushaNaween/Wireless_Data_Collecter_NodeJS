@@ -3,9 +3,6 @@ const logger = require('../logger/logger');
 
 // create and save new node
 exports.create = (req, res) => {
-
-  logger.reqLog(req, 'node.create');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -41,9 +38,6 @@ exports.create = (req, res) => {
 
 // get all nodes from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'node.getAll');
-
   Node.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -63,9 +57,6 @@ exports.getAll = (req, res) => {
 
 // get node by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'node.findById');
-
   Node.findById(req.params.nodeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -93,9 +84,6 @@ exports.findById = (req, res) => {
 
 // update a node
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'node.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -121,7 +109,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.error('update success');
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_node: data
@@ -133,9 +121,6 @@ exports.update = (req, res) => {
 
 // delete a node by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'node.remove');
-
   Node.remove(req.params.nodeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -163,9 +148,6 @@ exports.remove = (req, res) => {
 
 // delete all nodes
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'node.removeAll');
-
   Node.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -185,9 +167,6 @@ exports.removeAll = (req, res) => {
 
 // disable a node
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'node.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({

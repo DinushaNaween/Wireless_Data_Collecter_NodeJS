@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const role = require('../controllers/role.controller');
+  const logger = require('../logger/logger');
 
-  // create new role
-  app.post('/role', role.create);
+  // Create new role
+  app.post('/role', function (req, res, next) {
+    logger.reqLog(req, 'role.create');
+    next()
+  },
+    role.create
+  );
 
-  // get all roles
-  app.get('/role', role.getAll);
+  // Get all roles
+  app.get('/role', function (req, res, next) {
+    logger.reqLog(req, 'role.getAll');
+    next()
+  },
+    role.getAll
+  );
 
-  // find role by id
-  app.get('/role/:roleId', role.findById);
+  // Find role by id
+  app.get('/role/:roleId', function (req, res, next) {
+    logger.reqLog(req, 'role.findById');
+    next()
+  },
+    role.findById
+  );
 
-  // update role by id
-  app.put('/role/:roleId', role.update);
+  // Update role by id
+  app.put('/role/:roleId', function (req, res, next) {
+    logger.reqLog(req, 'role.update');
+    next()
+  },
+    role.update
+  );
 
-  // delete role by id
-  app.delete('/role/:roleId', role.remove);
+  // Delete role by id
+  app.delete('/role/:roleId', function (req, res, next) {
+    logger.reqLog(req, 'role.remove');
+    next()
+  },
+    role.remove
+  );
 
-  // delete all roles
-  app.delete('/role', role.removeAll);
+  // Delete all roles
+  app.delete('/role', function (req, res, next) {
+    logger.reqLog(req, 'role.removeAll');
+    next()
+  },
+    role.removeAll
+  );
 
-  // disable a role
-  app.put('/role/disable/:roleId', role.disable);
+  // Disable a role
+  app.put('/role/disable/:roleId', function (req, res, next) {
+    logger.reqLog(req, 'role.disable');
+    next()
+  },
+    role.disable
+  );
 }

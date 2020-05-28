@@ -3,9 +3,6 @@ const logger = require('../logger/logger');
 
 // create and save new parent node
 exports.create = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.create');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -45,9 +42,6 @@ exports.create = (req, res) => {
 
 // get all parent nodes from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.getAll');
-
   ParentNode.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -67,9 +61,6 @@ exports.getAll = (req, res) => {
 
 // get parent node by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.findById');
-
   ParentNode.findById(req.params.parentNodeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -97,9 +88,6 @@ exports.findById = (req, res) => {
 
 // update a parent node
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -125,7 +113,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.error('update success');
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_parentNode: data
@@ -137,9 +125,6 @@ exports.update = (req, res) => {
 
 // delete a parent node by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.remove');
-
   ParentNode.remove(req.params.parentNodeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -167,9 +152,6 @@ exports.remove = (req, res) => {
 
 // delete all parent nodes
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.removeAll');
-
   ParentNode.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -189,9 +171,6 @@ exports.removeAll = (req, res) => {
 
 // disable a parent node
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'parentNode.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({

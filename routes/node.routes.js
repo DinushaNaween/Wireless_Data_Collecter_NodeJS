@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const node = require('../controllers/node.controller');
+  const logger = require('../logger/logger');
 
-  // create new node
-  app.post('/node', node.create);
+  // Create new node
+  app.post('/node', function (req, res, next) {
+    logger.reqLog(req, 'node.create');
+    next()
+  },
+    node.create
+  );
 
-  // get all nodes
-  app.get('/node', node.getAll);
+  // Get all nodes
+  app.get('/node', function (req, res, next) {
+    logger.reqLog(req, 'node.getAll');
+    next()
+  },
+    node.getAll
+  );
 
-  // find node by id
-  app.get('/node/:nodeId', node.findById);
+  // Find node by id
+  app.get('/node/:nodeId', function (req, res, next) {
+    logger.reqLog(req, 'node.findById');
+    next()
+  },
+    node.findById
+  );
 
-  // update node by id
-  app.put('/node/:nodeId', node.update);
+  // Update node by id
+  app.put('/node/:nodeId', function (req, res, next) {
+    logger.reqLog(req, 'node.update');
+    next()
+  },
+    node.update
+  );
 
-  // delete node by id
-  app.delete('/node/:nodeId', node.remove);
+  // Delete node by id
+  app.delete('/node/:nodeId', function (req, res, next) {
+    logger.reqLog(req, 'node.remove');
+    next()
+  },
+    node.remove
+  );
 
-  // delete all nodes
-  app.delete('/node', node.removeAll);
+  // Delete all nodes
+  app.delete('/node', function (req, res, next) {
+    logger.reqLog(req, 'node.removeAll');
+    next()
+  },
+    node.removeAll
+  );
 
-  // disable a node
-  app.put('/node/disable/:nodeId', node.disable);
+  // Disable a node
+  app.put('/node/disable/:nodeId', function (req, res, next) {
+    logger.reqLog(req, 'node.disable');
+    next()
+  },
+    node.disable
+  );
 }

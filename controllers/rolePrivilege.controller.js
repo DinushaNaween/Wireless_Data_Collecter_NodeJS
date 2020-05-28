@@ -3,9 +3,6 @@ const logger = require('../logger/logger');
 
 // create and save new role privilege
 exports.create = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.create');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -41,9 +38,6 @@ exports.create = (req, res) => {
  
 // get all role privileges from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.getAll');
-
   RolePrivilege.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -63,9 +57,6 @@ exports.getAll = (req, res) => {
 
 // get role privilege by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.findById');
-
   RolePrivilege.findById(req.params.rolePrivilegeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -93,9 +84,6 @@ exports.findById = (req, res) => {
 
 // update a role privilege
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -121,7 +109,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.error('update success');
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_rolePrivilege: data
@@ -133,9 +121,6 @@ exports.update = (req, res) => {
 
 // delete a role privilege by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.remove');
-
   RolePrivilege.remove(req.params.rolePrivilegeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -163,9 +148,6 @@ exports.remove = (req, res) => {
 
 // delete all role privileges
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.removeAll');
-
   RolePrivilege.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -185,9 +167,6 @@ exports.removeAll = (req, res) => {
 
 // disable a role privilege
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'rolePrivilege.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({

@@ -3,9 +3,6 @@ const logger = require('../logger/logger');
 
 // Create new data table for a new node
 exports.createNewDataTable = (req, res) => {
-
-  logger.reqLog(req, 'dataTable.createNewDataTable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
@@ -33,9 +30,6 @@ exports.createNewDataTable = (req, res) => {
 
 // Add columns by table name
 exports.addColumnToTableByTableName = (req, res) => {
-
-  logger.reqLog(req, 'dataTable.addColumnToTableByTableName');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
@@ -63,9 +57,6 @@ exports.addColumnToTableByTableName = (req, res) => {
 
 // Modify columns by table name
 exports.modifyColumnByTableName = (req, res) => {
-
-  logger.reqLog(req, 'dataTable.modifyColumnByTableName');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
@@ -93,9 +84,6 @@ exports.modifyColumnByTableName = (req, res) => {
 
 // Drop columns by table name
 exports.dropColumnByTableName = (req, res) => {
-
-  logger.reqLog(req, 'dataTable.dropColumnByTableName');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
@@ -123,9 +111,6 @@ exports.dropColumnByTableName = (req, res) => {
 
 // Rename columns by table name
 exports.renameColumnByTableName = (req, res) => {
-
-  logger.reqLog(req, 'dataTable.renameColumnByTableName');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
@@ -153,9 +138,6 @@ exports.renameColumnByTableName = (req, res) => {
 
 // Get all data table names
 exports.getAllDataTableNames = (req, res) => {
-
-  logger.reqLog(req, 'dataTable.getAllDataTableNames');
-
   DataTable.getAllDataTables((err, data) => {
     if (err) {
       logger.error('getAllDataTableNames', err.message);

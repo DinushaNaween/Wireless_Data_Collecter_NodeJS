@@ -1,25 +1,61 @@
 module.exports = app => {
 
-  const collection = require('../controllers/collection.controller');
+  const collction = require('../controllers/collction.controller');
+  const logger = require('../logger/logger');
 
-  // create new collection
-  app.post('/collection', collection.create);
+  // Create new collction
+  app.post('/collction', function (req, res, next) {
+    logger.reqLog(req, 'collction.create');
+    next()
+  },
+    collction.create
+  );
 
-  // get all collections
-  app.get('/collection', collection.getAll);
+  // Get all collctions
+  app.get('/collction', function (req, res, next) {
+    logger.reqLog(req, 'collction.getAll');
+    next()
+  },
+    collction.getAll
+  );
 
-  // find collection by id
-  app.get('/collection/:collectionId', collection.findById);
+  // Find collction by id
+  app.get('/collction/:collctionId', function (req, res, next) {
+    logger.reqLog(req, 'collction.findById');
+    next()
+  },
+    collction.findById
+  );
 
-  // update collection by id
-  app.put('/collection/:collectionId', collection.update);
+  // Update collction by id
+  app.put('/collction/:collctionId', function (req, res, next) {
+    logger.reqLog(req, 'collction.update');
+    next()
+  },
+    collction.update
+  );
 
-  // delete collection by id
-  app.delete('/collection/:collectionId', collection.remove);
+  // Delete collction by id
+  app.delete('/collction/:collctionId', function (req, res, next) {
+    logger.reqLog(req, 'collction.remove');
+    next()
+  },
+    collction.remove
+  );
 
-  // delete all collections
-  app.delete('/collection', collection.removeAll);
+  // Delete all collctions
+  app.delete('/collction', function (req, res, next) {
+    logger.reqLog(req, 'collction.removeAll');
+    next()
+  },
+    collction.removeAll
+  );
 
-  // disable a collection
-  app.put('/collection/disable/:collectionId', collection.disable);
+  // Disable a collction
+  app.put('/collction/disable/:collctionId', function (req, res, next) {
+    logger.reqLog(req, 'collction.disable');
+    next()
+  },
+    collction.disable
+  );
 }

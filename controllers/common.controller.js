@@ -2,9 +2,6 @@ const common = require('../services/common.service');
 const logger = require('../logger/logger');
 
 exports.getTableInfo = (req, res) => {
-
-  logger.reqLog(req, 'common.getTableInfo');
-
   common.getTableInfo(req.params.tableName, (err, data) => {
     if (err) {
       logger.error('getTableInfo', err.message);
@@ -23,9 +20,6 @@ exports.getTableInfo = (req, res) => {
 };
 
 exports.renameTable = (req, res) => {
-
-  logger.reqLog(req, 'common.renameTable');
-
   common.renameTable(req.body.tableName, req.body.newTableName, (err, data) => {
     if (err) {
       logger.error('renameTable', err.message);

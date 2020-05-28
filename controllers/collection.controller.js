@@ -3,9 +3,6 @@ const logger = require('../logger/logger');
 
 // create and save new collection
 exports.create = (req, res) => {
-
-  logger.reqLog(req, 'collection.create');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -43,9 +40,6 @@ exports.create = (req, res) => {
 
 // get all collections from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'collection.getAll');
-
   Collection.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -65,9 +59,6 @@ exports.getAll = (req, res) => {
 
 // get collection by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'collection.findById');
-
   Collection.findById(req.params.collectionId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -95,9 +86,6 @@ exports.findById = (req, res) => {
 
 // update a collection
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'collection.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -123,7 +111,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.error('update success');
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_collection: data
@@ -135,9 +123,6 @@ exports.update = (req, res) => {
 
 // delete a collection by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'collection.remove');
-
   Collection.remove(req.params.collectionId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -165,9 +150,6 @@ exports.remove = (req, res) => {
 
 // delete all collections
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'collection.removeAll');
-
   Collection.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -187,9 +169,6 @@ exports.removeAll = (req, res) => {
 
 // disable a collection
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'collection.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
