@@ -1,17 +1,15 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const Logger = require('../logger/logger');
-const logger = new Logger('user');
-
+const logger = require('../logger/logger');
+  
 // create and save new user
 exports.create = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('create');
+  logger.reqLog(req, 'user.create');
 
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    logger.error('empty req.body');
+    logger.error('Empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -35,7 +33,7 @@ exports.create = (req, res) => {
               message: err.message || 'Some error occurred while creating the user.'
             });
           } else {
-            const user = new User({
+            let user = new User({
               email: req.body.email, 
               userName: req.body.userName,
               firstName: req.body.firstName,
@@ -55,7 +53,7 @@ exports.create = (req, res) => {
                   message: err.message || 'Some error occurred while creating the user.'
                 });
               } else {
-                logger.info('user created');
+                logger.info('User created', data);
                 res.status(200).json({
                   state: true,
                   created_user: data
@@ -65,7 +63,7 @@ exports.create = (req, res) => {
           }
         });
       } else if (data) {
-        logger.error('email exist')
+        logger.error('Email exist', {email: req.body.email});
         res.status(302).json({
           state: false,
           exist: true,
@@ -79,8 +77,7 @@ exports.create = (req, res) => {
 // Login user
 exports.login = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('login');
+  logger.reqLog(req, 'user.login');
 
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
@@ -146,8 +143,7 @@ exports.login = (req, res) => {
 // get all users from database
 exports.getAll = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('getAll');
+  logger.reqLog(req, 'user.getAll');
 
   User.getAll((err, data) => {
     if (err) {
@@ -157,7 +153,7 @@ exports.getAll = (req, res) => {
         message: err.message || 'Some error occurred while retrieving the users.'
       });
     } else {
-      logger.info('success')
+      logger.info('getAll success')
       res.status(200).json({
         state: true,
         users: data
@@ -169,8 +165,7 @@ exports.getAll = (req, res) => {
 // get user by id
 exports.findById = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('findById');
+  logger.reqLog(req, 'user.findById');
 
   User.findById(req.params.userId, (err, data) => {
     if (err) {
@@ -188,7 +183,7 @@ exports.findById = (req, res) => {
         });
       }
     } else {
-      logger.info('success');
+      logger.info('findById success');
       res.status(200).json({
         state: true,
         user: data
@@ -200,11 +195,10 @@ exports.findById = (req, res) => {
 // update a user
 exports.update = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('update');
+  logger.reqLog(req, 'user.update');
 
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    logger.error('empty content');
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -237,7 +231,7 @@ exports.update = (req, res) => {
               });
             }
           } else {
-            logger.info('success');
+            logger.info('update success');
             res.status(200).json({
               state: true,
               updated_user: data
@@ -252,8 +246,7 @@ exports.update = (req, res) => {
 // delete a user by id
 exports.remove = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('remove');
+  logger.reqLog(req, 'user.remove');
 
   User.remove(req.params.userId, (err, data) => {
     if (err) {
@@ -271,7 +264,7 @@ exports.remove = (req, res) => {
         });
       }
     } else {
-      logger.info('success');
+      logger.info('remove success');
       res.status(200).json({
         state: true,
         message: 'User deleted successfully'
@@ -283,8 +276,7 @@ exports.remove = (req, res) => {
 // delete all users
 exports.removeAll = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('removeAll');
+  logger.reqLog(req, 'user.removeAll');
 
   User.removeAll((err, data) => {
     if (err) {
@@ -294,7 +286,7 @@ exports.removeAll = (req, res) => {
         message: err.message || 'Some error occurred while deleting all users.'
       });
     } else {
-      logger.info('success');
+      logger.info('removeAll success');
       res.status(200).json({
         state: true,
         message: 'All users deleted successfully'
@@ -306,11 +298,10 @@ exports.removeAll = (req, res) => {
 // disable a user
 exports.disable = (req, res) => {
 
-  logger.setReqData(req);
-  logger.info('disable');
+  logger.reqLog(req, 'user.disable');
 
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    logger.error('empty content');
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -334,7 +325,7 @@ exports.disable = (req, res) => {
           });
         }
       } else {
-        logger.info('success');
+        logger.info('disable success');
         res.status(200).json({ 
           state: true,
           message: 'Disabled user with id: ' + data.id + '.' 

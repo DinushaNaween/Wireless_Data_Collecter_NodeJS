@@ -1,14 +1,19 @@
 const Unit = require('../models/unit.model');
+const logger = require('../logger/logger');
 
 // create and save new unit
 exports.create = (req, res) => {
+
+  logger.reqLog(req, 'unit.create');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
   } else {
-    const unit = new Unit({
+    let unit = new Unit({
       unitName: req.body.unitName,
       unitLocation: req.body.unitLocation,
       noOfParentNodes: req.body.noOfParentNodes,
@@ -21,11 +26,13 @@ exports.create = (req, res) => {
   
     Unit.create(unit, (err, data) => {
       if (err) {
+        logger.error('create', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the unit.'
         });
       } else {
+        logger.info('unit created');
         res.status(200).json({
           state: true,
           created_unit: data
@@ -37,13 +44,18 @@ exports.create = (req, res) => {
 
 // get all units from database
 exports.getAll = (req, res) => {
+
+  logger.reqLog(req, 'unit.getAll');
+
   Unit.getAll((err, data) => {
     if (err) {
+      logger.error('getAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while retrieving the units.'
       });
     } else {
+      logger.info('getAll success');
       res.status(200).json({
         state: true,
         units: data
@@ -54,20 +66,26 @@ exports.getAll = (req, res) => {
 
 // get unit by id
 exports.findById = (req, res) => {
+
+  logger.reqLog(req, 'unit.findById');
+
   Unit.findById(req.params.unitId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('findById notFound');
         res.status(404).json({
           state: false,
           message: 'Not found unit with id ' + req.params.unitId
         });
       } else {
+        logger.error('findById', err.message);
         res.status(500).json({
           state: false,
           message: 'Error retrieving unit with id ' + req.params.unitId
         });
       }
     } else {
+      logger.info('findById success');
       res.status(200).json({
         state: true,
         unit: data
@@ -78,7 +96,11 @@ exports.findById = (req, res) => {
 
 // update a unit
 exports.update = (req, res) => {
+
+  logger.reqLog(req, 'unit.update');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -89,17 +111,20 @@ exports.update = (req, res) => {
     Unit.updateById(req.params.unitId, new Unit(req.body), (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('updateById notFound');
           res.status(404).json({
             state: false,
             message: 'Not found unit with id ' + req.params.unitId
           });
         } else {
+          logger.error('updateById', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating unit with id ' + req.params.unitId
           });
         }
       } else {
+        logger.error('update success');
         res.status(200).json({
           state: true,
           updated_unit: data
@@ -111,20 +136,26 @@ exports.update = (req, res) => {
 
 // delete a unit by id
 exports.remove = (req, res) => {
+
+  logger.reqLog(req, 'unit.remove');
+
   Unit.remove(req.params.unitId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('remove notFound');
         res.status(404).json({
           state: false,
           message: 'Not found unit with id ' + req.params.unitId
         });
       } else {
+        logger.error('remove', err.message);
         res.status(500).json({
           state: false,
           message: 'Could not delete unit with id ' + req.params.unitId
         });
       }
     } else {
+      logger.info('remove success');
       res.status(200).json({
         state: true,
         message: 'Unit deleted successfully'
@@ -135,13 +166,18 @@ exports.remove = (req, res) => {
 
 // delete all units
 exports.removeAll = (req, res) => {
+
+  logger.reqLog(req, 'unit.removeAll');
+
   Unit.removeAll((err, data) => {
     if (err) {
+      logger.error('removeAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while deleting all units.'
       });
     } else {
+      logger.info('removeAll success');
       res.status(200).json({
         state: true,
         message: 'All units deleted successfully'
@@ -152,7 +188,11 @@ exports.removeAll = (req, res) => {
 
 // disable a unit
 exports.disable = (req, res) => {
+
+  logger.reqLog(req, 'unit.disable');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -163,17 +203,20 @@ exports.disable = (req, res) => {
     Unit.disable(req.params.unitId, req.body, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('disable notFound');
           res.status(404).json({
             state: false,
             message: 'Not found unit with id ' + req.params.unitId
           });
         } else {
+          logger.error('disable', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating unit with id ' + req.params.unitId
           });
         }
       } else {
+        logger.info('disable success');
         res.status(200).json({
           state: true,
           message: 'Disabled unit with id: ' + data.id +'.'
