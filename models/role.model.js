@@ -19,6 +19,7 @@ Role.create = (newRole, result) => {
     
     if (debug) console.log('Created role: ', { id: res.insertId, ...newRole });
     result(null, { id: res.insertId, ...newRole });
+    return;
   });
 };
 
@@ -33,7 +34,7 @@ Role.getAll = (result) => {
 
     if (debug) console.log('Roles: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -53,6 +54,7 @@ Role.findById = (roleId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -72,6 +74,7 @@ Role.updateById = (roleId, role, result) => {
 
     if (debug) console.log('Updated role: ', { id: roleId, ...role });
     result(null, { id: roleId, ...role });
+    return;
   });
 };
 
@@ -91,6 +94,7 @@ Role.remove = (roleId, result) => {
 
     if (debug) console.log('Deleted role with id: ', roleId);
     result(null, res);
+    return;
   });
 };
 
@@ -105,6 +109,7 @@ Role.removeAll = result => {
 
     if (debug) console.log('Deleted %s roles.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -124,6 +129,7 @@ Role.disable = (roleId, role, result) => {
 
     if (debug) console.log('Disabled role: ', { id: roleId });
     result(null, { id: roleId });
+    return;
   })
 };
 

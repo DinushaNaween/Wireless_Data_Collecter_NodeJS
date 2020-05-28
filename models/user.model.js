@@ -23,10 +23,9 @@ User.create = (newUser, result) => {
     
     if (debug) console.log('Created user: ', { id: res.insertId, ...newUser });
     result(null, { id: res.insertId, ...newUser });
+    return;
   });
 };
-
-
 
 // Get all users from database
 User.getAll = (result) => {
@@ -39,7 +38,7 @@ User.getAll = (result) => {
 
     if (debug) console.log('Users: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -59,6 +58,7 @@ User.findById = (userId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -78,6 +78,7 @@ User.updateById = (userId, user, result) => {
 
     if (debug) console.log('Updated user: ', { id: userId, ...user });
     result(null, { id: userId, ...user });
+    return;
   });
 };
 
@@ -97,6 +98,7 @@ User.remove = (userId, result) => {
 
     if (debug) console.log('Deleted user with id: ', userId);
     result(null, res);
+    return;
   });
 };
 
@@ -111,6 +113,7 @@ User.removeAll = result => {
 
     if (debug) console.log('Deleted %s users.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -130,6 +133,7 @@ User.disable = (userId, user, result) => {
 
     if (debug) console.log('Disabled user: ', { id: userId });
     result(null, { id: userId });
+    return;
   })
 };
 

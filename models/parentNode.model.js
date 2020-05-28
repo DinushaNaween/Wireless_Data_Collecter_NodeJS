@@ -23,6 +23,7 @@ ParentNode.create = (newParentNode, result) => {
     
     if (debug) console.log('Created parent node: ', { id: res.insertId, ...newParentNode });
     result(null, { id: res.insertId, ...newParentNode });
+    return;
   });
 };
 
@@ -37,7 +38,7 @@ ParentNode.getAll = (result) => {
 
     if (debug) console.log('Parent nodes: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -57,6 +58,7 @@ ParentNode.findById = (parentNodeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -76,6 +78,7 @@ ParentNode.updateById = (parentNodeId, parentNode, result) => {
 
     if (debug) console.log('Updated parent node: ', { id: parentNodeId, ...parentNode });
     result(null, { id: parentNodeId, ...parentNode });
+    return;
   });
 };
 
@@ -95,6 +98,7 @@ ParentNode.remove = (parentNodeId, result) => {
 
     if (debug) console.log('Deleted parent node with id: ', parentNodeId);
     result(null, res);
+    return;
   });
 };
 
@@ -109,6 +113,7 @@ ParentNode.removeAll = result => {
 
     if (debug) console.log('Deleted %s parent nodes.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -128,6 +133,7 @@ ParentNode.disable = (parentNodeId, parentNode, result) => {
 
     if (debug) console.log('Disabled parent node: ', { id: parentNodeId });
     result(null, { id: parentNodeId });
+    return;
   })
 };
 

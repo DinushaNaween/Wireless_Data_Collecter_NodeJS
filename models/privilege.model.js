@@ -18,6 +18,7 @@ Privilege.create = (newPrivilege, result) => {
 
     if (debug) console.log('Created privilege: ', { id: res.insertId, ...newPrivilege });
     result(null, { id: res.insertId, ...newPrivilege });
+    return;
   });
 };
 
@@ -32,7 +33,7 @@ Privilege.getAll = (result) => {
 
     if (debug) console.log('Privileges: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -52,6 +53,7 @@ Privilege.findById = (privilegeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -71,6 +73,7 @@ Privilege.updateById = (privilegeId, privilege, result) => {
 
     if (debug) console.log('updated privilege: ', { id: privilegeId, ...privilege });
     result(null, { id: privilegeId, ...privilege });
+    return;
   });
 };
 
@@ -90,6 +93,7 @@ Privilege.remove = (privilegeId, result) => {
 
     if (debug) console.log('Deleted privilege with id: ', privilegeId);
     result(null, res);
+    return;
   });
 };
 
@@ -104,6 +108,7 @@ Privilege.removeAll = result => {
 
     if (debug) console.log('Deleted %s privileges.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -123,6 +128,7 @@ Privilege.disable = (privilegeId, privilege, result) => {
 
     if (debug) console.log('Disabled privilege: ', { id: privilegeId });
     result(null, { id: privilegeId });
+    return;
   })
 };
 
