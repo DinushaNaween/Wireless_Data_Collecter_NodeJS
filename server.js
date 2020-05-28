@@ -2,8 +2,7 @@ require('dotenv').config();
 require('./config/global.config');
 const express = require('express');
 const bodyParser = require('body-parser');
-const Logger = require('./logger/logger');
-const logger = new Logger('app');
+const logger = require('./logger/logger');
 
 const app = express();
 
@@ -14,7 +13,7 @@ app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Data Collector...' });
 });
 
-require('./routes/role.routes')(app);
+require('./routes/role.routes')(app); 
 require('./routes/privilege.routes')(app);
 require('./routes/rolePrivilege.routes')(app);
 require('./routes/user.routes')(app);
@@ -28,8 +27,8 @@ require('./routes/common.routes')(app);
 
 app.listen(8080, (err, result) => {
   if (err) {
-    logger.error('error on starting server', err.message)
+    logger.error('error on starting server', err.message);
   } else {
-    logger.info('server is listning on port 8080')
+    logger.info('server started listning on port 8080');
   }
 });

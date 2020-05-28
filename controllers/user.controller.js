@@ -9,7 +9,7 @@ exports.create = (req, res) => {
   logger.reqLog(req, 'user.create');
 
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    logger.error('Empty req.body');
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -47,13 +47,13 @@ exports.create = (req, res) => {
       
             User.create(user, (err, data) => {
               if (err) {
-                logger.error('User.create', err.message);
+                logger.error('user.create', err.message);
                 res.status(500).json({
                   state: false,
                   message: err.message || 'Some error occurred while creating the user.'
                 });
               } else {
-                logger.info('User created', data);
+                logger.info('user created', data);
                 res.status(200).json({
                   state: true,
                   created_user: data
@@ -63,7 +63,7 @@ exports.create = (req, res) => {
           }
         });
       } else if (data) {
-        logger.error('Email exist', {email: req.body.email});
+        logger.error('email exist', {email: req.body.email});
         res.status(302).json({
           state: false,
           exist: true,

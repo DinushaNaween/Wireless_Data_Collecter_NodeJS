@@ -1,14 +1,19 @@
 const Node = require('../models/node.model');
+const logger = require('../logger/logger');
 
 // create and save new node
 exports.create = (req, res) => {
+
+  logger.reqLog(req, 'node.create');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
   } else {
-    const node = new Node({
+    let node = new Node({
       parentNodeId: req.body.parentNodeId,
       createdUserId: req.body.createdUserId,
       disabled: req.body.disabled,
@@ -18,11 +23,13 @@ exports.create = (req, res) => {
   
     Node.create(node, (err, data) => {
       if (err) {
+        logger.error('create', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the node.'
         });
       } else {
+        logger.info('node created');
         res.status(200).json({
           state: true,
           created_node: data
@@ -34,13 +41,18 @@ exports.create = (req, res) => {
 
 // get all nodes from database
 exports.getAll = (req, res) => {
+
+  logger.reqLog(req, 'node.getAll');
+
   Node.getAll((err, data) => {
     if (err) {
+      logger.error('getAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while retrieving the nodes.'
       });
     } else {
+      logger.info('getAll success');
       res.status(200).json({
         state: true,
         nodes: data
@@ -51,20 +63,26 @@ exports.getAll = (req, res) => {
 
 // get node by id
 exports.findById = (req, res) => {
+
+  logger.reqLog(req, 'node.findById');
+
   Node.findById(req.params.nodeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('findById notFound');
         res.status(404).json({
           state: false,
           message: 'Not found node with id ' + req.params.nodeId
         });
       } else {
+        logger.error('findById', err.message);
         res.status(500).json({
           state: false,
           message: 'Error retrieving node with id ' + req.params.nodeId
         });
       }
     } else {
+      logger.info('findById success');
       res.status(200).json({
         state: true,
         node: data
@@ -75,7 +93,11 @@ exports.findById = (req, res) => {
 
 // update a node
 exports.update = (req, res) => {
+
+  logger.reqLog(req, 'node.update');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -86,17 +108,20 @@ exports.update = (req, res) => {
     Node.updateById(req.params.nodeId, new Node(req.body), (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('updateById notFound');
           res.status(404).json({
             state: false,
             message: 'Not found node with id ' + req.params.nodeId
           });
         } else {
+          logger.error('updateById', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating node with id ' + req.params.nodeId
           });
         }
       } else {
+        logger.error('update success');
         res.status(200).json({
           state: true,
           updated_node: data
@@ -108,20 +133,26 @@ exports.update = (req, res) => {
 
 // delete a node by id
 exports.remove = (req, res) => {
+
+  logger.reqLog(req, 'node.remove');
+
   Node.remove(req.params.nodeId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('remove notFound');
         res.status(404).json({
           state: false,
           message: 'Not found node with id ' + req.params.nodeId
         });
       } else {
+        logger.error('remove', err.message);
         res.status(500).json({
           state: false,
           message: 'Could not delete node with id ' + req.params.nodeId
         });
       }
     } else {
+      logger.info('remove success');
       res.status(200).json({
         state: true,
         message: 'Node deleted successfully'
@@ -132,13 +163,18 @@ exports.remove = (req, res) => {
 
 // delete all nodes
 exports.removeAll = (req, res) => {
+
+  logger.reqLog(req, 'node.removeAll');
+
   Node.removeAll((err, data) => {
     if (err) {
+      logger.error('removeAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while deleting all nodes.'
       });
     } else {
+      logger.info('removeAll success');
       res.status(200).json({
         state: true,
         message: 'All nodes deleted successfully'
@@ -149,7 +185,11 @@ exports.removeAll = (req, res) => {
 
 // disable a node
 exports.disable = (req, res) => {
+
+  logger.reqLog(req, 'node.disable');
+
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -160,17 +200,20 @@ exports.disable = (req, res) => {
     Node.disable(req.params.nodeId, req.body, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('disable notFound');
           res.status(404).json({
             state: false,
             message: 'Not found node with id ' + req.params.nodeId
           });
         } else {
+          logger.error('disable', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating node with id ' + req.params.nodeId
           });
         }
       } else {
+        logger.info('disable success');
         res.status(200).json({
           state: true,
           message: 'Disabled node with id: ' + data.id +'.'
