@@ -27,6 +27,7 @@ Sensor.create = (newSensor, result) => {
     
     if (debug) console.log('Created sensor: ', { id: res.insertId, ...newSensor });
     result(null, { id: res.insertId, ...newSensor });
+    return;
   });
 };
 
@@ -41,7 +42,7 @@ Sensor.getAll = (result) => {
 
     if (debug) console.log('Sensors: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -61,6 +62,7 @@ Sensor.findById = (sensorId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -80,6 +82,7 @@ Sensor.updateById = (sensorId, sensor, result) => {
 
     if (debug) console.log('Updated sensor: ', { id: sensorId, ...sensor });
     result(null, { id: sensorId, ...sensor });
+    return;
   });
 };
 
@@ -99,6 +102,7 @@ Sensor.remove = (sensorId, result) => {
 
     if (debug) console.log('Deleted sensor with id: ', sensorId);
     result(null, res);
+    return;
   });
 };
 
@@ -113,6 +117,7 @@ Sensor.removeAll = result => {
 
     if (debug) console.log('Deleted %s sensors.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -132,6 +137,7 @@ Sensor.disable = (sensorId, sensor, result) => {
 
     if (debug) console.log('Disabled sensor: ', { id: sensorId });
     result(null, { id: sensorId });
+    return;
   })
 };
 

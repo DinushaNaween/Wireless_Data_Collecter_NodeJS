@@ -1,14 +1,16 @@
 const Role = require('../models/role.model');
+const logger = require('../logger/logger');
 
 // create and save new role
 exports.create = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
     });
   } else {
-    const role = new Role({
+    let role = new Role({
       roleName: req.body.roleName,
       disabled: req.body.disabled,
       lastModifiedUser: req.body.lastModifiedUser,
@@ -17,11 +19,13 @@ exports.create = (req, res) => {
   
     Role.create(role, (err, data) => {
       if (err) {
+        logger.error('create', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the role.'
         });
       } else {
+        logger.info('role created');
         res.status(200).json({
           state: true,
           created_role: data
@@ -35,11 +39,13 @@ exports.create = (req, res) => {
 exports.getAll = (req, res) => {
   Role.getAll((err, data) => {
     if (err) {
+      logger.error('getAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while retrieving the roles.'
       });
     } else {
+      logger.info('getAll success');
       res.status(200).json({
         state: true,
         roles: data
@@ -53,17 +59,20 @@ exports.findById = (req, res) => {
   Role.findById(req.params.roleId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('findById notFound');
         res.status(404).json({
           state: false,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
+        logger.error('findById', err.message);
         res.status(500).json({
           state: false,
           message: 'Error retrieving role with id ' + req.params.roleId
         });
       }
     } else {
+      logger.info('findById success');
       res.status(200).json({
         state: true,
         role: data
@@ -75,6 +84,7 @@ exports.findById = (req, res) => {
 // update a role
 exports.update = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -85,17 +95,20 @@ exports.update = (req, res) => {
     Role.updateById(req.params.roleId, new Role(req.body), (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('updateById notFound');
           res.status(404).json({
             state: false,
             message: 'Not found role with id ' + req.params.roleId
           });
         } else {
+          logger.error('updateById', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating role with id ' + req.params.roleId
           });
         }
       } else {
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_role: data
@@ -110,17 +123,20 @@ exports.remove = (req, res) => {
   Role.remove(req.params.roleId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
+        logger.error('remove notFound');
         res.status(404).json({
           state: false,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
+        logger.error('remove', err.message);
         res.status(500).json({
           state: false,
           message: 'Could not delete role with id ' + req.params.roleId
         });
       }
     } else {
+      logger.info('remove success');
       res.status(200).json({
         state: true,
         message: 'Role deleted successfully'
@@ -133,11 +149,13 @@ exports.remove = (req, res) => {
 exports.removeAll = (req, res) => {
   Role.removeAll((err, data) => {
     if (err) {
+      logger.error('removeAll', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while deleting all roles.'
       });
     } else {
+      logger.info('removeAll success');
       res.status(200).json({
         state: true,
         message: 'All roles deleted successfully'
@@ -149,6 +167,7 @@ exports.removeAll = (req, res) => {
 // disable a role
 exports.disable = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).json({
       state: false,
       message: 'Content can not be empty!'
@@ -159,17 +178,20 @@ exports.disable = (req, res) => {
     Role.disable(req.params.roleId, req.body, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
+          logger.error('disable notFound');
           res.status(404).json({
             state: false,
             message: 'Not found role with id ' + req.params.roleId
           });
         } else {
+          logger.error('disable', err.message);
           res.status(500).json({
             state: false,
             message: 'Error updating role with id ' + req.params.roleId
           });
         }
       } else {
+        logger.info('disable success');
         res.status(200).json({
           state: true,
           message: 'Disabled role with id: ' + data.id +'.'

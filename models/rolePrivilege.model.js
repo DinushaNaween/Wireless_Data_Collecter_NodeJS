@@ -19,6 +19,7 @@ RolePrivilege.create = (newRolePrivilege, result) => {
     
     if (debug) console.log('Created role privilege: ', { id: res.insertId, ...newRolePrivilege });
     result(null, { id: res.insertId, ...newRolePrivilege });
+    return;
   });
 };
 
@@ -33,7 +34,7 @@ RolePrivilege.getAll = (result) => {
 
     if (debug) console.log('Role privileges: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -53,6 +54,7 @@ RolePrivilege.findById = (rolePrivilegeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -72,6 +74,7 @@ RolePrivilege.updateById = (rolePrivilegeId, rolePrivilege, result) => {
 
     if (debug) console.log('Updated role privilege: ', { id: rolePrivilegeId, ...rolePrivilege });
     result(null, { id: rolePrivilegeId, ...rolePrivilege });
+    return;
   });
 };
 
@@ -91,6 +94,7 @@ RolePrivilege.remove = (rolePrivilegeId, result) => {
 
     if (debug) console.log('Deleted role privilege with id: ', rolePrivilegeId);
     result(null, res);
+    return;
   });
 };
 
@@ -105,6 +109,7 @@ RolePrivilege.removeAll = result => {
 
     if (debug) console.log('Deleted %s role privileges.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -124,6 +129,7 @@ RolePrivilege.disable = (rolePrivilegeId, rolePrivilege, result) => {
 
     if (debug) console.log('Disabled role privilege: ', { id: rolePrivilegeId });
     result(null, { id: rolePrivilegeId });
+    return;
   })
 };
 

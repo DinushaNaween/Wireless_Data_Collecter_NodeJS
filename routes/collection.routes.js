@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const collection = require('../controllers/collection.controller');
+  const logger = require('../logger/logger');
 
-  // create new collection
-  app.post('/collection', collection.create);
+  // Create new collection
+  app.post('/collection', function (req, res, next) {
+    logger.reqLog(req, 'collection.create');
+    next()
+  },
+    collection.create
+  );
 
-  // get all collections
-  app.get('/collection', collection.getAll);
+  // Get all collections
+  app.get('/collection', function (req, res, next) {
+    logger.reqLog(req, 'collection.getAll');
+    next()
+  },
+    collection.getAll
+  );
 
-  // find collection by id
-  app.get('/collection/:collectionId', collection.findById);
+  // Find collection by id
+  app.get('/collection/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.findById');
+    next()
+  },
+    collection.findById
+  );
 
-  // update collection by id
-  app.put('/collection/:collectionId', collection.update);
+  // Update collection by id
+  app.put('/collection/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.update');
+    next()
+  },
+    collection.update
+  );
 
-  // delete collection by id
-  app.delete('/collection/:collectionId', collection.remove);
+  // Delete collection by id
+  app.delete('/collection/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.remove');
+    next()
+  },
+    collection.remove
+  );
 
-  // delete all collections
-  app.delete('/collection', collection.removeAll);
+  // Delete all collections
+  app.delete('/collection', function (req, res, next) {
+    logger.reqLog(req, 'collection.removeAll');
+    next()
+  },
+    collection.removeAll
+  );
 
-  // disable a collection
-  app.put('/collection/disable/:collectionId', collection.disable);
+  // Disable a collection
+  app.put('/collection/disable/:collectionId', function (req, res, next) {
+    logger.reqLog(req, 'collection.disable');
+    next()
+  },
+    collection.disable
+  );
 }

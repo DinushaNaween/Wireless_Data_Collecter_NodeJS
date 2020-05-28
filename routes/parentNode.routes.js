@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const parentNode = require('../controllers/parentNode.controller');
+  const logger = require('../logger/logger');
 
-  // create new parentNode
-  app.post('/parentNode', parentNode.create);
+  // Create new parentNode
+  app.post('/parentNode', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.create');
+    next()
+  },
+    parentNode.create
+  );
 
-  // get all parentNodes
-  app.get('/parentNode', parentNode.getAll);
+  // Get all parentNodes
+  app.get('/parentNode', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.getAll');
+    next()
+  },
+    parentNode.getAll
+  );
 
-  // find parentNode by id
-  app.get('/parentNode/:parentNodeId', parentNode.findById);
+  // Find parentNode by id
+  app.get('/parentNode/:parentNodeId', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.findById');
+    next()
+  },
+    parentNode.findById
+  );
 
-  // update parentNode by id
-  app.put('/parentNode/:parentNodeId', parentNode.update);
+  // Update parentNode by id
+  app.put('/parentNode/:parentNodeId', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.update');
+    next()
+  },
+    parentNode.update
+  );
 
-  // delete parentNode by id
-  app.delete('/parentNode/:parentNodeId', parentNode.remove);
+  // Delete parentNode by id
+  app.delete('/parentNode/:parentNodeId', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.remove');
+    next()
+  },
+    parentNode.remove
+  );
 
-  // delete all parentNodes
-  app.delete('/parentNode', parentNode.removeAll);
+  // Delete all parentNodes
+  app.delete('/parentNode', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.removeAll');
+    next()
+  },
+    parentNode.removeAll
+  );
 
-  // disable a parentNode
-  app.put('/parentNode/disable/:parentNodeId', parentNode.disable);
+  // Disable a parentNode
+  app.put('/parentNode/disable/:parentNodeId', function (req, res, next) {
+    logger.reqLog(req, 'parentNode.disable');
+    next()
+  },
+    parentNode.disable
+  );
 }

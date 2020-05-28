@@ -1,8 +1,10 @@
 const DataTable = require('../models/dataTable.model');
+const logger = require('../logger/logger');
 
 // Create new data table for a new node
 exports.createNewDataTable = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -10,15 +12,18 @@ exports.createNewDataTable = (req, res) => {
   } else {
     DataTable.createNewDataTable(req.body.nodeId, req.body.columns, (err, data) => {
       if (err) {
+        logger.error('createNewDataTable', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the data table.'
         });
-      } else 
+      } else {
+        logger.info('createNewDataTable success');
         res.status(200).json({
           state: true,
           table_data: data
         });
+      }
     });
   }
 };
@@ -26,6 +31,7 @@ exports.createNewDataTable = (req, res) => {
 // Add columns by table name
 exports.addColumnToTableByTableName = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -33,15 +39,18 @@ exports.addColumnToTableByTableName = (req, res) => {
   } else {
     DataTable.addColumnToTableByTableName(req.params.tableName, req.body.columns, (err, data) => {
       if (err) {
+        logger.error('addColumnToTableByTableName', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while updating the data table.'
         });
-      } else 
+      } else {
+        logger.info('addColumnToTableByTableName success');
         res.status(200).json({
           state: true,
           table_data: data
         });
+      }
     });
   }
 };
@@ -49,6 +58,7 @@ exports.addColumnToTableByTableName = (req, res) => {
 // Modify columns by table name
 exports.modifyColumnByTableName = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -56,15 +66,18 @@ exports.modifyColumnByTableName = (req, res) => {
   } else {
     DataTable.modifyColumnByTableName(req.params.tableName, req.body.columns, (err, data) => {
       if (err) {
+        logger.error('modifyColumnByTableName', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while updating the data table.'
         });
-      } else 
+      } else {
+        logger.info('modifyColumnByTableName success');
         res.status(200).json({
           state: true,
           table_data: data
         });
+      }
     });
   }
 };
@@ -72,6 +85,7 @@ exports.modifyColumnByTableName = (req, res) => {
 // Drop columns by table name
 exports.dropColumnByTableName = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -79,15 +93,18 @@ exports.dropColumnByTableName = (req, res) => {
   } else {
     DataTable.dropColumnByTableName(req.params.tableName, req.body.columns, (err, data) => {
       if (err) {
+        logger.error('dropColumnByTableName', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while updating the data table.'
         });
-      } else 
+      } else {
+        logger.info('dropColumnByTableName success');
         res.status(200).json({
           state: true,
           table_data: data
         });
+      }
     });
   }
 };
@@ -95,6 +112,7 @@ exports.dropColumnByTableName = (req, res) => {
 // Rename columns by table name
 exports.renameColumnByTableName = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
     res.status(400).send({
       state: false,
       message: 'Content can not be empty!'
@@ -102,15 +120,18 @@ exports.renameColumnByTableName = (req, res) => {
   } else {
     DataTable.renameColumnByTableName(req.params.tableName, req.body.columns, (err, data) => {
       if (err) {
+        logger.error('renameColumnByTableName', err.message);
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while updating the data table.'
         });
-      } else 
+      } else {
+        logger.info('renameColumnByTableName success');
         res.status(200).json({
           state: true,
           table_data: data
         });
+      }
     });
   }
 };
@@ -119,14 +140,17 @@ exports.renameColumnByTableName = (req, res) => {
 exports.getAllDataTableNames = (req, res) => {
   DataTable.getAllDataTables((err, data) => {
     if (err) {
+      logger.error('getAllDataTableNames', err.message);
       res.status(500).json({
         state: false,
         message: err.message || 'Some error occurred while getting data table names.'
       });
-    } else 
+    } else {
+      logger.info('getAllDataTableNames success');
       res.status(200).json({
         state: true,
         table_names: data
       });
-  })
-}
+    }
+  });
+};

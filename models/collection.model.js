@@ -21,6 +21,7 @@ Collection.create = (newCollection, result) => {
     
     if (debug) console.log('Created collection: ', { id: res.insertId, ...newCollection });
     result(null, { id: res.insertId, ...newCollection });
+    return;
   });
 };
 
@@ -35,7 +36,7 @@ Collection.getAll = (result) => {
 
     if (debug) console.log('Collections: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -55,6 +56,7 @@ Collection.findById = (collectionId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -74,6 +76,7 @@ Collection.updateById = (collectionId, collection, result) => {
 
     if (debug) console.log('Updated collection: ', { id: collectionId, ...collection });
     result(null, { id: collectionId, ...collection });
+    return;
   });
 };
 
@@ -93,6 +96,7 @@ Collection.remove = (collectionId, result) => {
 
     if (debug) console.log('Deleted collection with id: ', collectionId);
     result(null, res);
+    return;
   });
 };
 
@@ -107,6 +111,7 @@ Collection.removeAll = result => {
 
     if (debug) console.log('Deleted %s collections.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -126,6 +131,7 @@ Collection.disable = (collectionId, collection, result) => {
 
     if (debug) console.log('Disabled collection: ', { id: collectionId });
     result(null, { id: collectionId });
+    return;
   })
 };
 

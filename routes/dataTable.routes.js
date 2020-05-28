@@ -1,22 +1,53 @@
 module.exports = app => {
   
   const dataTable = require('../controllers/dataTable.controller');
+  const logger = require('../logger/logger');
 
   // Create new data table for a new node
-  app.post('/dataTable', dataTable.createNewDataTable);
+  app.post('/dataTable', function (req, res, next) {
+    logger.reqLog(req, 'dataTable.createNewDataTable');
+    next()
+  },
+    dataTable.createNewDataTable
+  );
 
   // Add columns by table name
-  app.put('/dataTable/add/:tableName', dataTable.addColumnToTableByTableName);
+  app.put('/dataTable/add/:tableName', function (req, res, next) {
+    logger.reqLog(req, 'dataTable.addColumnToTableByTableName');
+    next()
+  },
+    dataTable.addColumnToTableByTableName
+  );
 
   // Modify columns by table name
-  app.put('/dataTable/modify/:tableName', dataTable.modifyColumnByTableName);
+  app.put('/dataTable/modify/:tableName', function (req, res, next) {
+    logger.reqLog(req, 'dataTable.modifyColumnByTableName');
+    next()
+  },
+    dataTable.modifyColumnByTableName
+  );
 
   // Drop columns by table name
-  app.put('/dataTable/dropColumn/:tableName', dataTable.dropColumnByTableName);
+  app.put('/dataTable/dropColumn/:tableName', function (req, res, next) {
+    logger.reqLog(req, 'dataTable.dropColumnByTableName');
+    next()
+  },
+    dataTable.dropColumnByTableName
+  );
 
   // Rename columns by table name
-  app.put('/dataTable/renameColumn/:tableName', dataTable.renameColumnByTableName);
+  app.put('/dataTable/renameColumn/:tableName', function (req, res, next) {
+    logger.reqLog(req, 'dataTable.renameColumnByTableName');
+    next()
+  },
+    dataTable.renameColumnByTableName
+  );
 
   // Get all data table names
-  app.get('/dataTable', dataTable.getAllDataTableNames);
+  app.get('/dataTable', function (req, res, next) {
+    logger.reqLog(req, 'dataTable.getAllDataTableNames');
+    next()
+  },
+    dataTable.getAllDataTableNames
+  );
 }

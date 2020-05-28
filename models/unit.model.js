@@ -22,6 +22,7 @@ Unit.create = (newUnit, result) => {
     
     if (debug) console.log('Created unit: ', { id: res.insertId, ...newUnit });
     result(null, { id: res.insertId, ...newUnit });
+    return;
   });
 };
 
@@ -56,6 +57,7 @@ Unit.findById = (unitId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -75,6 +77,7 @@ Unit.updateById = (unitId, unit, result) => {
 
     if (debug) console.log('Updated unit: ', { id: unitId, ...unit });
     result(null, { id: unitId, ...unit });
+    return;
   });
 };
 
@@ -94,6 +97,7 @@ Unit.remove = (unitId, result) => {
 
     if (debug) console.log('Deleted unit with id: ', unitId);
     result(null, res);
+    return;
   });
 };
 
@@ -108,6 +112,7 @@ Unit.removeAll = result => {
 
     if (debug) console.log('Deleted %s units.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -127,6 +132,7 @@ Unit.disable = (unitId, unit, result) => {
 
     if (debug) console.log('Disabled unit: ', { id: unitId });
     result(null, { id: unitId });
+    return;
   })
 };
 

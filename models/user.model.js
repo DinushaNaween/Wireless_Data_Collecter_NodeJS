@@ -23,10 +23,9 @@ User.create = (newUser, result) => {
     
     if (debug) console.log('Created user: ', { id: res.insertId, ...newUser });
     result(null, { id: res.insertId, ...newUser });
+    return;
   });
 };
-
-
 
 // Get all users from database
 User.getAll = (result) => {
@@ -39,7 +38,7 @@ User.getAll = (result) => {
 
     if (debug) console.log('Users: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -59,12 +58,13 @@ User.findById = (userId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
 // Update a user
 User.updateById = (userId, user, result) => {
-  sql.query('UPDATE user SET email = ?, userName = ?, firstName = ?, lastName = ?, loginPassword = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.email, user.userName, user.firstName, user.lastName, user.loginPassword, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
+  sql.query('UPDATE user SET userName = ?, firstName = ?, lastName = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.userName, user.firstName, user.lastName, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -78,8 +78,29 @@ User.updateById = (userId, user, result) => {
 
     if (debug) console.log('Updated user: ', { id: userId, ...user });
     result(null, { id: userId, ...user });
+    return;
   });
 };
+
+// Change email address 
+User.changeEmailAddress = (userId, data, result) => {
+  sql.query('UPDATE user SET email = REPLACE(email, ?, ?), lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [data.currentEmail, data.newEmail, data.lastModifiedUser, data.lastModifiedDateTime, userId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ kind: 'not_found' }, null);
+      return;
+    }
+
+    if (debug) console.log('Updated user email');
+    result(null, res);
+    return;
+  })
+}
 
 // Delete a user by id
 User.remove = (userId, result) => {
@@ -97,6 +118,7 @@ User.remove = (userId, result) => {
 
     if (debug) console.log('Deleted user with id: ', userId);
     result(null, res);
+    return;
   });
 };
 
@@ -111,6 +133,7 @@ User.removeAll = result => {
 
     if (debug) console.log('Deleted %s users.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -130,7 +153,8 @@ User.disable = (userId, user, result) => {
 
     if (debug) console.log('Disabled user: ', { id: userId });
     result(null, { id: userId });
-  })
+    return;
+  });
 };
 
 // User find by email
@@ -142,9 +166,15 @@ User.findByEmail = (userEmail, result) => {
       return;
     }
 
+    if (res.length == 0) {
+      result({ kind: 'not_found' }, null);
+      return;
+    }
+
+    if (debug) console.log('User: ', res);
     result(null, res);
     return;
-  })
-}
+  });
+};
 
 module.exports = User;
