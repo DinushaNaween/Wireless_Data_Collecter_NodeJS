@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const sensor = require('../controllers/sensor.controller');
+  const logger = require('../logger/logger');
 
-  // create new sensor
-  app.post('/sensor', sensor.create);
+  // Create new sensor
+  app.post('/sensor', function (req, res, next) {
+    logger.reqLog(req, 'sensor.create');
+    next()
+  },
+    sensor.create
+  );
 
-  // get all sensors
-  app.get('/sensor', sensor.getAll);
+  // Get all sensors
+  app.get('/sensor', function (req, res, next) {
+    logger.reqLog(req, 'sensor.getAll');
+    next()
+  },
+    sensor.getAll
+  );
 
-  // find sensor by id
-  app.get('/sensor/:sensorId', sensor.findById);
+  // Find sensor by id
+  app.get('/sensor/:sensorId', function (req, res, next) {
+    logger.reqLog(req, 'sensor.findById');
+    next()
+  },
+    sensor.findById
+  );
 
-  // update sensor by id
-  app.put('/sensor/:sensorId', sensor.update);
+  // Update sensor by id
+  app.put('/sensor/:sensorId', function (req, res, next) {
+    logger.reqLog(req, 'sensor.update');
+    next()
+  },
+    sensor.update
+  );
 
-  // delete sensor by id
-  app.delete('/sensor/:sensorId', sensor.remove);
+  // Delete sensor by id
+  app.delete('/sensor/:sensorId', function (req, res, next) {
+    logger.reqLog(req, 'sensor.remove');
+    next()
+  },
+    sensor.remove
+  );
 
-  // delete all sensors
-  app.delete('/sensor', sensor.removeAll);
+  // Delete all sensors
+  app.delete('/sensor', function (req, res, next) {
+    logger.reqLog(req, 'sensor.removeAll');
+    next()
+  },
+    sensor.removeAll
+  );
 
-  // disable a sensor
-  app.put('/sensor/disable/:sensorId', sensor.disable);
+  // Disable a sensor
+  app.put('/sensor/disable/:sensorId', function (req, res, next) {
+    logger.reqLog(req, 'sensor.disable');
+    next()
+  },
+    sensor.disable
+  );
 }

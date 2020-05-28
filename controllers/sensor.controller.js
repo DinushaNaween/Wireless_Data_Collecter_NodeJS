@@ -3,9 +3,6 @@ const logger = require('../logger/logger');
 
 // create and save new sensor
 exports.create = (req, res) => {
-
-  logger.reqLog(req, 'sensor.create');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -49,9 +46,6 @@ exports.create = (req, res) => {
 
 // get all sensors from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'sensor.getAll');
-
   Sensor.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -71,9 +65,6 @@ exports.getAll = (req, res) => {
 
 // get sensor by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'sensor.findById');
-
   Sensor.findById(req.params.sensorId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -101,9 +92,6 @@ exports.findById = (req, res) => {
 
 // update a sensor
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'sensor.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -129,7 +117,7 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.error('update success');
+        logger.info('update success');
         res.status(200).json({
           state: true,
           updated_sensor: data
@@ -141,9 +129,6 @@ exports.update = (req, res) => {
 
 // delete a sensor by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'sensor.remove');
-
   Sensor.remove(req.params.sensorId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -171,9 +156,6 @@ exports.remove = (req, res) => {
 
 // delete all sensors
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'sensor.removeAll');
-
   Sensor.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -193,9 +175,6 @@ exports.removeAll = (req, res) => {
 
 // disable a sensor
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'sensor.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
