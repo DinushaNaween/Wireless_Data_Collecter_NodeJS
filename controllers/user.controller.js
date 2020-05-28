@@ -5,9 +5,6 @@ const logger = require('../logger/logger');
   
 // create and save new user
 exports.create = (req, res) => {
-
-  logger.reqLog(req, 'user.create');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -76,9 +73,6 @@ exports.create = (req, res) => {
 
 // Login user
 exports.login = (req, res) => {
-
-  logger.reqLog(req, 'user.login');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).json({
@@ -142,9 +136,6 @@ exports.login = (req, res) => {
 
 // get all users from database
 exports.getAll = (req, res) => {
-
-  logger.reqLog(req, 'user.getAll');
-
   User.getAll((err, data) => {
     if (err) {
       logger.error('getAll', err.message);
@@ -164,9 +155,6 @@ exports.getAll = (req, res) => {
 
 // get user by id
 exports.findById = (req, res) => {
-
-  logger.reqLog(req, 'user.findById');
-
   User.findById(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -194,9 +182,6 @@ exports.findById = (req, res) => {
 
 // update a user
 exports.update = (req, res) => {
-
-  logger.reqLog(req, 'user.update');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
@@ -245,9 +230,6 @@ exports.update = (req, res) => {
 
 // delete a user by id
 exports.remove = (req, res) => {
-
-  logger.reqLog(req, 'user.remove');
-
   User.remove(req.params.userId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -275,9 +257,6 @@ exports.remove = (req, res) => {
 
 // delete all users
 exports.removeAll = (req, res) => {
-
-  logger.reqLog(req, 'user.removeAll');
-
   User.removeAll((err, data) => {
     if (err) {
       logger.error('removeAll', err.message);
@@ -297,9 +276,6 @@ exports.removeAll = (req, res) => {
 
 // disable a user
 exports.disable = (req, res) => {
-
-  logger.reqLog(req, 'user.disable');
-
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
     res.status(400).send({
