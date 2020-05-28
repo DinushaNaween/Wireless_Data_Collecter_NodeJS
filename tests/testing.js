@@ -1,91 +1,153 @@
-// const express = require('express');
-// const app = express();
-// const Logger = require('../middlewares/logger');
-// const bodyParser = require('body-parser');
-// const logger = new Logger('test');
+// const { createLogger, format, transports } = require('winston');
 
-// app.use(bodyParser.urlencoded({
-//   extended: false
-// }))
+// timeStamp = () => {
+//   return new Date(Date.now()).toUTCString();
+// }
 
-// app.use(bodyParser.json())
+// const logger = createLogger({
+//   transports: [
+//     new transports.File({
+//       filename: `./logs/log.log`,
+//       handleExceptions: true,
+//       maxsize: 5242880,
+//       maxFiles: 5
+//     }),
+//     new transports.Console()
+//   ],
+//   format: format.combine(
+//     format.splat(),
+//     format.simple()
+//   )
+// });
 
-// app.post('/test', (req, res) => {
+// exports.reqLog = (req, endPoint) => {
 
-//   // console.log(req.headers);
+//   let reqData = JSON.parse(`{
+//     "ip": "${req.connection.remoteAddress}",
+//     "host": "${req.headers.host}",
+//     "path": "${req.originalUrl}",
+//     "method": "${req.method}"
+//   }`);
 
-//   const body = req.body
-//   let error = {}
-//   // Adding body of the request as log data
-//   logger.setReqData(req);
-//   logger.info("Request recieved at /test", req.body)
-//   // We are expecting name,age and gender in the body of the request
+//   let message = ` | ${timeStamp()} | ${endPoint} |` 
 
-//   if (body.name == null || body.name == "") {
-//     logger.error("Name field is empty", body)
-//     error["name"] = "name field is empty"
-//   }
+//   logger.info(message, {reqData: reqData});
+// }
 
-//   if (body.age == null || body.age == "") {
-//     logger.error("Age field is empty")
-//     error["age"] = "age field is empty"
-//   }
+// exports.info = (msg) => {
 
-//   if (body.gender == null || body.gender == "") {
-//     logger.error("Gender field is empty", body)
-//     error["gender"] = "gender field is empty"
-//   }
+//   let message = ` | ${timeStamp()} | ${msg} |`
+//   logger.info(message);
+// }
 
-//   if (Object.keys(error).length != 0) {
-//     logger.error("Retun error response", {
-//       "sucess": false
-//     })
-//     res.send("Error")
-//   } else {
-//     logger.info("Retun sucess response", {
-//       "sucess": true
-//     })
-//     res.send("No Error")
-//   }
-// })
+// exports.info = (msg, obj) => {
 
-// app.post('/test_2', (req, res) => {
+//   let message = ` | ${timeStamp()} | ${msg} |`
+//   logger.info(message, {data: obj});
+// }
 
-//   const body = req.body
-//   let error = {}
-//   // Adding body of the request as log data
-//   logger.setReqData(req)
-//   logger.info("Request recieved at /test", req.body)
-//   // We are expecting name,age and gender in the body of the request
+// exports.error = (msg) => {
 
-//   if (body.name == null || body.name == "") {
-//     logger.error("Name field is empty")
-//     error["name"] = "name field is empty"
-//   }
+//   let message = `| ${timeStamp()} | ${msg} |`
+//   logger.error(message);
+// }
 
-//   if (body.age == null || body.age == "") {
-//     logger.error("Age field is empty")
-//     error["age"] = "age field is empty"
-//   }
+// exports.error = (msg, obj) => {
 
-//   if (body.gender == null || body.gender == "") { 
-//     logger.error("Gender field is empty")
-//     error["gender"] = "gender field is empty"
-//   }
+//   let message = `| ${timeStamp()} | ${msg} |`
+//   logger.error(message, {data: obj});
+// }
 
-//   if (Object.keys(error).length != 0) {
-//     logger.error("Retun error response", {
-//       "sucess": false
-//     })
-//     res.send("Error")
-//   } else {
-//     logger.info("Retun sucess response", {
-//       "sucess": true
-//     })
-//     res.send("No Error")
-//   }
-// })
 
-// app.listen(4000, () => {
-//   logger.info("APP LAUNCHED IN PORT 4000")
-// })
+
+
+
+
+
+
+
+
+
+// const winston = require('winston');
+
+// timeStamp = () => {
+//   return new Date(Date.now()).toUTCString();
+// }
+
+// class Logger {
+//   constructor() {
+//     // this.route = route
+//     this.req_data = null
+//     this.ip_address = null
+//     this.user = null
+
+//     const logger = winston.createLogger({
+//       transports: [
+//         new winston.transports.File({
+//           filename: `./logs/log.log`,
+//           handleExceptions: true,
+//           maxsize: 5242880,
+//           maxFiles: 5
+//         })
+//       ],
+//       format: winston.format.printf((info) => {
+//         let message = `${timeStamp()} | ${info.level.toUpperCase()} | ${info.message} | `
+//         message = info.obj ? message + `data:${JSON.stringify(info.obj)} | ` : message
+//         message = this.req_data ? message + `req_header:${JSON.stringify(this.req_data)} | ` : message
+//         return message
+//       })
+//     });
+
+//     if (debug) {
+//       logger.add(new winston.transports.Console({
+//         format: winston.format.simple()
+//       }));
+//     }
+
+//     this.logger = logger;
+//   };
+
+//   setReqData(req) {
+
+//     let data = `{ 
+//                   "ip": "${req.connection.remoteAddress}",
+//                   "host": "${req.headers.host}",
+//                   "path": "${req.originalUrl}",
+//                   "method": "${req.method}"
+//                 }`
+
+//     this.req_data = JSON.parse(data);
+//   };
+
+//   async info(message) {
+//     this.logger.log('info', message);
+//   };
+
+//   async info(message, obj) {
+//     this.logger.log('info', message, {
+//       obj
+//     });
+//   };
+
+//   async debug(message) {
+//     this.logger.log('debug', message);
+//   };
+
+//   async debug(message, obj) {
+//     this.logger.log('debug', message, {
+//       obj
+//     });
+//   };
+
+//   async error(message) {
+//     this.logger.log('error', message);
+//   };
+
+//   async error(message, obj) {
+//     this.logger.log('error', message, {
+//       obj
+//     });
+//   };
+// };
+
+// module.exports = Logger;

@@ -1,84 +1,59 @@
-const winston = require('winston');
+const { createLogger, format, transports } = require('winston');
 
 timeStamp = () => {
   return new Date(Date.now()).toUTCString();
 }
 
-class Logger {
-  constructor(route) {
-    this.route = route
-    this.req_data = null
-    this.ip_address = null
-    this.user = null
+const logger = createLogger({
+  transports: [
+    new transports.File({
+      filename: `./logs/log.log`,
+      handleExceptions: true,
+      maxsize: 5242880,
+      maxFiles: 5
+    }),
+    new transports.Console()
+  ],
+  format: format.combine(
+    format.splat(),
+    format.simple()
+  )
+});
 
-    const logger = winston.createLogger({
-      transports: [
-        // new winston.transports.Console(),
-        new winston.transports.File({
-          filename: `./logs/${route}/${route}.log`,
-          handleExceptions: true,
-          maxsize: 5242880,
-          maxFiles: 5
-        })
-      ],
-      format: winston.format.printf((info) => {
-        let message = `${timeStamp()} | ${info.level.toUpperCase()} | ${route} | ${info.message} | `
-        message = info.obj ? message + `data:${JSON.stringify(info.obj)} | ` : message
-        message = this.req_data ? message + `req_header:${JSON.stringify(this.req_data)} | ` : message
-        return message
-      })
-    });
+exports.reqLog = (req, endPoint) => {
 
-    if (debug) {
-      logger.add(new winston.transports.Console({
-        format: winston.format.simple()
-      }));
-    }
+  let reqData = JSON.parse(`{
+    "ip": "${req.connection.remoteAddress}",
+    "host": "${req.headers.host}",
+    "path": "${req.originalUrl}",
+    "method": "${req.method}"
+  }`);
 
-    this.logger = logger;
-  };
+  let message = ` | ${timeStamp()} | ${endPoint} |` 
 
-  setReqData(req) {
+  logger.info(message, {reqData: reqData});
+}
 
-    let data = `{ 
-                  "ip": "${req.connection.remoteAddress}",
-                  "host": "${req.headers.host}",
-                  "path": "${req.originalUrl}",
-                  "method": "${req.method}"
-                }`
+exports.info = (msg) => {
 
-    this.req_data = JSON.parse(data);
-  };
+  let message = ` | ${timeStamp()} | ${msg} |`
+  logger.info(message);
+}
 
-  async info(message) {
-    this.logger.log('info', message);
-  };
+exports.info = (msg, obj) => {
 
-  async info(message, obj) {
-    this.logger.log('info', message, {
-      obj
-    });
-  };
+  let message = ` | ${timeStamp()} | ${msg} |`
+  logger.info(message, {data: obj});
+}
 
-  async debug(message) {
-    this.logger.log('debug', message);
-  };
+exports.error = (msg) => {
 
-  async debug(message, obj) {
-    this.logger.log('debug', message, {
-      obj
-    });
-  };
+  let message = `| ${timeStamp()} | ${msg} |`
+  logger.error(message);
+}
 
-  async error(message) {
-    this.logger.log('error', message);
-  };
+exports.error = (msg, obj) => {
 
-  async error(message, obj) {
-    this.logger.log('error', message, {
-      obj
-    });
-  };
-};
-
-module.exports = Logger;
+  let message = `| ${timeStamp()} | ${msg} |`
+  logger.error(message, {data: obj});
+}
