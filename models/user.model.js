@@ -99,6 +99,26 @@ User.changeEmailAddress = (userId, data, result) => {
     if (debug) console.log('Updated user email');
     result(null, res);
     return;
+  });
+};
+
+// Reset login password
+User.resetLoginPassword = (hash, user, result) => {
+  sql.query('UPDATE user SET loginPassword = REPLACE(loginPassword, ?, ?), lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.loginPassword, hash, user.lastModifiedUser, new Date(), user.userId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ kind: 'not_found' }, null);
+      return;
+    }
+
+    if (debug) console.log('Reset user login password');
+    result(null, res);
+    return;
   })
 }
 

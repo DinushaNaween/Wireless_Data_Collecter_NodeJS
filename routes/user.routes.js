@@ -51,6 +51,14 @@ module.exports = app => {
     user.changeEmail
   );
 
+  // Reset login password
+  app.post('/user/resetPassword', function (req, res, next) {
+    logger.reqLog(req, 'user.resetLoginPassword');
+    next()
+  },
+    user.resetLoginPassword
+  );
+
   // Delete user by id
   app.delete('/user/:userId', function (req, res, next) {
     logger.reqLog(req, 'user.remove');

@@ -2,8 +2,9 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const logger = require('../logger/logger');
+const mailer = require('../services/mail.service');
 
-// create and save new user
+// Create and save new user
 exports.create = (req, res) => {
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
@@ -15,20 +16,6 @@ exports.create = (req, res) => {
     User.findByEmail(req.body.email, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
-          logger.error('email notFound');
-          res.status(400).json({
-            state: false,
-            message: 'Email not found'
-          })
-        } else {
-          logger.error('findByEmail', err.message);
-          res.status(500).json({
-            state: false,
-            message: err.message || 'Some error occurred while finding the user.'
-          });
-        }
-      } else {
-        if (data.length == 0) {
           bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
             if (err) {
               logger.error('bcrypt.hash', err.message);
@@ -66,7 +53,14 @@ exports.create = (req, res) => {
               });
             }
           });
-        } else if (data) {
+        } else {
+          logger.error('findByEmail', err.message);
+          res.status(500).json({
+            state: false,
+            message: err.message || 'Some error occurred while finding the user.'
+          });
+        }
+      } else {
           logger.error('email exist', { email: req.body.email });
           res.status(302).json({
             state: false,
@@ -74,7 +68,6 @@ exports.create = (req, res) => {
             message: 'Email exist.'
           });
         }
-      }
     })
   }
 };
@@ -150,7 +143,7 @@ exports.login = (req, res) => {
   }
 };
 
-// get all users from database
+// Get all users from database
 exports.getAll = (req, res) => {
   User.getAll((err, data) => {
     if (err) {
@@ -169,7 +162,7 @@ exports.getAll = (req, res) => {
   });
 };
 
-// get user by id
+// Get user by id
 exports.findById = (req, res) => {
   User.findById(req.params.userId, (err, data) => {
     if (err) {
@@ -196,7 +189,7 @@ exports.findById = (req, res) => {
   });
 };
 
-// update a user
+// Update a user
 exports.update = (req, res) => {
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
@@ -235,6 +228,13 @@ exports.update = (req, res) => {
 
 // Change email address
 exports.changeEmail = (req, res) => {
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
+    res.status(400).send({
+      state: false,
+      message: 'Content can not be empty!'
+    });
+  }
   User.findByEmail(req.body.currentEmail, (err, user) => {
     if (err) {
       if (err.kind === 'not_found') {
@@ -258,7 +258,7 @@ exports.changeEmail = (req, res) => {
         res.status(500).json({
           state: false,
           message: 'UserId does not match with email address given.'
-        })
+        });
       } else {
         bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
@@ -279,13 +279,13 @@ exports.changeEmail = (req, res) => {
                   res.status(400).json({
                     state: false,
                     message: 'Email not found'
-                  })
+                  });
                 } else {
                   logger.error('changeEmailAddress', err.message);
                   res.status(500).json({
                     state: false,
                     message: err.message || 'Some error occured while updating email address'
-                  })
+                  });
                 }
               } 
 
@@ -294,23 +294,136 @@ exports.changeEmail = (req, res) => {
                 res.status(200).json({
                   state: true,
                   message: 'Email changed'
-                })
+                });
               }
-            })
+            });
           }
-        })
+        });
       }
     } else {
       logger.error('email found multiple times');
       res.status(200).json({
         state: true,
         message: 'Check email and try again'
-      })
+      });
     }
-  })
-}
+  });
+};
 
-// delete a user by id
+// Reset login password
+exports.resetLoginPassword = (req, res) => {
+  if (req.body.step == 1) {
+    User.findByEmail(req.body.email, (err, user) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          logger.error('email notFound');
+          res.status(400).json({
+            state: false,
+            message: 'Email not found'
+          });
+        } else {
+          logger.error('findByEmail', err.message);
+          res.status(500).json({
+            state: false,
+            message: err.message || 'Some error occurred while finding the user.'
+          });
+        }
+      }
+
+      if (user.length == 1) {
+        mailer.sendVerificationCode(user[0].email, (err, verificationCode) => {
+          if (err) {
+            logger.error('mailer.sendVerificationCode', err.message);
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occured while sending verification code'
+            });
+          }
+
+          if (verificationCode) {
+            logger.info('verificationCode send to ' + user[0].email);
+            res.status(200).json({
+              state: true,
+              verificationCode: verificationCode
+            });
+          }
+        })
+      } else {
+        logger.error('email found multiple times');
+        res.status(200).json({
+          state: true,
+          message: 'Check email and try again'
+        });
+      }
+    })
+  } else if (req.body.step == 2) {
+    if (req.body.verified == true) {
+      User.findByEmail(req.body.email, (err, user) => {
+        if (err) {
+          if (err.kind === 'not_found') {
+            logger.error('email notFound');
+            res.status(400).json({
+              state: false,
+              message: 'Email not found'
+            }); 
+          } else {
+            logger.error('findByEmail', err.message);
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while finding the user.'
+            });
+          }
+        }
+
+        if (user.length == 1) {
+          bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
+            if (err) {
+              logger.error('bcrypy.hash new password', err.message);
+              res.status(500).json({
+                state: false,
+                message: err.message || 'Some error occured'
+              });
+            } 
+
+            if (hash) {
+              User.resetLoginPassword(hash, user[0], (err, data) => {
+                if (err) {
+                  logger.error('user.resetLoginPassword', err.message);
+                  res.status(500).json({
+                    state: false,
+                    message: 'Some error occured while reseting passord'
+                  });
+                }
+
+                if (data) {
+                  logger.info('login password reset success');
+                  res.status(200).json({
+                    state: true,
+                    message: 'Password reset successfilly'
+                  });
+                }
+              });
+            }
+          });
+        } else {
+          logger.error('email found multiple times');
+          res.status(200).json({
+            state: true,
+            message: 'Check email and try again'
+          });
+        }
+      });
+    } else{
+      logger.error('not verified');
+      res.status(200).json({
+        state: false,
+        message: 'Not verified'
+      });
+    }
+  };
+};
+
+// Delete a user by id
 exports.remove = (req, res) => {
   User.remove(req.params.userId, (err, data) => {
     if (err) {
@@ -337,7 +450,7 @@ exports.remove = (req, res) => {
   });
 };
 
-// delete all users
+// Delete all users
 exports.removeAll = (req, res) => {
   User.removeAll((err, data) => {
     if (err) {
@@ -356,7 +469,7 @@ exports.removeAll = (req, res) => {
   })
 };
 
-// disable a user
+// Disable a user
 exports.disable = (req, res) => {
   if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
     logger.error('empty req.body');
