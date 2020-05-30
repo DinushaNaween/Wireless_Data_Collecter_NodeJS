@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const user = require('../controllers/user.controller');
-  const logger = require('../logger/logger');
+  const logger = require('../middlewares/logger');
 
   // Create new user
   app.post('/user', function (req, res, next) {

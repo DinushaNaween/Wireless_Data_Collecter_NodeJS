@@ -1,5 +1,5 @@
 const Role = require('../models/role.model');
-const logger = require('../logger/logger');
+const logger = require('../middlewares/logger');
 
 // create and save new role
 exports.create = (req, res) => {

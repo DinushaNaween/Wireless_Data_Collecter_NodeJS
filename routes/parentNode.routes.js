@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const parentNode = require('../controllers/parentNode.controller');
-  const logger = require('../logger/logger');
+  const logger = require('../middlewares/logger');
 
   // Create new parentNode
   app.post('/parentNode', function (req, res, next) {

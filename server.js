@@ -2,7 +2,7 @@ require('dotenv').config();
 require('./config/global.config');
 const express = require('express');
 const bodyParser = require('body-parser');
-const logger = require('./logger/logger');
+const logger = require('./middlewares/logger');
 
 const app = express();
 

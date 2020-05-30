@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const unit = require('../controllers/unit.controller');
-  const logger = require('../logger/logger');
+  const logger = require('../middlewares/logger');
 
   // Create new unit
   app.post('/unit', function (req, res, next) {

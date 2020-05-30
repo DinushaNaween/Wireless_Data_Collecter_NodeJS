@@ -1,4 +1,5 @@
 const mysql = require('mysql');
+const logger = require('../middlewares/logger');
 
 const HOST = process.env.HOST;
 const USER = process.env.USER;

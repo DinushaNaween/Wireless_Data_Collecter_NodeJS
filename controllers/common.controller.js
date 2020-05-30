@@ -1,5 +1,5 @@
 const common = require('../services/common.service');
-const logger = require('../logger/logger');
+const logger = require('../middlewares/logger');
 
 exports.getTableInfo = (req, res) => {
   common.getTableInfo(req.params.tableName, (err, data) => {

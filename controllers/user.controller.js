@@ -1,7 +1,7 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const logger = require('../logger/logger');
+const logger = require('../middlewares/logger');
 const mailer = require('../services/mail.service');
 
 // Create and save new user
