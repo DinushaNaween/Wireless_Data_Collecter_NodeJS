@@ -109,7 +109,7 @@ exports.login = (req, res) => {
           }
 
           if (result) {
-            jwtAuth.createAccessToken({user}, (err, token) => {
+            jwtAuth.createAccessAndRefreshTokens({user}, (err, tokens) => {
               if (err) {
                 logger.error('jwt.sign');
                 res.status(500).json({
@@ -118,9 +118,13 @@ exports.login = (req, res) => {
                 });
               } else {
                 logger.info('token send')
+                res.cookie('refreshtoken', tokens.refreshToken, {
+                  httpOnly: true,
+                  path: '/refresh_token'
+                });
                 res.status(200).json({
                   state: true,
-                  token: token
+                  token: tokens.accessToken
                 });
               }
             });

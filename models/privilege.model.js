@@ -9,7 +9,7 @@ const Privilege = function(privilege) {
 
 // create and save new privilege
 Privilege.create = (newPrivilege, result) => {
-  sql.query('INSERT INTO privilege set ?', newPrivilege, (err, res) => {
+  sql.query('INSERT INTO privilege SET ?', newPrivilege, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -39,7 +39,7 @@ Privilege.getAll = (result) => {
 
 // get privilege by id
 Privilege.findById = (privilegeId, result) => {
-  sql.query('SELECT * FROM privilege WHERE privilegeId =' + privilegeId, (err, res) => {
+  sql.query('SELECT * FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -79,7 +79,7 @@ Privilege.updateById = (privilegeId, privilege, result) => {
 
 // delete a privilege by id
 Privilege.remove = (privilegeId, result) => {
-  sql.query('DELETE FROM privilege WHERE privilegeId = ?', privilegeId, (err, res) => {
+  sql.query('DELETE FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
