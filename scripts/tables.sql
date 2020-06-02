@@ -75,6 +75,23 @@ CREATE TABLE IF NOT EXISTS `wdc`.`user` (
   DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
+-- Table `wdc`.`loginToken`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`authToken` (
+  `tokenId` INT NOT NULL AUTO_INCREMENT ,
+  `userId` INT NOT NULL,
+  `refreshToken` VARCHAR(128) NOT NULL,
+  `revoked` INT(1) ZEROFILL NULL ,
+  `createdDateTime` DATETIME NULL DEFAULT NULL,
+  PRIMARY KEY (`tokenId`),
+  FOREIGN KEY (`userId`)
+  REFERENCES `wdc`.`user` (`userId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
+  ENGINE = InnoDB
+  DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
 -- Table `wdc`.`collection`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wdc`.`collection` (
