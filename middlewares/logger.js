@@ -57,3 +57,15 @@ exports.error = (msg, obj) => {
   let message = `| ${timeStamp()} | ${msg} |`
   logger.error(message, {data: obj});
 }
+
+exports.debug = (msg) => {
+
+  let message = `| ${timeStamp()} | ${msg} |`
+  logger.debug(message);
+}
+
+exports.debug = (msg, obj) => {
+
+  let message = `| ${timeStamp()} | ${msg} |`
+  logger.debug(message, {data: obj});
+}
