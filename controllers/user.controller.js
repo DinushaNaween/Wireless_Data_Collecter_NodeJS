@@ -1,4 +1,5 @@
 const User = require('../models/user.model');
+const AuthToken = require('../controllers/authToken.controller');
 const bcrypt = require('bcrypt');
 const jwtAuth = require('../middlewares/jwtAuth');
 const logger = require('../middlewares/logger');
@@ -109,6 +110,7 @@ exports.login = (req, res) => {
           }
 
           if (result) {
+            console.log(user[0])
             jwtAuth.createAccessAndRefreshTokens({user}, (err, tokens) => {
               if (err) {
                 logger.error('jwt.sign');
@@ -117,14 +119,26 @@ exports.login = (req, res) => {
                   message: err.message || 'Some error occurred while creating token.'
                 });
               } else {
-                logger.info('token send')
-                res.cookie('refreshtoken', tokens.refreshToken, {
-                  httpOnly: true,
-                  path: '/refresh_token'
-                });
-                res.status(200).json({
-                  state: true,
-                  token: tokens.accessToken
+                AuthToken.saveNewRefreshToken(user[0].userId, tokens.refreshToken, (err, data) => {
+                  if (err) {
+                    logger.error('AuthToken.saveNewRefreshToken', err.message);
+                    res.status(500).json({
+                      state: false,
+                      message: err.message || 'Some error occurred while saving user refreshToken.'
+                    });
+                  } 
+                
+                  if (data) {
+                    logger.info('token send')
+                    res.cookie('refreshtoken', tokens.refreshToken, {
+                      httpOnly: true,
+                      path: '/refresh_token'
+                    });
+                    res.status(200).json({
+                      state: true,
+                      token: tokens.accessToken
+                    });
+                  }
                 });
               }
             });

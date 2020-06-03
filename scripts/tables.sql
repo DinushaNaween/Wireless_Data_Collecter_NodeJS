@@ -80,7 +80,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`user` (
 CREATE TABLE IF NOT EXISTS `wdc`.`authToken` (
   `tokenId` INT NOT NULL AUTO_INCREMENT ,
   `userId` INT NOT NULL,
-  `refreshToken` VARCHAR(128) NOT NULL,
+  `refreshToken` LONGTEXT NOT NULL,
   `revoked` INT(1) ZEROFILL NULL ,
   `createdDateTime` DATETIME NULL DEFAULT NULL,
   PRIMARY KEY (`tokenId`),

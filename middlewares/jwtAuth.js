@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const authToken = require('../models/authToken.model');
+const AuthToken = require('../models/authToken.model');
 
 // Create access token
 exports.createAccessToken = (payload, result) => {
@@ -57,53 +57,90 @@ exports.verifyAccessToken = (req, res, next) => {
 
   if (authorization) {
     token = authorization.split(' ')[1];
-    console.log(token);
     
-    jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, payload) => {
+    jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, accessTokenPayload) => {
       if (err) {
         if (debug) console.log(err.message);
-
-        const refreshToken = req.cookies.refreshtoken;
-
-        if (refreshToken) {
-          jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, payload) => {
-            console.log(payload.user[0]);
-            if (err) {
-              if (debug) console.log(err.message);
-              res.status(400).json({
-                state: false,
-                message: 'Login required 1'
-              })
-            } 
-
-            if (payload.user[0]) {
-              this.createAccessToken(payload.user[0], (err, accessToken) => {
-                if (err) {
-                  if (debug) console.log(err.message);
-                  res.status(400).json({
-                    state: false,
-                    message: 'Login required 2'
-                  }); 
-                }
-
-                if (accessToken) {
-                  if (debug) console.log('New accessToken added to headers');  
-                  req.headers.authorization.replace('Bearer ' + accessToken);
-                  console.log(req.headers['authorization'].split(' ')[1])
-                  next()
-                }
-              });
-            }
-          });
-        } else{
+        if (err.message == 'invalid token') {
           res.status(400).json({
             state: false,
-            message: 'Login required 3'
+            message: 'Login required 1'
           })
-        } 
+        } else if (err.message == 'jwt expired') {
+          const refreshToken = req.cookies.refreshtoken;
 
+          if (refreshToken) {
+            jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, refreshTokenPayload) => {
+              if (err) { 
+                if (debug) console.log(err.message);
+                res.status(400).json({
+                  state: false,
+                  message: 'Login required 1'
+                })
+              } 
+
+              if (refreshTokenPayload) {
+                AuthToken.getTokenByUserId(refreshTokenPayload.user[0].userId, (err, token) => {
+                  if (err) {
+                    if (err.kind == 'not_found') {
+                      if (debug) console.log('No token found in DB');
+                      res.status(400).json({
+                        state: false,
+                        message: 'Login required 7'
+                      });
+                    } else {
+                      if (debug) console.log(err.message);
+                      res.status(400).json({
+                        state: false,
+                        message: 'Login required 5'
+                      });
+                    }
+                  }
+
+                  if (token) {
+                    if (token != refreshToken) {
+                      if (debug) console.log(err.message);
+                      res.status(400).json({
+                        state: false,
+                        message: 'Login required 6'
+                      });
+                    } else {
+                      this.createAccessToken(refreshTokenPayload.user[0], (err, accessToken) => {
+                        if (err) {
+                          if (debug) console.log(err.message);
+                          res.status(400).json({
+                            state: false,
+                            message: 'Login required 2'
+                          }); 
+                        }
+
+                        if (accessToken) {
+                          if (debug) console.log('New accessToken created');  
+                          res.set('authorization', `Bearer ${accessToken}`);
+                          console.log(req.headers['authorization'].split(' ')[1])
+                          next()
+                        }
+                      });
+                    }
+                  }
+                });
+              }
+            });
+          } else{
+            res.status(400).json({
+              state: false,
+              message: 'Login required 3'
+            });
+          } 
+        } else{
+          if (debug) console.log(err.message);
+          res.status(400).json({
+            state: false,
+            message: 'Login required 1'
+          });
+        }
       } else{
-        if (debug) console.log(payload);
+        if (debug) console.log(accessTokenPayload);
         next()
       }
     });

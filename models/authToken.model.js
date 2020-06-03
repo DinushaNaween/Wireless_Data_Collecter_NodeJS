@@ -4,7 +4,7 @@ const AuthToken = function(authToken) {
   this.userId = authToken.userId;
   this.refreshToken = authToken.refreshToken;
   this.revoked = authToken.revoked;
-  this.lastModifiedDateTime = authToken.lastModifiedDateTime;
+  this.createdDateTime = authToken.createdDateTime;
 };
 
 // Save new token
@@ -94,7 +94,7 @@ AuthToken.removeAll = result => {
 
 // Revoke a token
 AuthToken.revokeById = (authTokenId, result) => {
-  sql.query('UPDATE authToken SET revoked = 1, lastModifiedDateTime = ? WHERE tokenId = ?', [new Date(), authTokenId], (err, res) => {
+  sql.query('UPDATE authToken SET revoked = 1, createdDateTime = ? WHERE tokenId = ?', [new Date(), authTokenId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -123,11 +123,12 @@ AuthToken.getTokenByUserId = (userId, result) => {
 
     if (res.length == 0) {
       if (debug) console.log('No token for user with id: ' + userId);
-      result(null, res)
+      result({ kind: 'not_found' }, null)
       return;
     } else {
       if (debug) console.log('Token found');
-      result(null, res);
+      console.log(res[0].refreshToken);
+      result(null, res[0].refreshToken);
       return;
     }
   });
