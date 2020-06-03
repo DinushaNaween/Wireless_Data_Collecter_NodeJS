@@ -1,14 +1,17 @@
 const jwt = require('jsonwebtoken');
 const AuthToken = require('../models/authToken.model');
+const logger = require('./logger');
 
 // Create access token
 exports.createAccessToken = (payload, result) => {
-  jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '1m' }, (err, token) => {
+  jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' }, (err, token) => {
     if (err) {
+      logger.error('createAccessToken', err.message);
       result(err, null);
       return;
 
     } else{
+      logger.info('accessToken created');
       result(null, token);
       return;
     }
@@ -19,10 +22,12 @@ exports.createAccessToken = (payload, result) => {
 exports.createRefreshToken = (payload, result) => {
   jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: '7d' }, (err, token) => {
     if (err) {
+      logger.error('createRefreshToken', err.message);
       result(err, null);
       return;
 
     } else{
+      logger.info('refreshToken created');
       result(null, token);
       return;
     }
@@ -41,6 +46,7 @@ exports.createAccessAndRefreshTokens = (payload, result) => {
           result(err, null);
           return;
         } else if (refreshToken) {
+          logger.info('createAccessAndRefreshTokens success');
           result(null, { accessToken: accessToken, refreshToken: refreshToken });
           return;
         }
@@ -50,38 +56,46 @@ exports.createAccessAndRefreshTokens = (payload, result) => {
 }
 
 // Verufy access token
-exports.verifyAccessToken = (req, res, next) => {
+exports.tokenAuthentication = (req, res, next) => {
 
   const authorization = req.headers['authorization'];
   let token = '';
 
   if (authorization) {
     token = authorization.split(' ')[1];
-    
+    if (!token) {
+      logger.error('Authorization found without token');
+      res.status(400).json({
+        state: false,
+        message: 'Login required 1'
+      });
+    }
     jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, accessTokenPayload) => {
       if (err) {
-        if (debug) console.log(err.message);
         if (err.message == 'invalid token') {
+          logger.error('invalid accessToken');
           res.status(400).json({
             state: false,
             message: 'Login required 1'
-          })
+          });
         } else if (err.message == 'jwt expired') {
           const refreshToken = req.cookies.refreshtoken;
 
           if (refreshToken) {
             jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, refreshTokenPayload) => {
               if (err) { 
+                logger.error('refreshToken verify failed');
                 if (debug) console.log(err.message);
                 res.status(400).json({
                   state: false,
                   message: 'Login required 1'
-                })
+                });
               } 
 
               if (refreshTokenPayload) {
                 AuthToken.getTokenByUserId(refreshTokenPayload.user[0].userId, (err, token) => {
                   if (err) {
+                    logger.error('AuthToken.getTokenByUserId', err.message);
                     if (err.kind == 'not_found') {
                       if (debug) console.log('No token found in DB');
                       res.status(400).json({
@@ -99,7 +113,7 @@ exports.verifyAccessToken = (req, res, next) => {
 
                   if (token) {
                     if (token != refreshToken) {
-                      if (debug) console.log(err.message);
+                      logger.error('refreshTokens not same');
                       res.status(400).json({
                         state: false,
                         message: 'Login required 6'
@@ -107,6 +121,7 @@ exports.verifyAccessToken = (req, res, next) => {
                     } else {
                       this.createAccessToken(refreshTokenPayload.user[0], (err, accessToken) => {
                         if (err) {
+                          logger.error('createAccessToken for refreshToken', err.message);
                           if (debug) console.log(err.message);
                           res.status(400).json({
                             state: false,
@@ -115,7 +130,7 @@ exports.verifyAccessToken = (req, res, next) => {
                         }
 
                         if (accessToken) {
-                          if (debug) console.log('New accessToken created');  
+                          logger.info('New accessToken created');  
                           res.set('authorization', `Bearer ${accessToken}`);
                           console.log(req.headers['authorization'].split(' ')[1])
                           next()
@@ -133,7 +148,7 @@ exports.verifyAccessToken = (req, res, next) => {
             });
           } 
         } else{
-          if (debug) console.log(err.message);
+          logger.error('accessToken verify', err.message);
           res.status(400).json({
             state: false,
             message: 'Login required 1'
@@ -145,6 +160,7 @@ exports.verifyAccessToken = (req, res, next) => {
       }
     });
   } else {
+    logger.debug('Authorization header not found');
     res.status(400).json({
       state: false,
       message: 'Login required 4'

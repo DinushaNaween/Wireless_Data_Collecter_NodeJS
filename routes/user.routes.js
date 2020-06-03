@@ -31,7 +31,7 @@ module.exports = app => {
   // Find user by id
   app.get('/user/:userId', function (req, res, next) {
     logger.reqLog(req, 'user.findById');
-    jwtAuth.verifyAccessToken(req, res, next);
+    jwtAuth.tokenAuthentication(req, res, next);
   },
     user.findById
   );

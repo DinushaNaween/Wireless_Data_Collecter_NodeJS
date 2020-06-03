@@ -129,7 +129,8 @@ exports.login = (req, res) => {
                   } 
                 
                   if (data) {
-                    logger.info('token send')
+                    logger.info('token saved');
+                    logger.info('token send');
                     res.cookie('refreshtoken', tokens.refreshToken, {
                       httpOnly: true,
                       path: '/refresh_token'
