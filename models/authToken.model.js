@@ -134,4 +134,24 @@ AuthToken.getTokenByUserId = (userId, result) => {
   });
 };
 
+AuthToken.updateRefreshToken = (userId, currentToken, newToken, result) => {
+  sql.query('UPDATE authToken SET refreshToken = REPLACE(refreshToken, ?, ?), createdDateTime = ? WHERE userId = ?', [currentToken, newToken, new Date(), userId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    } 
+
+    console.log(res);
+
+    if (res.affectedRows == 0) {
+      result({ kind: 'not_found' }, null);
+      return;
+    }
+
+    result(null, res);
+    return;    
+  })
+}
+
 module.exports = AuthToken;
