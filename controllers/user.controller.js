@@ -1,7 +1,8 @@
 const User = require('../models/user.model');
+const AuthToken = require('../controllers/authToken.controller');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const logger = require('../logger/logger');
+const jwtAuth = require('../middlewares/jwtAuth');
+const logger = require('../middlewares/logger');
 const mailer = require('../services/mail.service');
 
 // Create and save new user
@@ -109,7 +110,8 @@ exports.login = (req, res) => {
           }
 
           if (result) {
-            jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '10h' }, (err, token) => {
+            console.log(user[0])
+            jwtAuth.createAccessAndRefreshTokens({user}, (err, tokens) => {
               if (err) {
                 logger.error('jwt.sign');
                 res.status(500).json({
@@ -117,10 +119,27 @@ exports.login = (req, res) => {
                   message: err.message || 'Some error occurred while creating token.'
                 });
               } else {
-                logger.info('token send')
-                res.status(200).json({
-                  state: true,
-                  token: token
+                AuthToken.saveNewRefreshToken(user[0].userId, tokens.refreshToken, (err, data) => {
+                  if (err) {
+                    logger.error('AuthToken.saveNewRefreshToken', err.message);
+                    res.status(500).json({
+                      state: false,
+                      message: err.message || 'Some error occurred while saving user refreshToken.'
+                    });
+                  } 
+                
+                  if (data) {
+                    logger.info('token saved');
+                    logger.info('token send');
+                    res.cookie('refreshtoken', tokens.refreshToken, {
+                      httpOnly: true,
+                      path: '/refresh_token'
+                    });
+                    res.status(200).json({
+                      state: true,
+                      token: tokens.accessToken
+                    });
+                  }
                 });
               }
             });

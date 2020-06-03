@@ -1,5 +1,5 @@
 const Sensor = require('../models/sensor.model');
-const logger = require('../logger/logger');
+const logger = require('../middlewares/logger');
 
 // create and save new sensor
 exports.create = (req, res) => {

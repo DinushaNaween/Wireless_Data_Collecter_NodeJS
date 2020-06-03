@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const role = require('../controllers/role.controller');
-  const logger = require('../logger/logger');
+  const logger = require('../middlewares/logger');
 
   // Create new role
   app.post('/role', function (req, res, next) {

@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const sensor = require('../controllers/sensor.controller');
-  const logger = require('../logger/logger');
+  const logger = require('../middlewares/logger');
 
   // Create new sensor
   app.post('/sensor', function (req, res, next) {

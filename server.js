@@ -2,12 +2,22 @@ require('dotenv').config();
 require('./config/global.config');
 const express = require('express');
 const bodyParser = require('body-parser');
-const logger = require('./logger/logger');
+const logger = require('./middlewares/logger');
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 
 const app = express();
 
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(
+  cors({
+    origin: 'http://localhost:8080',
+    credentials: true
+  })
+)
 
 app.get('/', (req, res) => {
   res.json({ message: 'Welcome to Data Collector...' });

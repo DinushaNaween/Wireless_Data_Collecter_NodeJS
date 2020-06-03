@@ -1,7 +1,8 @@
 module.exports = app => {
 
   const user = require('../controllers/user.controller');
-  const logger = require('../logger/logger');
+  const logger = require('../middlewares/logger');
+  const jwtAuth = require('../middlewares/jwtAuth');
 
   // Create new user
   app.post('/user', function (req, res, next) {
@@ -30,7 +31,7 @@ module.exports = app => {
   // Find user by id
   app.get('/user/:userId', function (req, res, next) {
     logger.reqLog(req, 'user.findById');
-    next()
+    jwtAuth.tokenAuthentication(req, res, next);
   },
     user.findById
   );
