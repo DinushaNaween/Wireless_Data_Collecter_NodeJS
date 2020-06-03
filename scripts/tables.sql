@@ -75,7 +75,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`user` (
   DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
--- Table `wdc`.`loginToken`
+-- Table `wdc`.`authToken`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wdc`.`authToken` (
   `tokenId` INT NOT NULL AUTO_INCREMENT ,
