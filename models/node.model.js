@@ -1,4 +1,4 @@
-const sql = require('../config/db.config');
+const { query } = require('../config/db.config');
 
 const Node = function (node) {
   this.parentNodeId = node.parentNodeId;
@@ -10,7 +10,7 @@ const Node = function (node) {
 
 // create and save new node
 Node.create = (newNode, result) => {
-  sql.query('INSERT INTO node SET ?', newNode, (err, res) => {
+  query('INSERT INTO node SET ?', newNode, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -25,7 +25,7 @@ Node.create = (newNode, result) => {
 
 // get all nodes from database
 Node.getAll = (result) => {
-  sql.query('SELECT * FROM node', (err, res) => {
+  query('SELECT * FROM node', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -40,7 +40,7 @@ Node.getAll = (result) => {
 
 // get node by id
 Node.findById = (nodeId, result) => {
-  sql.query('SELECT * FROM node WHERE nodeId =' + nodeId, (err, res) => {
+  query('SELECT * FROM node WHERE nodeId =' + nodeId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -60,7 +60,7 @@ Node.findById = (nodeId, result) => {
 
 // update a node
 Node.updateById = (nodeId, node, result) => {
-  sql.query('UPDATE node SET parentNodeId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE nodeId = ?', [node.parentNodeId, node.createdUserId, node.disabled, node.lastModifiedUser, node.lastModifiedDateTime, nodeId], (err, res) => {
+  query('UPDATE node SET parentNodeId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE nodeId = ?', [node.parentNodeId, node.createdUserId, node.disabled, node.lastModifiedUser, node.lastModifiedDateTime, nodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -80,7 +80,7 @@ Node.updateById = (nodeId, node, result) => {
 
 // delete a node by id
 Node.remove = (nodeId, result) => {
-  sql.query('DELETE FROM node WHERE nodeId = ?', nodeId, (err, res) => {
+  query('DELETE FROM node WHERE nodeId = ?', nodeId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -100,7 +100,7 @@ Node.remove = (nodeId, result) => {
 
 // delete all nodes
 Node.removeAll = result => {
-  sql.query('DELETE FROM node', (err, res) => {
+  query('DELETE FROM node', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -115,7 +115,7 @@ Node.removeAll = result => {
 
 // disable a node
 Node.disable = (nodeId, node, result) => {
-  sql.query('UPDATE node SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE nodeId = ?', [node.lastModifiedUser, node.lastModifiedDateTime, nodeId], (err, res) => {
+  query('UPDATE node SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE nodeId = ?', [node.lastModifiedUser, node.lastModifiedDateTime, nodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

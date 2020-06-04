@@ -1,4 +1,4 @@
-const mysql = require('mysql');
+const { createConnection } = require('mysql');
 const commonService = require('../services/common.service');
 
 const USER = process.env.USER;
@@ -6,7 +6,7 @@ const PASSWORD = process.env.PASSWORD;
 const PORT = process.env.PORT;
 const DB = process.env.DB;
 
-const sqlConnection = mysql.createConnection({
+const sqlConnection = createConnection({
   host: '127.0.0.1',
   user: USER,
   password: PASSWORD,

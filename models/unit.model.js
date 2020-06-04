@@ -1,4 +1,4 @@
-const sql = require('../config/db.config');
+const { query } = require('../config/db.config');
 
 const Unit = function (unit) {
   this.unitName = unit.unitName;
@@ -13,7 +13,7 @@ const Unit = function (unit) {
 
 // create and save new unit
 Unit.create = (newUnit, result) => {
-  sql.query('INSERT INTO unit SET ?', newUnit, (err, res) => {
+  query('INSERT INTO unit SET ?', newUnit, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -28,7 +28,7 @@ Unit.create = (newUnit, result) => {
 
 // get all units from database
 Unit.getAll = (result) => {
-  sql.query('SELECT * FROM unit', (err, res) => {
+  query('SELECT * FROM unit', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -43,7 +43,7 @@ Unit.getAll = (result) => {
 
 // get unit by id
 Unit.findById = (unitId, result) => {
-  sql.query('SELECT * FROM unit WHERE unitId =' + unitId, (err, res) => {
+  query('SELECT * FROM unit WHERE unitId =' + unitId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -63,7 +63,7 @@ Unit.findById = (unitId, result) => {
 
 // update a unit
 Unit.updateById = (unitId, unit, result) => {
-  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, noOfParentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.noOfParentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
+  query('UPDATE unit SET unitName = ?, unitLocation = ?, noOfParentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.noOfParentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -83,7 +83,7 @@ Unit.updateById = (unitId, unit, result) => {
 
 // delete a unit by id
 Unit.remove = (unitId, result) => {
-  sql.query('DELETE FROM unit WHERE unitId = ?', unitId, (err, res) => {
+  query('DELETE FROM unit WHERE unitId = ?', unitId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -103,7 +103,7 @@ Unit.remove = (unitId, result) => {
 
 // delete all units
 Unit.removeAll = result => {
-  sql.query('DELETE FROM unit', (err, res) => {
+  query('DELETE FROM unit', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -118,7 +118,7 @@ Unit.removeAll = result => {
 
 // disable a unit
 Unit.disable = (unitId, unit, result) => {
-  sql.query('UPDATE unit SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
+  query('UPDATE unit SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
