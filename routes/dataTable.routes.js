@@ -1,11 +1,11 @@
 module.exports = app => {
   
   const dataTable = require('../controllers/dataTable.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger');
 
   // Create new data table for a new node
   app.post('/dataTable', function (req, res, next) {
-    logger.reqLog(req, 'dataTable.createNewDataTable');
+    reqLog(req, 'dataTable.createNewDataTable');
     next()
   },
     dataTable.createNewDataTable
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Add columns by table name
   app.put('/dataTable/add/:tableName', function (req, res, next) {
-    logger.reqLog(req, 'dataTable.addColumnToTableByTableName');
+    reqLog(req, 'dataTable.addColumnToTableByTableName');
     next()
   },
     dataTable.addColumnToTableByTableName
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Modify columns by table name
   app.put('/dataTable/modify/:tableName', function (req, res, next) {
-    logger.reqLog(req, 'dataTable.modifyColumnByTableName');
+    reqLog(req, 'dataTable.modifyColumnByTableName');
     next()
   },
     dataTable.modifyColumnByTableName
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Drop columns by table name
   app.put('/dataTable/dropColumn/:tableName', function (req, res, next) {
-    logger.reqLog(req, 'dataTable.dropColumnByTableName');
+    reqLog(req, 'dataTable.dropColumnByTableName');
     next()
   },
     dataTable.dropColumnByTableName
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Rename columns by table name
   app.put('/dataTable/renameColumn/:tableName', function (req, res, next) {
-    logger.reqLog(req, 'dataTable.renameColumnByTableName');
+    reqLog(req, 'dataTable.renameColumnByTableName');
     next()
   },
     dataTable.renameColumnByTableName
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Get all data table names
   app.get('/dataTable', function (req, res, next) {
-    logger.reqLog(req, 'dataTable.getAllDataTableNames');
+    reqLog(req, 'dataTable.getAllDataTableNames');
     next()
   },
     dataTable.getAllDataTableNames

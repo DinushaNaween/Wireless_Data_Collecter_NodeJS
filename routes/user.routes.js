@@ -1,12 +1,12 @@
 module.exports = app => {
 
   const user = require('../controllers/user.controller');
-  const logger = require('../middlewares/logger');
-  const jwtAuth = require('../middlewares/jwtAuth');
+  const { reqLog } = require('../middlewares/logger');
+  const { tokenAuthentication } = require('../middlewares/jwtAuth');
 
   // Create new user
   app.post('/user', function (req, res, next) {
-    logger.reqLog(req, 'user.create');
+    reqLog(req, 'user.create');
     next()
   },
     user.create
@@ -14,7 +14,7 @@ module.exports = app => {
 
   // User login
   app.post('/user/login', function (req, res, next) {
-    logger.reqLog(req, 'user.login');
+    reqLog(req, 'user.login');
     next()
   },
     user.login
@@ -22,7 +22,7 @@ module.exports = app => {
 
   // Get all users
   app.get('/user', function (req, res, next) {
-    logger.reqLog(req, 'user.getAll');
+    reqLog(req, 'user.getAll');
     next()
   },
     user.getAll
@@ -30,15 +30,15 @@ module.exports = app => {
 
   // Find user by id
   app.get('/user/:userId', function (req, res, next) {
-    logger.reqLog(req, 'user.findById');
-    jwtAuth.tokenAuthentication(req, res, next);
+    reqLog(req, 'user.findById');
+    tokenAuthentication(req, res, next);
   },
     user.findById
   );
 
   // Update user by id
   app.put('/user/:userId', function (req, res, next) {
-    logger.reqLog(req, 'user.update');
+    reqLog(req, 'user.update');
     next()
   },
     user.update
@@ -46,7 +46,7 @@ module.exports = app => {
 
   // Change email address
   app.put('/user/changeEmail/:userId', function (req, res, next) {
-    logger.reqLog(req, 'user.changeEmailAddress');
+    reqLog(req, 'user.changeEmailAddress');
     next()
   },
     user.changeEmail
@@ -54,7 +54,7 @@ module.exports = app => {
 
   // Reset login password
   app.post('/user/resetPassword', function (req, res, next) {
-    logger.reqLog(req, 'user.resetLoginPassword');
+    reqLog(req, 'user.resetLoginPassword');
     next()
   },
     user.resetLoginPassword
@@ -62,7 +62,7 @@ module.exports = app => {
 
   // Delete user by id
   app.delete('/user/:userId', function (req, res, next) {
-    logger.reqLog(req, 'user.remove');
+    reqLog(req, 'user.remove');
     next()
   },
     user.remove
@@ -70,7 +70,7 @@ module.exports = app => {
 
   // Delete all users
   app.delete('/user', function (req, res, next) {
-    logger.reqLog(req, 'user.removeAll');
+    reqLog(req, 'user.removeAll');
     next()
   },
     user.removeAll
@@ -78,7 +78,7 @@ module.exports = app => {
 
   // Disable a user
   app.put('/user/disable/:userId', function (req, res, next) {
-    logger.reqLog(req, 'user.disable');
+    reqLog(req, 'user.disable');
     next()
   },
     user.disable

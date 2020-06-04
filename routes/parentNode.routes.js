@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const parentNode = require('../controllers/parentNode.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger');
 
   // Create new parentNode
   app.post('/parentNode', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.create');
+    reqLog(req, 'parentNode.create');
     next()
   },
     parentNode.create
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Get all parentNodes
   app.get('/parentNode', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.getAll');
+    reqLog(req, 'parentNode.getAll');
     next()
   },
     parentNode.getAll
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Find parentNode by id
   app.get('/parentNode/:parentNodeId', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.findById');
+    reqLog(req, 'parentNode.findById');
     next()
   },
     parentNode.findById
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Update parentNode by id
   app.put('/parentNode/:parentNodeId', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.update');
+    reqLog(req, 'parentNode.update');
     next()
   },
     parentNode.update
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Delete parentNode by id
   app.delete('/parentNode/:parentNodeId', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.remove');
+    reqLog(req, 'parentNode.remove');
     next()
   },
     parentNode.remove
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Delete all parentNodes
   app.delete('/parentNode', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.removeAll');
+    reqLog(req, 'parentNode.removeAll');
     next()
   },
     parentNode.removeAll
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // Disable a parentNode
   app.put('/parentNode/disable/:parentNodeId', function (req, res, next) {
-    logger.reqLog(req, 'parentNode.disable');
+    reqLog(req, 'parentNode.disable');
     next()
   },
     parentNode.disable

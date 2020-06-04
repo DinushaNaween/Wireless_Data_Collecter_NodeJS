@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const rolePrivilege = require('../controllers/rolePrivilege.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger');
 
   // Create new rolePrivilege
   app.post('/rolePrivilege', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.create');
+    reqLog(req, 'rolePrivilege.create');
     next()
   },
     rolePrivilege.create
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Get all rolePrivileges
   app.get('/rolePrivilege', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.getAll');
+    reqLog(req, 'rolePrivilege.getAll');
     next()
   },
     rolePrivilege.getAll
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Find rolePrivilege by id
   app.get('/rolePrivilege/:rolePrivilegeId', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.findById');
+    reqLog(req, 'rolePrivilege.findById');
     next()
   },
     rolePrivilege.findById
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Update rolePrivilege by id
   app.put('/rolePrivilege/:rolePrivilegeId', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.update');
+    reqLog(req, 'rolePrivilege.update');
     next()
   },
     rolePrivilege.update
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Delete rolePrivilege by id
   app.delete('/rolePrivilege/:rolePrivilegeId', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.remove');
+    reqLog(req, 'rolePrivilege.remove');
     next()
   },
     rolePrivilege.remove
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Delete all rolePrivileges
   app.delete('/rolePrivilege', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.removeAll');
+    reqLog(req, 'rolePrivilege.removeAll');
     next()
   },
     rolePrivilege.removeAll
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // Disable a rolePrivilege
   app.put('/rolePrivilege/disable/:rolePrivilegeId', function (req, res, next) {
-    logger.reqLog(req, 'rolePrivilege.disable');
+    reqLog(req, 'rolePrivilege.disable');
     next()
   },
     rolePrivilege.disable
