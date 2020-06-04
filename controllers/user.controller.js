@@ -1,9 +1,10 @@
 const User = require('../models/user.model');
 const AuthToken = require('../controllers/authToken.controller');
-const bcrypt = require('bcrypt');
-const jwtAuth = require('../middlewares/jwtAuth');
 const logger = require('../middlewares/logger');
-const mailer = require('../services/mail.service');
+
+const { hash, compare } = require('bcrypt');
+const { createAccessAndRefreshTokens } = require('../middlewares/jwtAuth');
+const { sendVerificationCode } = require('../services/mail.service');
 
 // Create and save new user
 exports.create = (req, res) => {
@@ -17,7 +18,7 @@ exports.create = (req, res) => {
     User.findByEmail(req.body.email, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
-          bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
+          hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
             if (err) {
               logger.error('bcrypt.hash', err.message);
               res.status(500).json({
@@ -100,7 +101,7 @@ exports.login = (req, res) => {
       } 
       
       if (user.length == 1) {
-        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+        compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
             logger.error('bcrypt.compare');
             res.status(500).json({
@@ -111,7 +112,7 @@ exports.login = (req, res) => {
 
           if (result) {
             console.log(user[0])
-            jwtAuth.createAccessAndRefreshTokens({user}, (err, tokens) => {
+            createAccessAndRefreshTokens({user}, (err, tokens) => {
               if (err) {
                 logger.error('jwt.sign');
                 res.status(500).json({
@@ -279,7 +280,7 @@ exports.changeEmail = (req, res) => {
           message: 'UserId does not match with email address given.'
         });
       } else {
-        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+        compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
             logger.error('bcrypt.compare');
             res.status(500).json({
@@ -350,7 +351,7 @@ exports.resetLoginPassword = (req, res) => {
       }
 
       if (user.length == 1) {
-        mailer.sendVerificationCode(user[0].email, (err, verificationCode) => {
+        sendVerificationCode(user[0].email, (err, verificationCode) => {
           if (err) {
             logger.error('mailer.sendVerificationCode', err.message);
             res.status(500).json({
@@ -395,7 +396,7 @@ exports.resetLoginPassword = (req, res) => {
         }
 
         if (user.length == 1) {
-          bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
+          hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
             if (err) {
               logger.error('bcrypy.hash new password', err.message);
               res.status(500).json({
