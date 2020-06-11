@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const RolePrivilege = function (rolePrivilege) {
   this.roleId = rolePrivilege.roleId;
@@ -10,7 +10,7 @@ const RolePrivilege = function (rolePrivilege) {
 
 // create and save new role privilege
 RolePrivilege.create = (newRolePrivilege, result) => {
-  query('INSERT INTO rolePrivilege SET ?', newRolePrivilege, (err, res) => {
+  sql.query('INSERT INTO rolePrivilege SET ?', newRolePrivilege, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -25,7 +25,7 @@ RolePrivilege.create = (newRolePrivilege, result) => {
 
 // get all role privileges from database
 RolePrivilege.getAll = (result) => {
-  query('SELECT * FROM rolePrivilege', (err, res) => {
+  sql.query('SELECT * FROM rolePrivilege', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -40,7 +40,7 @@ RolePrivilege.getAll = (result) => {
 
 // get role privilege by id
 RolePrivilege.findById = (rolePrivilegeId, result) => {
-  query('SELECT * FROM rolePrivilege WHERE rolePrivilegeId =' + rolePrivilegeId, (err, res) => {
+  sql.query('SELECT * FROM rolePrivilege WHERE rolePrivilegeId =' + rolePrivilegeId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -60,7 +60,7 @@ RolePrivilege.findById = (rolePrivilegeId, result) => {
 
 // update a role privilege
 RolePrivilege.updateById = (rolePrivilegeId, rolePrivilege, result) => {
-  query('UPDATE rolePrivilege SET roleId = ?, privilegeId =?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [rolePrivilege.roleId, rolePrivilege.privilegeId, rolePrivilege.disabled, rolePrivilege.lastModifiedUser, rolePrivilege.lastModifiedDateTime, rolePrivilegeId], (err, res) => {
+  sql.query('UPDATE rolePrivilege SET roleId = ?, privilegeId =?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [rolePrivilege.roleId, rolePrivilege.privilegeId, rolePrivilege.disabled, rolePrivilege.lastModifiedUser, rolePrivilege.lastModifiedDateTime, rolePrivilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -80,7 +80,7 @@ RolePrivilege.updateById = (rolePrivilegeId, rolePrivilege, result) => {
 
 // delete a role privilege by id
 RolePrivilege.remove = (rolePrivilegeId, result) => {
-  query('DELETE FROM rolePrivilege WHERE rolePrivilegeId = ?', rolePrivilegeId, (err, res) => {
+  sql.query('DELETE FROM rolePrivilege WHERE rolePrivilegeId = ?', rolePrivilegeId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -100,7 +100,7 @@ RolePrivilege.remove = (rolePrivilegeId, result) => {
 
 // delete all role privileges
 RolePrivilege.removeAll = result => {
-  query('DELETE FROM rolePrivilege', (err, res) => {
+  sql.query('DELETE FROM rolePrivilege', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -115,7 +115,7 @@ RolePrivilege.removeAll = result => {
 
 // disable a role privilege
 RolePrivilege.disable = (rolePrivilegeId, rolePrivilege, result) => {
-  query('UPDATE rolePrivilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [rolePrivilege.lastModifiedUser, rolePrivilege.lastModifiedDateTime, rolePrivilegeId], (err, res) => {
+  sql.query('UPDATE rolePrivilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [rolePrivilege.lastModifiedUser, rolePrivilege.lastModifiedDateTime, rolePrivilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const Sensor = function (sensor) {
   this.sensorName = sensor.sensorName;
@@ -18,7 +18,7 @@ const Sensor = function (sensor) {
 
 // create and save new sensor
 Sensor.create = (newSensor, result) => {
-  query('INSERT INTO sensor SET ?', newSensor, (err, res) => {
+  sql.query('INSERT INTO sensor SET ?', newSensor, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -33,7 +33,7 @@ Sensor.create = (newSensor, result) => {
 
 // get all sensors from database
 Sensor.getAll = (result) => {
-  query('SELECT * FROM sensor', (err, res) => {
+  sql.query('SELECT * FROM sensor', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -48,7 +48,7 @@ Sensor.getAll = (result) => {
 
 // get sensor by id
 Sensor.findById = (sensorId, result) => {
-  query('SELECT * FROM sensor WHERE sensorId =' + sensorId, (err, res) => {
+  sql.query('SELECT * FROM sensor WHERE sensorId =' + sensorId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -68,7 +68,7 @@ Sensor.findById = (sensorId, result) => {
 
 // update a sensor
 Sensor.updateById = (sensorId, sensor, result) => {
-  query('UPDATE sensor SET sensorName = ?, sensorDiscription = ?, dataType = ?, dataSize = ?, sensingRange = ?, technology = ?, workingVoltage = ?, dimensions = ?, specialFact = ?, sensorImageURL = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE sensorId = ?', [sensor.sensorName, sensor.sensorDiscription, sensor.dataType, sensor.dataSize, sensor.sensingRange, sensor.technology, sensor.workingVoltage, sensor.dimensions, sensor.specialFact, sensor.sensorImageURL, sensor.disabled, sensor.lastModifiedUser, sensor.lastModifiedDateTime, sensorId], (err, res) => {
+  sql.query('UPDATE sensor SET sensorName = ?, sensorDiscription = ?, dataType = ?, dataSize = ?, sensingRange = ?, technology = ?, workingVoltage = ?, dimensions = ?, specialFact = ?, sensorImageURL = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE sensorId = ?', [sensor.sensorName, sensor.sensorDiscription, sensor.dataType, sensor.dataSize, sensor.sensingRange, sensor.technology, sensor.workingVoltage, sensor.dimensions, sensor.specialFact, sensor.sensorImageURL, sensor.disabled, sensor.lastModifiedUser, sensor.lastModifiedDateTime, sensorId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -88,7 +88,7 @@ Sensor.updateById = (sensorId, sensor, result) => {
 
 // delete a sensor by id
 Sensor.remove = (sensorId, result) => {
-  query('DELETE FROM sensor WHERE sensorId = ?', sensorId, (err, res) => {
+  sql.query('DELETE FROM sensor WHERE sensorId = ?', sensorId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -108,7 +108,7 @@ Sensor.remove = (sensorId, result) => {
 
 // delete all sensors
 Sensor.removeAll = result => {
-  query('DELETE FROM sensor', (err, res) => {
+  sql.query('DELETE FROM sensor', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -123,7 +123,7 @@ Sensor.removeAll = result => {
 
 // disable a sensor
 Sensor.disable = (sensorId, sensor, result) => {
-  query('UPDATE sensor SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE sensorId = ?', [sensor.lastModifiedUser, sensor.lastModifiedDateTime, sensorId], (err, res) => {
+  sql.query('UPDATE sensor SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE sensorId = ?', [sensor.lastModifiedUser, sensor.lastModifiedDateTime, sensorId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

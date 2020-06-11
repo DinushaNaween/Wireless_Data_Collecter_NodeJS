@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const ParentNode = function (parentNode) {
   this.parentNodeName = parentNode.parentNodeName;
@@ -14,7 +14,7 @@ const ParentNode = function (parentNode) {
 
 // create and save new parentNode
 ParentNode.create = (newParentNode, result) => {
-  query('INSERT INTO parentNode SET ?', newParentNode, (err, res) => {
+  sql.query('INSERT INTO parentNode SET ?', newParentNode, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -29,7 +29,7 @@ ParentNode.create = (newParentNode, result) => {
 
 // get all parent nodes from database
 ParentNode.getAll = (result) => {
-  query('SELECT * FROM parentNode', (err, res) => {
+  sql.query('SELECT * FROM parentNode', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -44,7 +44,7 @@ ParentNode.getAll = (result) => {
 
 // get parentNode by id
 ParentNode.findById = (parentNodeId, result) => {
-  query('SELECT * FROM parentNode WHERE parentNodeId =' + parentNodeId, (err, res) => {
+  sql.query('SELECT * FROM parentNode WHERE parentNodeId =' + parentNodeId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -64,7 +64,7 @@ ParentNode.findById = (parentNodeId, result) => {
 
 // update a parentNode
 ParentNode.updateById = (parentNodeId, parentNode, result) => {
-  query('UPDATE parentNode SET parentNodeName = ?, parentNodeLocation = ?, noOfNodes = ?, unitId = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.parentNodeName, parentNode.parentNodeLocation, parentNode.noOfNodes, parentNode.unitId, parentNode.collectionId, parentNode.createdUserId, parentNode.disabled, parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
+  sql.query('UPDATE parentNode SET parentNodeName = ?, parentNodeLocation = ?, noOfNodes = ?, unitId = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.parentNodeName, parentNode.parentNodeLocation, parentNode.noOfNodes, parentNode.unitId, parentNode.collectionId, parentNode.createdUserId, parentNode.disabled, parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -84,7 +84,7 @@ ParentNode.updateById = (parentNodeId, parentNode, result) => {
 
 // delete a parentNode by id
 ParentNode.remove = (parentNodeId, result) => {
-  query('DELETE FROM parentNode WHERE parentNodeId = ?', parentNodeId, (err, res) => {
+  sql.query('DELETE FROM parentNode WHERE parentNodeId = ?', parentNodeId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -104,7 +104,7 @@ ParentNode.remove = (parentNodeId, result) => {
 
 // delete all parent nodes
 ParentNode.removeAll = result => {
-  query('DELETE FROM parentNode', (err, res) => {
+  sql.query('DELETE FROM parentNode', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -119,7 +119,7 @@ ParentNode.removeAll = result => {
 
 // disable a parentNode
 ParentNode.disable = (parentNodeId, parentNode, result) => {
-  query('UPDATE parentNode SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
+  sql.query('UPDATE parentNode SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

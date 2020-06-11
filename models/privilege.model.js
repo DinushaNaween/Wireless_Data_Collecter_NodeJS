@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const Privilege = function(privilege) {
   this.privilegeDescription = privilege.privilegeDescription;
@@ -9,7 +9,7 @@ const Privilege = function(privilege) {
 
 // create and save new privilege
 Privilege.create = (newPrivilege, result) => {
-  query('INSERT INTO privilege SET ?', newPrivilege, (err, res) => {
+  sql.query('INSERT INTO privilege SET ?', newPrivilege, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -24,7 +24,7 @@ Privilege.create = (newPrivilege, result) => {
 
 // get all privileges from database
 Privilege.getAll = (result) => {
-  query('SELECT * FROM privilege', (err, res) => {
+  sql.query('SELECT * FROM privilege', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -39,7 +39,7 @@ Privilege.getAll = (result) => {
 
 // get privilege by id
 Privilege.findById = (privilegeId, result) => {
-  query('SELECT * FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
+  sql.query('SELECT * FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -59,7 +59,7 @@ Privilege.findById = (privilegeId, result) => {
 
 // update a privilege
 Privilege.updateById = (privilegeId, privilege, result) => {
-  query('UPDATE privilege SET privilegeDescription = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE privilegeId = ?', [privilege.privilegeDescription, privilege.disabled, privilege.lastModifiedUser, privilege.lastModifiedDateTime, privilegeId], (err, res) => {
+  sql.query('UPDATE privilege SET privilegeDescription = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE privilegeId = ?', [privilege.privilegeDescription, privilege.disabled, privilege.lastModifiedUser, privilege.lastModifiedDateTime, privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -79,7 +79,7 @@ Privilege.updateById = (privilegeId, privilege, result) => {
 
 // delete a privilege by id
 Privilege.remove = (privilegeId, result) => {
-  query('DELETE FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
+  sql.query('DELETE FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -99,7 +99,7 @@ Privilege.remove = (privilegeId, result) => {
 
 // delete all privileges
 Privilege.removeAll = result => {
-  query('DELETE FROM privilege', (err, res) => {
+  sql.query('DELETE FROM privilege', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -114,7 +114,7 @@ Privilege.removeAll = result => {
 
 // disable a privilege
 Privilege.disable = (privilegeId, privilege, result) => {
-  query('UPDATE privilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE privilegeId = ?', [privilege.lastModifiedUser, privilege.lastModifiedDateTime, privilegeId], (err, res) => {
+  sql.query('UPDATE privilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE privilegeId = ?', [privilege.lastModifiedUser, privilege.lastModifiedDateTime, privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

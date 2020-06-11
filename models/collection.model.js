@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const Collection = function (collection) {
   this.collectionName = collection.collectionName;
@@ -12,7 +12,7 @@ const Collection = function (collection) {
 
 // create and save new collection
 Collection.create = (newCollection, result) => {
-  query('INSERT INTO collection SET ?', newCollection, (err, res) => {
+  sql.query('INSERT INTO collection SET ?', newCollection, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -27,7 +27,7 @@ Collection.create = (newCollection, result) => {
 
 // get all collections from database
 Collection.getAll = (result) => {
-  query('SELECT * FROM collection', (err, res) => {
+  sql.query('SELECT * FROM collection', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -42,7 +42,7 @@ Collection.getAll = (result) => {
 
 // get collection by id
 Collection.findById = (collectionId, result) => {
-  query('SELECT * FROM collection WHERE collectionId =' + collectionId, (err, res) => {
+  sql.query('SELECT * FROM collection WHERE collectionId =' + collectionId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -62,7 +62,7 @@ Collection.findById = (collectionId, result) => {
 
 // update a collection
 Collection.updateById = (collectionId, collection, result) => {
-  query('UPDATE collection SET collectionName = ?, collectionLocation = ?, noOfUnits = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.collectionName, collection.collectionLocation, collection.noOfUnits, collection.createdUserId, collection.disabled, collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
+  sql.query('UPDATE collection SET collectionName = ?, collectionLocation = ?, noOfUnits = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.collectionName, collection.collectionLocation, collection.noOfUnits, collection.createdUserId, collection.disabled, collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -82,7 +82,7 @@ Collection.updateById = (collectionId, collection, result) => {
 
 // delete a collection by id
 Collection.remove = (collectionId, result) => {
-  query('DELETE FROM collection WHERE collectionId = ?', collectionId, (err, res) => {
+  sql.query('DELETE FROM collection WHERE collectionId = ?', collectionId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -102,7 +102,7 @@ Collection.remove = (collectionId, result) => {
 
 // delete all collections
 Collection.removeAll = result => {
-  query('DELETE FROM collection', (err, res) => {
+  sql.query('DELETE FROM collection', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -117,7 +117,7 @@ Collection.removeAll = result => {
 
 // disable a collection
 Collection.disable = (collectionId, collection, result) => {
-  query('UPDATE collection SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
+  sql.query('UPDATE collection SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

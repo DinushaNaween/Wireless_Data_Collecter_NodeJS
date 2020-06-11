@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const AuthToken = function(authToken) {
   this.userId = authToken.userId;
@@ -9,7 +9,7 @@ const AuthToken = function(authToken) {
 
 // Save new token
 AuthToken.saveNewRefreshToken = (newToken, result) => {
-  query('INSERT INTO authToken SET ?', newToken, (err, res) => {
+  sql.query('INSERT INTO authToken SET ?', newToken, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -24,7 +24,7 @@ AuthToken.saveNewRefreshToken = (newToken, result) => {
 
 // Get all tokens
 AuthToken.getAll = (result) => {
-  query('SELECT * FROM authToken', (err, res) => {
+  sql.query('SELECT * FROM authToken', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -39,7 +39,7 @@ AuthToken.getAll = (result) => {
 
 // Get token by id
 AuthToken.findById = (tokenId, result) => {
-  query('SELECT * FROM authToken WHERE tokenId = ?', [tokenId], (err, res) => {
+  sql.query('SELECT * FROM authToken WHERE tokenId = ?', [tokenId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -59,7 +59,7 @@ AuthToken.findById = (tokenId, result) => {
 
 // delete a authToken by id
 AuthToken.remove = (tokenId, result) => {
-  query('DELETE FROM authToken WHERE tokenId = ?', [tokenId], (err, res) => {
+  sql.query('DELETE FROM authToken WHERE tokenId = ?', [tokenId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -79,7 +79,7 @@ AuthToken.remove = (tokenId, result) => {
 
 // delete all authTokens
 AuthToken.removeAll = result => {
-  query('DELETE FROM authToken', (err, res) => {
+  sql.query('DELETE FROM authToken', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -94,7 +94,7 @@ AuthToken.removeAll = result => {
 
 // Revoke a token
 AuthToken.revokeById = (authTokenId, result) => {
-  query('UPDATE authToken SET revoked = 1, createdDateTime = ? WHERE tokenId = ?', [new Date(), authTokenId], (err, res) => {
+  sql.query('UPDATE authToken SET revoked = 1, createdDateTime = ? WHERE tokenId = ?', [new Date(), authTokenId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -114,7 +114,7 @@ AuthToken.revokeById = (authTokenId, result) => {
 
 // Get authToken by userId
 AuthToken.getTokenByUserId = (userId, result) => {
-  query('SELECT * FROM authToken WHERE userId = ?', [userId], (err, res) => {
+  sql.query('SELECT * FROM authToken WHERE userId = ?', [userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -135,7 +135,7 @@ AuthToken.getTokenByUserId = (userId, result) => {
 };
 
 AuthToken.updateRefreshToken = (userId, currentToken, newToken, result) => {
-  query('UPDATE authToken SET refreshToken = REPLACE(refreshToken, ?, ?), createdDateTime = ? WHERE userId = ?', [currentToken, newToken, new Date(), userId], (err, res) => {
+  sql.query('UPDATE authToken SET refreshToken = REPLACE(refreshToken, ?, ?), createdDateTime = ? WHERE userId = ?', [currentToken, newToken, new Date(), userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

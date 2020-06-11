@@ -1,4 +1,4 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 const User = function (user) {
   this.email = user.email;
@@ -14,7 +14,7 @@ const User = function (user) {
 
 // Create and save new user
 User.create = (newUser, result) => {
-  query('INSERT INTO user SET ?', newUser, (err, res) => {
+  sql.query('INSERT INTO user SET ?', newUser, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -29,7 +29,7 @@ User.create = (newUser, result) => {
 
 // Get all users from database
 User.getAll = (result) => {
-  query('SELECT * FROM user', (err, res) => {
+  sql.query('SELECT * FROM user', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -44,7 +44,7 @@ User.getAll = (result) => {
 
 // Get user by id
 User.findById = (userId, result) => {
-  query('SELECT * FROM user WHERE userId =' + userId, (err, res) => {
+  sql.query('SELECT * FROM user WHERE userId =' + userId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -64,7 +64,7 @@ User.findById = (userId, result) => {
 
 // Update a user
 User.updateById = (userId, user, result) => {
-  query('UPDATE user SET userName = ?, firstName = ?, lastName = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.userName, user.firstName, user.lastName, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
+  sql.query('UPDATE user SET userName = ?, firstName = ?, lastName = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.userName, user.firstName, user.lastName, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -84,7 +84,7 @@ User.updateById = (userId, user, result) => {
 
 // Change email address 
 User.changeEmailAddress = (userId, data, result) => {
-  query('UPDATE user SET email = REPLACE(email, ?, ?), lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [data.currentEmail, data.newEmail, data.lastModifiedUser, data.lastModifiedDateTime, userId], (err, res) => {
+  sql.query('UPDATE user SET email = REPLACE(email, ?, ?), lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [data.currentEmail, data.newEmail, data.lastModifiedUser, data.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -104,7 +104,7 @@ User.changeEmailAddress = (userId, data, result) => {
 
 // Reset login password
 User.resetLoginPassword = (hash, user, result) => {
-  query('UPDATE user SET loginPassword = REPLACE(loginPassword, ?, ?), lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.loginPassword, hash, user.lastModifiedUser, new Date(), user.userId], (err, res) => {
+  sql.query('UPDATE user SET loginPassword = REPLACE(loginPassword, ?, ?), lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.loginPassword, hash, user.lastModifiedUser, new Date(), user.userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -124,7 +124,7 @@ User.resetLoginPassword = (hash, user, result) => {
 
 // Delete a user by id
 User.remove = (userId, result) => {
-  query('DELETE FROM user WHERE userId = ?', userId, (err, res) => {
+  sql.query('DELETE FROM user WHERE userId = ?', userId, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -144,7 +144,7 @@ User.remove = (userId, result) => {
 
 // Delete all users
 User.removeAll = result => {
-  query('DELETE FROM user', (err, res) => {
+  sql.query('DELETE FROM user', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -159,7 +159,7 @@ User.removeAll = result => {
 
 // Disable a user
 User.disable = (userId, user, result) => {
-  query('UPDATE user SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
+  sql.query('UPDATE user SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -179,7 +179,7 @@ User.disable = (userId, user, result) => {
 
 // User find by email
 User.findByEmail = (userEmail, result) => {
-  query('SELECT * FROM user WHERE email = ?', [userEmail], (err, res) => {
+  sql.query('SELECT * FROM user WHERE email = ?', [userEmail], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
