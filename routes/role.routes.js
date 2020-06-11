@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const role = require('../controllers/role.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new role
   app.post('/role', function (req, res, next) {
-    logger.reqLog(req, 'role.create');
+    reqLog(req, 'role.create');
     next()
   },
     role.create
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Get all roles
   app.get('/role', function (req, res, next) {
-    logger.reqLog(req, 'role.getAll');
+    reqLog(req, 'role.getAll');
     next()
   },
     role.getAll
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Find role by id
   app.get('/role/:roleId', function (req, res, next) {
-    logger.reqLog(req, 'role.findById');
+    reqLog(req, 'role.findById');
     next()
   },
     role.findById
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Update role by id
   app.put('/role/:roleId', function (req, res, next) {
-    logger.reqLog(req, 'role.update');
+    reqLog(req, 'role.update');
     next()
   },
     role.update
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Delete role by id
   app.delete('/role/:roleId', function (req, res, next) {
-    logger.reqLog(req, 'role.remove');
+    reqLog(req, 'role.remove');
     next()
   },
     role.remove
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Delete all roles
   app.delete('/role', function (req, res, next) {
-    logger.reqLog(req, 'role.removeAll');
+    reqLog(req, 'role.removeAll');
     next()
   },
     role.removeAll
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // Disable a role
   app.put('/role/disable/:roleId', function (req, res, next) {
-    logger.reqLog(req, 'role.disable');
+    reqLog(req, 'role.disable');
     next()
   },
     role.disable

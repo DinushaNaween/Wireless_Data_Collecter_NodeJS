@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const collection = require('../controllers/collection.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new collection
   app.post('/collection', function (req, res, next) {
-    logger.reqLog(req, 'collection.create');
+    reqLog(req, 'collection.create');
     next()
   },
     collection.create
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Get all collections
   app.get('/collection', function (req, res, next) {
-    logger.reqLog(req, 'collection.getAll');
+    reqLog(req, 'collection.getAll');
     next()
   },
     collection.getAll
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Find collection by id
   app.get('/collection/:collectionId', function (req, res, next) {
-    logger.reqLog(req, 'collection.findById');
+    reqLog(req, 'collection.findById');
     next()
   },
     collection.findById
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Update collection by id
   app.put('/collection/:collectionId', function (req, res, next) {
-    logger.reqLog(req, 'collection.update');
+    reqLog(req, 'collection.update');
     next()
   },
     collection.update
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Delete collection by id
   app.delete('/collection/:collectionId', function (req, res, next) {
-    logger.reqLog(req, 'collection.remove');
+    reqLog(req, 'collection.remove');
     next()
   },
     collection.remove
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Delete all collections
   app.delete('/collection', function (req, res, next) {
-    logger.reqLog(req, 'collection.removeAll');
+    reqLog(req, 'collection.removeAll');
     next()
   },
     collection.removeAll
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // Disable a collection
   app.put('/collection/disable/:collectionId', function (req, res, next) {
-    logger.reqLog(req, 'collection.disable');
+    reqLog(req, 'collection.disable');
     next()
   },
     collection.disable

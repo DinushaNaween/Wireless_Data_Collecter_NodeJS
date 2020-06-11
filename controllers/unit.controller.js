@@ -1,5 +1,5 @@
 const Unit = require('../models/unit.model');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 // create and save new unit
 exports.create = (req, res) => {  

@@ -1,11 +1,13 @@
 module.exports = app => {
 
   const sensor = require('../controllers/sensor.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
+  const { multerUpload } = require('../middlewares/multer.middleware');
+  const { uploadSensorImage } = require('../middlewares/fileUpload.middleware');
 
   // Create new sensor
-  app.post('/sensor', function (req, res, next) {
-    logger.reqLog(req, 'sensor.create');
+  app.post('/sensor', multerUpload, uploadSensorImage, function (req, res, next) {
+    reqLog(req, 'sensor.create');
     next()
   },
     sensor.create
@@ -13,7 +15,7 @@ module.exports = app => {
 
   // Get all sensors
   app.get('/sensor', function (req, res, next) {
-    logger.reqLog(req, 'sensor.getAll');
+    reqLog(req, 'sensor.getAll');
     next()
   },
     sensor.getAll
@@ -21,7 +23,7 @@ module.exports = app => {
 
   // Find sensor by id
   app.get('/sensor/:sensorId', function (req, res, next) {
-    logger.reqLog(req, 'sensor.findById');
+    reqLog(req, 'sensor.findById');
     next()
   },
     sensor.findById
@@ -29,7 +31,7 @@ module.exports = app => {
 
   // Update sensor by id
   app.put('/sensor/:sensorId', function (req, res, next) {
-    logger.reqLog(req, 'sensor.update');
+    reqLog(req, 'sensor.update');
     next()
   },
     sensor.update
@@ -37,7 +39,7 @@ module.exports = app => {
 
   // Delete sensor by id
   app.delete('/sensor/:sensorId', function (req, res, next) {
-    logger.reqLog(req, 'sensor.remove');
+    reqLog(req, 'sensor.remove');
     next()
   },
     sensor.remove
@@ -45,7 +47,7 @@ module.exports = app => {
 
   // Delete all sensors
   app.delete('/sensor', function (req, res, next) {
-    logger.reqLog(req, 'sensor.removeAll');
+    reqLog(req, 'sensor.removeAll');
     next()
   },
     sensor.removeAll
@@ -53,7 +55,7 @@ module.exports = app => {
 
   // Disable a sensor
   app.put('/sensor/disable/:sensorId', function (req, res, next) {
-    logger.reqLog(req, 'sensor.disable');
+    reqLog(req, 'sensor.disable');
     next()
   },
     sensor.disable

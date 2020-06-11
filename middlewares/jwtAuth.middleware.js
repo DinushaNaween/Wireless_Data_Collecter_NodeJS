@@ -1,10 +1,11 @@
-const jwt = require('jsonwebtoken');
 const AuthToken = require('../models/authToken.model');
-const logger = require('./logger');
+const logger = require('./logger.middleware');
+
+const { sign, verify } = require('jsonwebtoken');
 
 // Create access token
 exports.createAccessToken = (payload, result) => {
-  jwt.sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' }, (err, token) => {
+  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' }, (err, token) => {
     if (err) {
       logger.error('createAccessToken', err.message);
       result(err, null);
@@ -20,7 +21,7 @@ exports.createAccessToken = (payload, result) => {
 
 // Create refresh token
 exports.createRefreshToken = (payload, result) => {
-  jwt.sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: '7d' }, (err, token) => {
+  sign(payload, process.env.JWT_REFRESH_TOKEN_SECRET, { expiresIn: '7d' }, (err, token) => {
     if (err) {
       logger.error('createRefreshToken', err.message);
       result(err, null);
@@ -70,7 +71,7 @@ exports.tokenAuthentication = (req, res, next) => {
         message: 'Login required 1'
       });
     }
-    jwt.verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, accessTokenPayload) => {
+    verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, accessTokenPayload) => {
       if (err) {
         if (err.message == 'invalid token') {
           logger.error('invalid accessToken');
@@ -82,7 +83,7 @@ exports.tokenAuthentication = (req, res, next) => {
           const refreshToken = req.cookies.refreshtoken;
 
           if (refreshToken) {
-            jwt.verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, refreshTokenPayload) => {
+            verify(refreshToken, process.env.JWT_REFRESH_TOKEN_SECRET, (err, refreshTokenPayload) => {
               if (err) { 
                 logger.error('refreshToken verify failed');
                 if (debug) console.log(err.message);

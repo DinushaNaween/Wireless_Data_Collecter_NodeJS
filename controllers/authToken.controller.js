@@ -1,5 +1,5 @@
 const AuthToken = require('../models/authToken.model');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 // Save new token
 exports.saveNewRefreshToken = (userId, refreshToken, result) => {

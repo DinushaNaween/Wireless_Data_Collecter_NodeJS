@@ -1,5 +1,5 @@
 const ParentNode = require('../models/parentNode.model');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 // create and save new parent node
 exports.create = (req, res) => {

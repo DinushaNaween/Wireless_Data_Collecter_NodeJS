@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const common = require('../controllers/common.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Get table info
   app.get('/common/:tableName', function (req, res, next) {
-    logger.reqLog(req, 'common.getTableInfo');
+    reqLog(req, 'common.getTableInfo');
     next()
   },
     common.getTableInfo
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Rename table
   app.put('/common/renameTable', function (req, res, next) {
-    logger.reqLog(req, 'common.renameTable');
+    reqLog(req, 'common.renameTable');
     next()
   },
     common.renameTable

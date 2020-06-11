@@ -1,6 +1,6 @@
-const nodemailer = require('nodemailer');
+const { createTransport } = require('nodemailer');
 
-const transporter = nodemailer.createTransport({
+const transporter = createTransport({
   service: process.env.SERVICE,
   auth: {
     user: process.env.MAILADDRESS,

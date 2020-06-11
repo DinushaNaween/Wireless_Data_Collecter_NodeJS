@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const node = require('../controllers/node.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new node
   app.post('/node', function (req, res, next) {
-    logger.reqLog(req, 'node.create');
+    reqLog(req, 'node.create');
     next()
   },
     node.create
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Get all nodes
   app.get('/node', function (req, res, next) {
-    logger.reqLog(req, 'node.getAll');
+    reqLog(req, 'node.getAll');
     next()
   },
     node.getAll
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Find node by id
   app.get('/node/:nodeId', function (req, res, next) {
-    logger.reqLog(req, 'node.findById');
+    reqLog(req, 'node.findById');
     next()
   },
     node.findById
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Update node by id
   app.put('/node/:nodeId', function (req, res, next) {
-    logger.reqLog(req, 'node.update');
+    reqLog(req, 'node.update');
     next()
   },
     node.update
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Delete node by id
   app.delete('/node/:nodeId', function (req, res, next) {
-    logger.reqLog(req, 'node.remove');
+    reqLog(req, 'node.remove');
     next()
   },
     node.remove
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Delete all nodes
   app.delete('/node', function (req, res, next) {
-    logger.reqLog(req, 'node.removeAll');
+    reqLog(req, 'node.removeAll');
     next()
   },
     node.removeAll
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // Disable a node
   app.put('/node/disable/:nodeId', function (req, res, next) {
-    logger.reqLog(req, 'node.disable');
+    reqLog(req, 'node.disable');
     next()
   },
     node.disable

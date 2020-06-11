@@ -1,5 +1,5 @@
 const Privilege = require('../models/privilege.model');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 //create and save new privilege
 exports.create = (req, res) => {

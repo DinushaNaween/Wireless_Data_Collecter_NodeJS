@@ -2,7 +2,7 @@ require('dotenv').config();
 require('./config/global.config');
 const express = require('express');
 const bodyParser = require('body-parser');
-const logger = require('./middlewares/logger');
+const logger = require('./middlewares/logger.middleware');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
@@ -10,7 +10,7 @@ const app = express();
 
 app.use(cookieParser());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(
   cors({
@@ -41,4 +41,4 @@ app.listen(8080, (err, result) => {
   } else {
     logger.info('server started listning on port 8080');
   }
-});
+}); 

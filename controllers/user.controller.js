@@ -1,9 +1,10 @@
 const User = require('../models/user.model');
 const AuthToken = require('../controllers/authToken.controller');
-const bcrypt = require('bcrypt');
-const jwtAuth = require('../middlewares/jwtAuth');
-const logger = require('../middlewares/logger');
-const mailer = require('../services/mail.service');
+const logger = require('../middlewares/logger.middleware');
+
+const { hash, compare } = require('bcrypt');
+const { createAccessAndRefreshTokens } = require('../middlewares/jwtAuth.middleware');
+const { sendVerificationCode } = require('../services/mail.service');
 
 // Create and save new user
 exports.create = (req, res) => {
@@ -17,7 +18,7 @@ exports.create = (req, res) => {
     User.findByEmail(req.body.email, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
-          bcrypt.hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
+          hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
             if (err) {
               logger.error('bcrypt.hash', err.message);
               res.status(500).json({
@@ -62,13 +63,13 @@ exports.create = (req, res) => {
           });
         }
       } else {
-          logger.error('email exist', { email: req.body.email });
-          res.status(302).json({
-            state: false,
-            exist: true,
-            message: 'Email exist.'
-          });
-        }
+        logger.error('email exist', { email: req.body.email });
+        res.status(302).json({
+          state: false,
+          exist: true,
+          message: 'Email exist.'
+        });
+      }
     })
   }
 };
@@ -97,10 +98,10 @@ exports.login = (req, res) => {
             message: err.message || 'Some error occurred while finding the user.'
           });
         }
-      } 
-      
+      }
+
       if (user.length == 1) {
-        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+        compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
             logger.error('bcrypt.compare');
             res.status(500).json({
@@ -111,7 +112,7 @@ exports.login = (req, res) => {
 
           if (result) {
             console.log(user[0])
-            jwtAuth.createAccessAndRefreshTokens({user}, (err, tokens) => {
+            createAccessAndRefreshTokens({ user }, (err, tokens) => {
               if (err) {
                 logger.error('jwt.sign');
                 res.status(500).json({
@@ -126,8 +127,8 @@ exports.login = (req, res) => {
                       state: false,
                       message: err.message || 'Some error occurred while saving user refreshToken.'
                     });
-                  } 
-                
+                  }
+
                   if (data) {
                     logger.info('token saved');
                     logger.info('token send');
@@ -272,14 +273,14 @@ exports.changeEmail = (req, res) => {
     }
 
     if (user.length == 1) {
-      if (req.params.userId != user[0].userId) { 
+      if (req.params.userId != user[0].userId) {
         logger.error('userId does not match with email address');
         res.status(500).json({
           state: false,
           message: 'UserId does not match with email address given.'
         });
       } else {
-        bcrypt.compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
+        compare(req.body.loginPassword, user[0].loginPassword, (err, result) => {
           if (err) {
             logger.error('bcrypt.compare');
             res.status(500).json({
@@ -306,7 +307,7 @@ exports.changeEmail = (req, res) => {
                     message: err.message || 'Some error occured while updating email address'
                   });
                 }
-              } 
+              }
 
               if (data) {
                 logger.info('email changed success');
@@ -350,7 +351,7 @@ exports.resetLoginPassword = (req, res) => {
       }
 
       if (user.length == 1) {
-        mailer.sendVerificationCode(user[0].email, (err, verificationCode) => {
+        sendVerificationCode(user[0].email, (err, verificationCode) => {
           if (err) {
             logger.error('mailer.sendVerificationCode', err.message);
             res.status(500).json({
@@ -384,7 +385,7 @@ exports.resetLoginPassword = (req, res) => {
             res.status(400).json({
               state: false,
               message: 'Email not found'
-            }); 
+            });
           } else {
             logger.error('findByEmail', err.message);
             res.status(500).json({
@@ -395,14 +396,14 @@ exports.resetLoginPassword = (req, res) => {
         }
 
         if (user.length == 1) {
-          bcrypt.hash(req.body.loginPassword, SALTROUNDS, function(err, hash) {
+          hash(req.body.loginPassword, SALTROUNDS, function (err, hash) {
             if (err) {
               logger.error('bcrypy.hash new password', err.message);
               res.status(500).json({
                 state: false,
                 message: err.message || 'Some error occured'
               });
-            } 
+            }
 
             if (hash) {
               User.resetLoginPassword(hash, user[0], (err, data) => {
@@ -432,7 +433,7 @@ exports.resetLoginPassword = (req, res) => {
           });
         }
       });
-    } else{
+    } else {
       logger.error('not verified');
       res.status(200).json({
         state: false,

@@ -1,11 +1,11 @@
 module.exports = app => {
 
   const privilege = require('../controllers/privilege.controller');
-  const logger = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new privilege
   app.post('/privilege', function (req, res, next) {
-    logger.reqLog(req, 'privilege.create');
+    reqLog(req, 'privilege.create');
     next()
   },
     privilege.create
@@ -13,7 +13,7 @@ module.exports = app => {
 
   // Get all privileges
   app.get('/privilege', function (req, res, next) {
-    logger.reqLog(req, 'privilege.getAll');
+    reqLog(req, 'privilege.getAll');
     next()
   },
     privilege.getAll
@@ -21,7 +21,7 @@ module.exports = app => {
 
   // Find privilege by id
   app.get('/privilege/:privilegeId', function (req, res, next) {
-    logger.reqLog(req, 'privilege.findById');
+    reqLog(req, 'privilege.findById');
     next()
   },
     privilege.findById
@@ -29,7 +29,7 @@ module.exports = app => {
 
   // Update privilege by id
   app.put('/privilege/:privilegeId', function (req, res, next) {
-    logger.reqLog(req, 'privilege.update');
+    reqLog(req, 'privilege.update');
     next()
   },
     privilege.update
@@ -37,7 +37,7 @@ module.exports = app => {
 
   // Delete privilege by id
   app.delete('/privilege/:privilegeId', function (req, res, next) {
-    logger.reqLog(req, 'privilege.remove');
+    reqLog(req, 'privilege.remove');
     next()
   },
     privilege.remove
@@ -45,7 +45,7 @@ module.exports = app => {
 
   // Delete all privileges
   app.delete('/privilege', function (req, res, next) {
-    logger.reqLog(req, 'privilege.removeAll');
+    reqLog(req, 'privilege.removeAll');
     next()
   },
     privilege.removeAll
@@ -53,7 +53,7 @@ module.exports = app => {
 
   // Disable a privilege
   app.put('/privilege/disable/:privilegeId', function (req, res, next) {
-    logger.reqLog(req, 'privilege.disable');
+    reqLog(req, 'privilege.disable');
     next()
   },
     privilege.disable
