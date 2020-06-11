@@ -1,8 +1,8 @@
 module.exports = app => {
 
   const user = require('../controllers/user.controller');
-  const { reqLog } = require('../middlewares/logger');
-  const { tokenAuthentication } = require('../middlewares/jwtAuth');
+  const { reqLog } = require('../middlewares/logger.middleware');
+  const { tokenAuthentication } = require('../middlewares/jwtAuth.middleware');
 
   // Create new user
   app.post('/user', function (req, res, next) {

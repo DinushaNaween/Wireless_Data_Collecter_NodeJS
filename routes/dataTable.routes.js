@@ -1,7 +1,7 @@
 module.exports = app => {
   
   const dataTable = require('../controllers/dataTable.controller');
-  const { reqLog } = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new data table for a new node
   app.post('/dataTable', function (req, res, next) {

@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const rolePrivilege = require('../controllers/rolePrivilege.controller');
-  const { reqLog } = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new rolePrivilege
   app.post('/rolePrivilege', function (req, res, next) {

@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const common = require('../controllers/common.controller');
-  const { reqLog } = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Get table info
   app.get('/common/:tableName', function (req, res, next) {

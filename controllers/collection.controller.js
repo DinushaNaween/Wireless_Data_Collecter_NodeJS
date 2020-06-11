@@ -1,5 +1,5 @@
 const Collection = require('../models/collection.model');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 // create and save new collection
 exports.create = (req, res) => {

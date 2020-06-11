@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const node = require('../controllers/node.controller');
-  const { reqLog } = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new node
   app.post('/node', function (req, res, next) {

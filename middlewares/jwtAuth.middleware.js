@@ -1,5 +1,5 @@
 const AuthToken = require('../models/authToken.model');
-const logger = require('./logger');
+const logger = require('./logger.middleware');
 
 const { sign, verify } = require('jsonwebtoken');
 

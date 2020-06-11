@@ -1,5 +1,5 @@
 const Node = require('../models/node.model');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 // create and save new node
 exports.create = (req, res) => {

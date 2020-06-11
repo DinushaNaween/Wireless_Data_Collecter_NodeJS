@@ -1,7 +1,7 @@
 module.exports = app => {
 
   const collection = require('../controllers/collection.controller');
-  const { reqLog } = require('../middlewares/logger');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
   // Create new collection
   app.post('/collection', function (req, res, next) {
