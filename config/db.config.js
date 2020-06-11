@@ -1,5 +1,5 @@
 const { createConnection } = require('mysql');
-const logger = require('../middlewares/logger');
+const logger = require('../middlewares/logger.middleware');
 
 const HOST = process.env.HOST;
 const USER = process.env.USER;
