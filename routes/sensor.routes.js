@@ -3,10 +3,9 @@ module.exports = app => {
   const sensor = require('../controllers/sensor.controller');
   const { reqLog } = require('../middlewares/logger.middleware');
   const { multerUpload } = require('../middlewares/multer.middleware');
-  const { uploadSensorImage } = require('../middlewares/fileUpload.middleware');
 
   // Create new sensor
-  app.post('/sensor', multerUpload, uploadSensorImage, function (req, res, next) {
+  app.post('/sensor', multerUpload, function (req, res, next) {
     reqLog(req, 'sensor.create');
     next()
   },
