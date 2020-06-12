@@ -11,8 +11,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`role` (
   `roleId` INT NOT NULL AUTO_INCREMENT ,
   `roleName` VARCHAR(45) NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`roleId`))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`privilege` (
   `privilegeId` INT NOT NULL AUTO_INCREMENT ,
   `privilegeDescription` VARCHAR(45) NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`privilegeId`))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`rolePrivilege` (
   `roleId` INT NULL ,
   `privilegeId` INT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`rolePrivilegeId`) ,
   FOREIGN KEY (`roleId`)
   REFERENCES `wdc`.`role` (`roleId`)
@@ -63,9 +63,10 @@ CREATE TABLE IF NOT EXISTS `wdc`.`user` (
   `lastName` VARCHAR(45) NOT NULL ,
   `loginPassword` LONGTEXT NOT NULL ,
   `roleId` INT NOT NULL ,
+  `userImageURL` LONGTEXT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`userId`),
   FOREIGN KEY (`roleId`)
   REFERENCES `wdc`.`role` (`roleId`)
@@ -82,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`authToken` (
   `userId` INT NOT NULL,
   `refreshToken` LONGTEXT NOT NULL,
   `revoked` INT(1) ZEROFILL NULL ,
-  `createdDateTime` DATETIME NULL DEFAULT NULL,
+  `createdDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`tokenId`),
   FOREIGN KEY (`userId`)
   REFERENCES `wdc`.`user` (`userId`)
@@ -100,9 +101,10 @@ CREATE TABLE IF NOT EXISTS `wdc`.`collection` (
   `collectionLocation` VARCHAR(45) NOT NULL ,
   `noOfUnits` INT ZEROFILL NULL ,
   `createdUserId` INT NOT NULL ,
+  `collectionImageURL` LONGTEXT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`collectionId`) ,
   FOREIGN KEY (`createdUserId`)
   REFERENCES `wdc`.`user` (`userId`)
@@ -121,9 +123,10 @@ CREATE TABLE IF NOT EXISTS `wdc`.`unit` (
   `noOfParentNodes` INT ZEROFILL NULL ,
   `collectionId` INT NOT NULL ,
   `createdUserId` INT NOT NULL ,
+  `unitImageURL` LONGTEXT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`unitId`) ,
   FOREIGN KEY (`collectionId`)
   REFERENCES `wdc`.`collection` (`collectionId`)
@@ -148,8 +151,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`parentNode` (
   `collectionId` INT NOT NULL ,
   `createdUserId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`parentNodeId`) ,
   FOREIGN KEY (`unitId`)
   REFERENCES `wdc`.`unit` (`unitId`)
@@ -170,8 +173,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`node` (
   `parentNodeId` INT NOT NULL ,
   `createdUserId` INT NOT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`nodeId`),
   FOREIGN KEY (`parentNodeId`)
   REFERENCES `wdc`.`parentNode` (`parentNodeId`)
@@ -222,8 +225,8 @@ CREATE TABLE IF NOT EXISTS `wdc`.`sensor` (
   `specialFact` VARCHAR(80) NULL ,
   `sensorImageURL` LONGTEXT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
-  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL,
-  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`sensorId`))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
