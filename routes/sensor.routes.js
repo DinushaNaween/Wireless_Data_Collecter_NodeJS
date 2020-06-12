@@ -29,7 +29,7 @@ module.exports = app => {
   );
 
   // Update sensor by id
-  app.put('/sensor/:sensorId', function (req, res, next) {
+  app.put('/sensor/:sensorId', multerUpload, function (req, res, next) {
     reqLog(req, 'sensor.update');
     next()
   },

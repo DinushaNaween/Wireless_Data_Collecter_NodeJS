@@ -11,7 +11,7 @@ cloudinary.config({
   api_secret: process.env.COLUDINARY_API_SECRET
 });
 
-exports.uploadSensorImage = (req, sensor, result) => {
+exports.uploadSensorImage = (req, fileName, result) => {
   if (!req.file) {
     logger.warn('sensor image not found');
     result('not_found', null);
@@ -20,7 +20,7 @@ exports.uploadSensorImage = (req, sensor, result) => {
   } else {
     const imageDataUri = parser.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
-    cloudinary.uploader.upload(imageDataUri.content, { folder: 'sensor_images', public_id: `${sensor.id}_${sensor.sensorName}`, use_filename: true }, function (err, res) {
+    cloudinary.uploader.upload(imageDataUri.content, { folder: 'sensor_images', public_id: fileName, use_filename: true }, function (err, res) {
       if (err) {
         logger.error('cloudinary.uploader.upload', err.message);
         result('error', null);

@@ -36,7 +36,9 @@ exports.create = (req, res) => {
         });
       } else {
         logger.info('sensor created');
-        fileUploadService.uploadSensorImage(req, data, (imageUploadState, sensorImageURL) => {
+        let fileName = `${data.id}_${data.sensorName}`;
+
+        fileUploadService.uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
           switch (imageUploadState) {
             case 'not_found':
               logger.info('sensor created without image');
@@ -48,7 +50,7 @@ exports.create = (req, res) => {
               break;
 
             case 'error':
-              logger.info('sensor created without image');
+              logger.info('error while uploading image');
               res.status(200).json({
                 state: true,
                 imageState: false,
@@ -161,13 +163,57 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.info('update success');
-        res.status(200).json({
-          state: true,
-          updated_sensor: data
+        let fileName = `${req.params.sensorId}_${req.body.sensorName}`;
+
+        fileUploadService.uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
+          switch (imageUploadState) {
+            case 'not_found':
+              logger.info('sensor updated without image');
+              res.status(200).json({
+                state: true,
+                imageState: false,
+                updated_sensor: data
+              });
+              break;
+            
+            case 'error':
+              logger.info('error while uploading image');
+              res.status(200).json({
+                state: true,
+                imageState: false,
+                updated_sensor: data
+              });
+              break;
+
+            case 'success':
+              Sensor.updateSensorImageURL(sensorImageURL, req.params.sensorId, (err, updatedData) => {
+                if (err) {
+                  logger.error('updateSensorImageURL', err.message);
+                  res.status(200).json({
+                    state: true,
+                    imageState: false,
+                    updated_sensor: data
+                  });
+                }
+
+                if (updatedData) {
+                  logger.info('sensor updated with image');
+                  data.sensorImageURL = sensorImageURL;
+                  res.status(200).json({
+                    state: true,
+                    imageState: true,
+                    updated_sensor: data
+                  });
+                }
+              });
+              break;
+          
+            default:
+              break;
+          }
         });
       }
-    })
+    });
   }
 };
 
