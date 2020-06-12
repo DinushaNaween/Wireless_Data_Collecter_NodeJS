@@ -1,6 +1,7 @@
 const cloudinary = require('cloudinary').v2;
 const path = require('path');
 const DataUriParser = require('datauri/parser');
+const logger = require('../middlewares/logger.middleware');
 
 const parser = new DataUriParser();
 
@@ -12,19 +13,19 @@ cloudinary.config({
 
 exports.uploadSensorImage = (req, res, next) => {
   if (!req.file) {
+    logger.warn('sensor image not found');
     next()
   } else{
     const imageDataUri = parser.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
     cloudinary.uploader.upload(imageDataUri.content, { folder: 'sensor_images', public_id: req.file.originalname, use_filename: true }, function(err, result){
       if (err) {
-        console.log(err);
+        logger.error('cloudinary.uploader.upload', err.message);
         next()
       } else{
-        console.log(result.secure_url);
         req.body.sensorImageURL = result.secure_url;
         next()
       }
     });
   };
-};
+};  
