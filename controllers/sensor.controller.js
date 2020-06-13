@@ -1,6 +1,7 @@
 const Sensor = require('../models/sensor.model');
 const logger = require('../middlewares/logger.middleware');
-const fileUploadService = require('../services/fileUpload.service');
+
+const { uploadSensorImage } = require('../services/fileUpload.service');
 
 // create and save new sensor
 exports.create = (req, res) => {
@@ -38,7 +39,7 @@ exports.create = (req, res) => {
         logger.info('sensor created');
         let fileName = `${data.id}_${data.sensorName}`;
 
-        fileUploadService.uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
+        uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
           switch (imageUploadState) {
             case 'not_found':
               logger.info('sensor created without image');
@@ -165,7 +166,7 @@ exports.update = (req, res) => {
       } else {
         let fileName = `${req.params.sensorId}_${req.body.sensorName}`;
 
-        fileUploadService.uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
+        uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
           switch (imageUploadState) {
             case 'not_found':
               logger.info('sensor updated without image');
