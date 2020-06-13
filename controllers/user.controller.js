@@ -5,6 +5,7 @@ const logger = require('../middlewares/logger.middleware');
 const { hash, compare } = require('bcrypt');
 const { createAccessAndRefreshTokens } = require('../middlewares/jwtAuth.middleware');
 const { sendVerificationCode } = require('../services/mail.service');
+const { uploadUserImage } = require('../services/fileUpload.service');
 
 // Create and save new user
 exports.create = (req, res) => {
@@ -26,6 +27,7 @@ exports.create = (req, res) => {
                 message: err.message || 'Some error occurred while creating the user.'
               });
             } else {
+              console.log(req.body.email);
               let user = new User({
                 email: req.body.email,
                 userName: req.body.userName,
@@ -33,6 +35,7 @@ exports.create = (req, res) => {
                 lastName: req.body.lastName,
                 loginPassword: hash,
                 roleId: req.body.roleId,
+                userImageURL: req.body.userImageURL,
                 disabled: req.body.disabled,
                 lastModifiedUser: req.body.lastModifiedUser,
                 lastModifiedDateTime: new Date()
@@ -43,13 +46,60 @@ exports.create = (req, res) => {
                   logger.error('user.create', err.message);
                   res.status(500).json({
                     state: false,
-                    message: err.message || 'Some error occurred while creating the user.'
+                    message: err.message || 'Some error occurred while creating the user.' 
                   });
                 } else {
                   logger.info('user created', data);
-                  res.status(200).json({
-                    state: true,
-                    created_user: data
+                  let fileName = `${data.id}_${data.firstName}_${data.lastName}`;
+
+                  uploadUserImage(req, fileName, (imageUploadState, userImageURL) => {
+                    console.log(imageUploadState);
+                    console.log(userImageURL);
+                    switch (imageUploadState) {
+                      case 'not_found':
+                        logger.info('user created without image');
+                        res.status(200).json({
+                          state: true,
+                          imageState: false,
+                          created_user: data
+                        });
+                        break;
+          
+                      case 'error':
+                        logger.info('error while uploading image');
+                        res.status(200).json({
+                          state: true,
+                          imageState: false,
+                          created_user: data
+                        });
+                        break;
+                    
+                      case 'success':
+                        User.updateUserImageURL(userImageURL, data.id, (err, updatedData) => {
+                          if (err) {
+                            logger.error('updateUserImageURL', err.message);
+                            res.status(200).json({
+                              state: true,
+                              imageState: false,
+                              created_user: data
+                            });
+                          } 
+          
+                          if (updatedData) {
+                            logger.info('user created with image');
+                            data.userImageURL = userImageURL;
+                            res.status(200).json({
+                              state: true,
+                              imageState: true,
+                              created_user: data
+                            });
+                          }
+                        });
+                        break;
+          
+                      default:
+                        break;
+                    }
                   })
                 }
               });

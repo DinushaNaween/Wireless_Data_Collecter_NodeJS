@@ -11,12 +11,12 @@ cloudinary.config({
   api_secret: process.env.COLUDINARY_API_SECRET
 });
 
+// Upload sensor images
 exports.uploadSensorImage = (req, fileName, result) => {
   if (!req.file) {
     logger.warn('sensor image not found');
     result('not_found', null);
     return;
-
   } else {
     const imageDataUri = parser.format(path.extname(req.file.originalname).toString(), req.file.buffer);
 
@@ -31,4 +31,27 @@ exports.uploadSensorImage = (req, fileName, result) => {
       }
     });
   };
-};  
+};
+
+// Upload user images
+exports.uploadUserImage = (req, fileName, result) => {
+  console.log('image upload function')
+  if (!req.file) {
+    logger.warn('user image not found');
+    result('not_found', null); 
+    return;
+  } else {
+    const imageDataUri = parser.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+
+    cloudinary.uploader.upload(imageDataUri.content, { folder: 'user_images', public_id: fileName, use_filename: true }, function (err, res) {
+      if (err) {
+        logger.error('cloudinary.uploader.upload', err.message);
+        result('error', null);
+        return;
+      } else {
+        result('success', res.secure_url);
+        return;
+      }
+    });
+  }
+}

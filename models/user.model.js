@@ -7,6 +7,7 @@ const User = function (user) {
   this.lastName = user.lastName;
   this.loginPassword = user.loginPassword;
   this.roleId = user.roleId;
+  this.userImageURL = user.userImageURL;
   this.disabled = user.disabled;
   this.lastModifiedUser = user.lastModifiedUser;
   this.lastModifiedDateTime = user.lastModifiedDateTime;
@@ -26,6 +27,21 @@ User.create = (newUser, result) => {
     return;
   });
 };
+
+// Update user imageURL
+User.updateUserImageURL = (userImageURL, userId, result) => {
+  sql.query('UPDATE user SET userImageURL = ? WHERE userId = ?', [userImageURL, userId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (debug) console.log('ImageURL updated', res);
+    result(null, res);
+    return;
+  })
+}
 
 // Get all users from database
 User.getAll = (result) => {
