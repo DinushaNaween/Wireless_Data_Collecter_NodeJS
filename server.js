@@ -33,7 +33,7 @@ require('./routes/parentNode.routes')(app);
 require('./routes/node.routes')(app);
 require('./routes/sensor.routes')(app);
 require('./routes/dataTable.routes')(app);
-require('./routes/common.routes')(app);
+require('./routes/table.routes')(app);
 
 app.listen(8080, (err, result) => {
   if (err) {

@@ -286,11 +286,55 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.info('update success');
-        res.status(200).json({
-          state: true,
-          updated_user: data
-        });
+        let fileName = `${req.params.userId}_${req.body.firstName}_${req.body.lastName}`;
+
+        uploadUserImage(req, fileName, (imageUploadState, userImageURL) => {
+          switch (imageUploadState) {
+            case 'not_found':
+              logger.info('user update without user image');
+              res.status(200).json({
+                state: true,
+                imageState: false,
+                updated_user: data
+              });
+              break;
+            
+            case 'error':
+              logger.error('error while uploading image');
+              res.status(500).json({
+                state: false,
+                imageState: false,
+                updated_user: data
+              });
+              break;
+
+            case 'success':
+              User.updateUserImageURL(userImageURL, req.params.userId, (err, updatedData) => {
+                if (err) {
+                  logger.error('updateUserImageURL', err.message);
+                  res.status(200).json({
+                    state: true,
+                    imageState: false,
+                    updated_user: data
+                  });
+                }
+
+                if (updatedData) {
+                  logger.info('user updated with image');
+                  data.userImageURL = userImageURL;
+                  res.status(200).json({
+                    state: true,
+                    imageState: true,
+                    updated_user: data
+                  });
+                }
+              });
+              break;
+          
+            default:
+              break;
+          }
+        })
       }
     });
   }
@@ -492,6 +536,21 @@ exports.resetLoginPassword = (req, res) => {
     }
   };
 };
+
+// Password verify
+exports.verifyPassword = (req, res) => {
+  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
+    res.status(400).send({
+      state: false,
+      message: 'Content can not be empty!'
+    });
+  } else {
+    User.findByEmail(req.body.email, (err, data) => {
+      
+    })
+  }
+}
 
 // Delete a user by id
 exports.remove = (req, res) => {

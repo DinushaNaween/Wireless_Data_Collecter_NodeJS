@@ -180,7 +180,7 @@ exports.update = (req, res) => {
             case 'error':
               logger.info('error while uploading image');
               res.status(200).json({
-                state: true,
+                state: false,
                 imageState: false,
                 updated_sensor: data
               });
@@ -192,7 +192,7 @@ exports.update = (req, res) => {
                   logger.error('updateSensorImageURL', err.message);
                   res.status(200).json({
                     state: true,
-                    imageState: false,
+                    imageState: false, 
                     updated_sensor: data
                   });
                 }

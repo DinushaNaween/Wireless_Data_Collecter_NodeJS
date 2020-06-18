@@ -80,7 +80,7 @@ User.findById = (userId, result) => {
 
 // Update a user
 User.updateById = (userId, user, result) => {
-  sql.query('UPDATE user SET userName = ?, firstName = ?, lastName = ?, roleId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.userName, user.firstName, user.lastName, user.roleId, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
+  sql.query('UPDATE user SET userName = ?, firstName = ?, lastName = ?, roleId = ?, userImageURL = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE userId = ?', [user.userName, user.firstName, user.lastName, user.roleId, user.userImageURL, user.disabled, user.lastModifiedUser, user.lastModifiedDateTime, userId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
