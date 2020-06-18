@@ -50,4 +50,12 @@ module.exports = app => {
   },
     dataTable.getAllDataTableNames
   );
+
+  // Get data table info by table name
+  app.post('/dataTable/getTableByName', function (req, res, next) {
+    reqLog(req, 'dataTable.getDataTableByTableName');
+    next()
+  },
+    dataTable.getDataTableByTableName
+  );
 }

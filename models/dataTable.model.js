@@ -182,3 +182,25 @@ exports.getAllDataTables = (result) => {
     return
   });
 };
+
+// Get data table info by table name
+exports.getDataTableByTableName = (dataTableName, result) => {
+
+  let columns = [];
+
+  sqlConnection.query('SELECT * FROM information_schema.columns WHERE TABLE_SCHEMA = \'WDC\' AND TABLE_NAME = ?', [dataTableName], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    for (let i = 0; i < res.length; i++) {
+      columns.push(res[i].COLUMN_NAME);
+    }
+
+    if (debug) console.log(columns);
+    result(null, columns);
+    return;
+  });
+}
