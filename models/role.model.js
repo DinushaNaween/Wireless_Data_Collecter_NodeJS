@@ -40,7 +40,7 @@ Role.getAll = (result) => {
 
 // get role by id
 Role.findById = (roleId, result) => {
-  sql.query('SELECT * FROM role WHERE roleId =' + roleId, (err, res) => {
+  sql.query('SELECT * FROM role WHERE roleId = ?', [roleId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

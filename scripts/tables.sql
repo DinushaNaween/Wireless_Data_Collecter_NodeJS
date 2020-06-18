@@ -193,11 +193,11 @@ CREATE TABLE IF NOT EXISTS `wdc`.`node` (
 -- -----------------------------------------------------
 -- CREATE TABLE IF NOT EXISTS `wdc`.`data` (
 --   `dataId` INT NOT NULL AUTO_INCREMENT ,
+--   `nodeId` INT NOT NULL ,
 --   `data1` VARCHAR(45) NULL ,
 --   `data2` VARCHAR(45) NULL ,
 --   `data3` VARCHAR(45) NULL ,
 --   `data4` VARCHAR(45) NULL ,
---   `nodeId` INT NOT NULL ,
 --   `isValidated` INT(1) ZEROFILL NULL ,
 --   `disabled` INT(1) ZEROFILL NULL ,
 --   `savedDateTime` DATETIME NULL DEFAULT NULL,
