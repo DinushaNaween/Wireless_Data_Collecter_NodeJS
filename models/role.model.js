@@ -10,7 +10,6 @@ const Role = function (role) {
 // create and save new role
 Role.create = (newRole, result) => {
   sql.query('INSERT INTO role SET ?', newRole, (err, res) => {
-    console.log(newRole);
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

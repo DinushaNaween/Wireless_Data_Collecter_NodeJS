@@ -1,20 +1,25 @@
-function groupArrayOfObjects(list, key) {
-  return list.reduce(function(rv, x) {
-    (rv[x[key]] = rv[x[key]] || []).push(x);
-    return rv;
-  }, {});
-};
+// A simple promise that resolves after a given time
+const timeOut = (t) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (t === 2000) {
+        reject(`Rejected in ${t}`)
+      } else {
+        resolve(`Completed in ${t}`)
+      }
+    }, t)
+  })
+}
 
-var people = [
-    {sex:"Male", name:"Jeff"},
-    {sex:"Female", name:"Megan"},
-    {sex:"Male", name:"Taylor"},
-    {sex:"Female", name:"Madison"}
-];
-var groupedPeople=groupArrayOfObjects(people,"sex");
+const durations = [1000, 2000, 3000]
 
-let all = [];
-all.push(groupedPeople.Male);
-all.push(groupedPeople.Female)
+const promises = []
 
-console.log(all);
+durations.map((duration) => {
+  promises.push(timeOut(duration)) 
+})
+
+// We are passing an array of pending promises to Promise.all
+Promise.all(promises)
+.then(response => console.log(response)) // Promise.all cannot be resolved, as one of the promises passed got rejected.
+.catch(error => console.log(`Error in executing ${error}`)) // Promise.all throws an error.

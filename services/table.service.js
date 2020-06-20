@@ -1,7 +1,7 @@
-const { query } = require('../config/db.config');
+const sql = require('../config/db.config');
 
 exports.getTableInfo = (tableName, result) => {
-  query('SHOW COLUMNS FROM ' + tableName, (err, res) => {
+  sql.query('SHOW COLUMNS FROM ' + tableName, (err, res) => {
     if (err) {
       if (debug) console.log('Error on getting columns of table: ', err);
       result(err, null);
@@ -15,7 +15,7 @@ exports.getTableInfo = (tableName, result) => {
 }
 
 exports.renameTable = (tableName, newTableName, result) => {
-  query('ALTER TABLE ' + tableName + ' RENAME TO ' + newTableName, (err, res) => {
+  sql.query('ALTER TABLE ' + tableName + ' RENAME TO ' + newTableName, (err, res) => {
     if (err) {
       if (debug) console.log('Error on renaming table: ', err);
       result(err, null);

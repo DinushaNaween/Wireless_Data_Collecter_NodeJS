@@ -3,7 +3,6 @@
   "data": [
     {
       "nodeId": "1",
-      "dataId": "",
       "humadity": "",
       "soil_moisture": "",
       "tempurature": "",
@@ -11,7 +10,6 @@
     },
     {
       "nodeId": "2",
-      "dataId": "",
       "humadity": "",
       "soil_moisture": "",
       "tempurature": "",
@@ -19,7 +17,6 @@
     },
     {
       "nodeId": "3",
-      "dataId": "",
       "humadity": "",
       "soil_moisture": "",
       "tempurature": "",
