@@ -1,6 +1,8 @@
 const Data = require('../models/data.model');
 const logger = require('../middlewares/logger.middleware');
+const { promise_handler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
+const { response } = require('express');
 
 // Save parent node data object. Includes child node data.
 exports.save = (req, res) => {
@@ -28,9 +30,12 @@ exports.save = (req, res) => {
           dataArray.push(req.body.data[i]);
         }
 
-        saveData(dataArray);
+        let response = saveData(dataArray);
+        console.log(response);
 
-
+        res.status(200).json({
+          state: true
+        })
 
       }
     })
@@ -42,27 +47,37 @@ function saveData(dataArray){
   const promises = [];
 
   dataArray.map((data) => {
-    promises.push(saveDataObject(data))
-  })
+    promises.push(saveDataObject(data));
+  });
 
-  Promise.all(promises)
+  Promise.all(promises.map(promise_handler))
     .then(response => {
-      console.log(response);
+      let resolved = [];
+      let rejected = [];
+
+      response.forEach(value => {
+        if (value.status === 'resolved') resolved.push(value.data);
+        if (value.status === 'rejected') rejected.push(value.data);
+      })
+
+      console.log(`Values: ${JSON.stringify(response)}`);
+      console.log(`Resolved: `, resolved);
+      console.log(`Rejected: `, rejected);
     })
     .catch(error => {
       console.log(error);
     })
-}
+};
 
 // Save one data packet in one data table.
 const saveDataObject = (data) => {
   return new Promise((resolve, reject) => {
     Data.save(`data_${data.nodeId}`, data, (err, savedData) => {
       if (err) {
-        reject('Reject with err');
+        reject(data.nodeId);
       } else {
         resolve(savedData.nodeId);
       }
-    })
-  })
-}
+    });
+  });
+};
