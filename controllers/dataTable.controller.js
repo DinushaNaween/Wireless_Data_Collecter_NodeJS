@@ -154,3 +154,13 @@ exports.getAllDataTableNames = (req, res) => {
     }
   });
 };
+
+// Get data table info by table name
+exports.getDataTableByTableName = (req, res) => {
+  DataTable.getDataTableByTableName(req.body.tableName, (err, data) => {
+    res.status(200).json({
+      err: err,
+      data: data
+    })
+  })
+}

@@ -1,29 +1,14 @@
-const { query } = require('../config/db.config');
-
-exports.getTableInfo = (tableName, result) => {
-  query('SHOW COLUMNS FROM ' + tableName, (err, res) => {
-    if (err) {
-      if (debug) console.log('Error on getting columns of table: ', err);
-      result(err, null);
-      return;
-    }
-
-    if (debug) console.log('Table info: ', res);
-    result(null, res);
-    return;
-  })
+// This promice-reflect use to map rejects in Promice.all
+const promise_handler =  function(promise) {
+  return promise
+      .then(data => {
+        return {data: data, status: "resolved"}
+      })
+      .catch(error => {
+        return {data: error, status: "rejected"}
+      });
 }
 
-exports.renameTable = (tableName, newTableName, result) => {
-  query('ALTER TABLE ' + tableName + ' RENAME TO ' + newTableName, (err, res) => {
-    if (err) {
-      if (debug) console.log('Error on renaming table: ', err);
-      result(err, null);
-      return;
-    }
-
-    if (debug) console.log('Table info: ', res);
-    result(null, res);
-    return;
-  })
+module.exports = {
+  promise_handler
 }

@@ -69,3 +69,15 @@ exports.debug = (msg, obj) => {
   let message = `| ${timeStamp()} | ${msg} |`
   logger.debug(message, {data: obj});
 }
+
+exports.warn = (msg) => {
+
+  let message = `| ${timeStamp()} | ${msg} |`
+  logger.warn(message);
+}
+
+exports.warn = (msg, obj) => {
+
+  let message = `| ${timeStamp()} | ${msg} |`
+  logger.warn(message, {data: obj});
+}

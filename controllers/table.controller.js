@@ -1,8 +1,8 @@
-const common = require('../services/common.service');
+const table = require('../services/table.service');
 const logger = require('../middlewares/logger.middleware');
 
 exports.getTableInfo = (req, res) => {
-  common.getTableInfo(req.params.tableName, (err, data) => {
+  table.getTableInfo(req.params.tableName, (err, data) => {
     if (err) {
       logger.error('getTableInfo', err.message);
       res.status(500).json({
@@ -20,7 +20,7 @@ exports.getTableInfo = (req, res) => {
 };
 
 exports.renameTable = (req, res) => {
-  common.renameTable(req.body.tableName, req.body.newTableName, (err, data) => {
+  table.renameTable(req.body.tableName, req.body.newTableName, (err, data) => {
     if (err) {
       logger.error('renameTable', err.message);
       res.status(500).json({

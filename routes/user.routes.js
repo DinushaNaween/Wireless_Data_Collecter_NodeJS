@@ -3,10 +3,12 @@ module.exports = app => {
   const user = require('../controllers/user.controller');
   const { reqLog } = require('../middlewares/logger.middleware');
   const { tokenAuthentication } = require('../middlewares/jwtAuth.middleware');
+  const { multerUpload } = require('../middlewares/multer.middleware');
 
   // Create new user
-  app.post('/user', function (req, res, next) {
+  app.post('/user', multerUpload, function (req, res, next) {
     reqLog(req, 'user.create');
+    console.log(req.file);
     next()
   },
     user.create
@@ -37,7 +39,7 @@ module.exports = app => {
   );
 
   // Update user by id
-  app.put('/user/:userId', function (req, res, next) {
+  app.put('/user/:userId', multerUpload, function (req, res, next) {
     reqLog(req, 'user.update');
     next()
   },

@@ -1,5 +1,5 @@
 const { createConnection } = require('mysql');
-const commonService = require('../services/common.service');
+const tableService = require('../services/table.service');
 
 const USER = process.env.USER;
 const PASSWORD = process.env.PASSWORD;
@@ -23,7 +23,7 @@ sqlConnection.connect(error => {
 // Create new data table for a new node
 exports.createNewDataTable = (nodeId, columns, result) => {
   let columnsArray = [];
-  let tableName = 'Data_' + nodeId;
+  let tableName = 'data_' + nodeId;
 
   for (let i = 0; i < columns.length; i++) {
     columnsArray.push(columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ')');
@@ -36,7 +36,7 @@ exports.createNewDataTable = (nodeId, columns, result) => {
       return;
     }
 
-    commonService.getTableInfo(tableName, (err, data) => {
+    tableService.getTableInfo(tableName, (err, data) => {
       if (err) {
         result(err, null);
         return;
@@ -65,7 +65,7 @@ exports.addColumnToTableByTableName = (tableName, columns, result) => {
       return;
     }
 
-    commonService.getTableInfo(tableName, (err, data) => {
+    tableService.getTableInfo(tableName, (err, data) => {
       if (err) {
         result(err, null);
         return;
@@ -95,7 +95,7 @@ exports.modifyColumnByTableName = (tableName, columns, result) => {
       return;
     }
 
-    commonService.getTableInfo(tableName, (err, data) => {
+    tableService.getTableInfo(tableName, (err, data) => {
       if (err) {
         result(err, null);
         return;
@@ -123,7 +123,7 @@ exports.dropColumnByTableName = (tableName, columns, result) => {
       return;
     }
 
-    commonService.getTableInfo(tableName, (err, data) => {
+    tableService.getTableInfo(tableName, (err, data) => {
       if (err) {
         result(err, null);
         return;
@@ -150,7 +150,7 @@ exports.renameColumnByTableName = (tableName, columns, result) => {
       return;
     }
 
-    commonService.getTableInfo(tableName, (err, data) => {
+    tableService.getTableInfo(tableName, (err, data) => {
       if (err) {
         result(err, null);
         return;
@@ -182,3 +182,25 @@ exports.getAllDataTables = (result) => {
     return
   });
 };
+
+// Get data table info by table name
+exports.getDataTableByTableName = (dataTableName, result) => {
+
+  let columns = [];
+
+  sqlConnection.query('SELECT * FROM information_schema.columns WHERE TABLE_SCHEMA = \'WDC\' AND TABLE_NAME = ?', [dataTableName], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    for (let i = 0; i < res.length; i++) {
+      columns.push(res[i].COLUMN_NAME);
+    }
+
+    if (debug) console.log(columns);
+    result(null, columns);
+    return;
+  });
+}

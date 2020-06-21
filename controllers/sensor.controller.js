@@ -1,6 +1,8 @@
 const Sensor = require('../models/sensor.model');
 const logger = require('../middlewares/logger.middleware');
 
+const { uploadSensorImage } = require('../services/fileUpload.service');
+
 // create and save new sensor
 exports.create = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -35,9 +37,54 @@ exports.create = (req, res) => {
         });
       } else {
         logger.info('sensor created');
-        res.status(200).json({
-          state: true,
-          created_sensor: data
+        let fileName = `${data.id}_${data.sensorName}`;
+
+        uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
+          switch (imageUploadState) {
+            case 'not_found':
+              logger.info('sensor created without image');
+              res.status(200).json({
+                state: true,
+                imageState: false,
+                created_sensor: data
+              });
+              break;
+
+            case 'error':
+              logger.info('error while uploading image');
+              res.status(200).json({
+                state: true,
+                imageState: false,
+                created_sensor: data
+              });
+              break;
+          
+            case 'success':
+              Sensor.updateSensorImageURL(sensorImageURL, data.id, (err, updatedData) => {
+                if (err) {
+                  logger.error('updateSensorImageURL', err.message);
+                  res.status(200).json({
+                    state: true,
+                    imageState: false,
+                    created_sensor: data
+                  });
+                } 
+
+                if (updatedData) {
+                  logger.info('sensor created with image');
+                  data.sensorImageURL = sensorImageURL;
+                  res.status(200).json({
+                    state: true,
+                    imageState: true,
+                    created_sensor: data
+                  });
+                }
+              });
+              break;
+
+            default:
+              break;
+          }
         });
       }
     });
@@ -117,13 +164,57 @@ exports.update = (req, res) => {
           });
         }
       } else {
-        logger.info('update success');
-        res.status(200).json({
-          state: true,
-          updated_sensor: data
+        let fileName = `${req.params.sensorId}_${req.body.sensorName}`;
+
+        uploadSensorImage(req, fileName, (imageUploadState, sensorImageURL) => {
+          switch (imageUploadState) {
+            case 'not_found':
+              logger.info('sensor updated without image');
+              res.status(200).json({
+                state: true,
+                imageState: false,
+                updated_sensor: data
+              });
+              break;
+            
+            case 'error':
+              logger.info('error while uploading image');
+              res.status(200).json({
+                state: false,
+                imageState: false,
+                updated_sensor: data
+              });
+              break;
+
+            case 'success':
+              Sensor.updateSensorImageURL(sensorImageURL, req.params.sensorId, (err, updatedData) => {
+                if (err) {
+                  logger.error('updateSensorImageURL', err.message);
+                  res.status(200).json({
+                    state: true,
+                    imageState: false, 
+                    updated_sensor: data
+                  });
+                }
+
+                if (updatedData) {
+                  logger.info('sensor updated with image');
+                  data.sensorImageURL = sensorImageURL;
+                  res.status(200).json({
+                    state: true,
+                    imageState: true,
+                    updated_sensor: data
+                  });
+                }
+              });
+              break;
+          
+            default:
+              break;
+          }
         });
       }
-    })
+    });
   }
 };
 
