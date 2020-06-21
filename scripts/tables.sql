@@ -230,3 +230,40 @@ CREATE TABLE IF NOT EXISTS `wdc`.`sensor` (
   PRIMARY KEY (`sensorId`))
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table `wdc`.`dataAck`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`dataAck` (
+  `dataAckId` INT NOT NULL AUTO_INCREMENT ,
+  `parentNodeId` INT NOT NULL ,
+  `successNodes` INT(10) NULL ,
+  `errorNodes` INT(10) NULL ,
+  `noOfMissedNodes` INT(10) NULL ,
+  `savedDateTime` DATETIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`dataAckId`),
+  FOREIGN KEY (`parentNodeId`)
+  REFERENCES `wdc`.`parentNode` (`parentNodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
+  ENGINE = InnoDB
+  DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table `wdc`.`dataValidation`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`dataValidation` (
+  `dataValidationId` INT NOT NULL AUTO_INCREMENT ,
+  `parentNodeId` INT NOT NULL ,
+  `sensorId` INT NOT NULL ,
+  `lowerValidLimit` INT(10) NULL ,
+  `upperValidLimit` INT(10) NULL ,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`dataValidationId`),
+  FOREIGN KEY (`parentNodeId`)
+  REFERENCES `wdc`.`parentNode` (`parentNodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
+  ENGINE = InnoDB
+  DEFAULT CHARACTER SET = utf8;
