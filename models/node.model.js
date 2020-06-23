@@ -58,6 +58,26 @@ Node.findById = (nodeId, result) => {
   });
 };
 
+// Get nodes by parentNodeId
+Node.findByParentNodeId = (parentNodeId, result) => {
+  sql.query('SELECT nodeId FROM node WHERE parentNodeId = ?', [parentNodeId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      if (debug) console.log('Found nodes: ', res);
+      result(null, res);
+      return;
+    }
+
+    result({ kind: 'not_found' }, null);
+    return;
+  });
+};
+
 // update a node
 Node.updateById = (nodeId, node, result) => {
   sql.query('UPDATE node SET parentNodeId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE nodeId = ?', [node.parentNodeId, node.createdUserId, node.disabled, node.lastModifiedUser, node.lastModifiedDateTime, nodeId], (err, res) => {
