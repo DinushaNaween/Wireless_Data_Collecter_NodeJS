@@ -5,7 +5,6 @@ const DataAck = function (dataAck) {
   this.successNodes = dataAck.successNodes;
   this.errorNodes = dataAck.errorNodes;
   this.noOfMissedNodes = dataAck.noOfMissedNodes;
-  this.noOfExtraNodes = dataAck.noOfExtraNodes;
   this.savedDateTime = dataAck.savedDateTime;
 };
 
@@ -21,6 +20,25 @@ DataAck.saveAcknowledgement = (newDataAck, result) => {
     result(null, { id: res.insertId, ...newDataAck });
     return;
   });
+}
+
+DataAck.getDataAcknowledgementById = (dataAckId, result) => {
+  sql.query('SELECT * FROM dataAck WHERE dataAckId = ?', [dataAckId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      if (debug) console.log('Found node: ', res[0]);
+      result(null, res[0]);
+      return;
+    }
+    
+    result({ kind: 'not_found' }, null);
+    return;
+  })
 }
 
 module.exports = DataAck;
