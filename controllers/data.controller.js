@@ -4,7 +4,6 @@ const DataAck = require('../models/dataAck.model');
 const Node = require('../models/node.model');
 const { promise_handler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
-const { response } = require('express');
 
 // Save parent node data object. Includes child node data.
 exports.save = (req, res) => {
@@ -32,8 +31,6 @@ exports.save = (req, res) => {
           dataArray.push(req.body.data[i]);
         }
 
-        // saveData(dataArray);
-
         Node.findByParentNodeId(parentNode.parentNodeId, (err, data) => {
           if (err) {
             if (err.kind === 'not_found') {
@@ -57,23 +54,22 @@ exports.save = (req, res) => {
             for (let j = 0; j < req.body.data.length; j++) { nodesFromParentNode.push(parseInt(req.body.data[j].nodeId)); }
 
             const missedNodes = [...new Set(nodesFromDB.filter(node => !nodesFromParentNode.includes(node)))];
-            const extraNodes = [...new Set(nodesFromParentNode.filter(node => !nodesFromDB.includes(node)))];
-console.log(extraNodes);
-            saveData(dataArray, missedNodes, extraNodes, parentNode.parentNodeId);
+
+            saveData(dataArray, missedNodes, parentNode.parentNodeId);
           }
-        })
+        });
 
         res.status(200).json({
           state: true
-        })
+        });
 
       }
-    })
+    });
   }
-}
+};
 
 // Parent node data array save in relevent data tables.
-function saveData(dataArray, missedNodes, extraNodes, parentNodeId){
+function saveData(dataArray, missedNodes, parentNodeId){
   const promises = [];
 
   dataArray.map((data) => {
@@ -85,7 +81,6 @@ function saveData(dataArray, missedNodes, extraNodes, parentNodeId){
       let resolved = [];
       let rejected = [];
       let missed = Array.from(missedNodes);
-      let extra = Array.from(extraNodes);
 
       response.forEach(value => {
         if (value.status === 'resolved') resolved.push(value.data);
@@ -95,14 +90,12 @@ function saveData(dataArray, missedNodes, extraNodes, parentNodeId){
       let resolvedNodesString = resolved.join();
       let rejectedNodesString = rejected.join();
       let missedNodesString = missed.join();
-      let extraNodesString = extra.join();
 
       const newDataAck = new DataAck({
         parentNodeId: parentNodeId,
         successNodes: resolvedNodesString,
         errorNodes: rejectedNodesString,
         noOfMissedNodes: missedNodesString,
-        noOfExtraNodes: extraNodesString,
         savedDateTime: new Date()
       })
 
