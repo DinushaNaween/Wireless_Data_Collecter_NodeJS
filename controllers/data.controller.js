@@ -2,7 +2,7 @@ const Data = require('../models/data.model');
 const logger = require('../middlewares/logger.middleware');
 const DataAck = require('../models/dataAck.model');
 const Node = require('../models/node.model');
-const { promise_handler } = require('../services/common.service');
+const { promiseHandler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
 
 // Save parent node data object. Includes child node data.
@@ -76,7 +76,7 @@ function saveData(dataArray, missedNodes, parentNodeId){
     promises.push(saveDataObject(data));
   });
 
-  Promise.all(promises.map(promise_handler))
+  Promise.all(promises.map(promiseHandler))
     .then(response => {
       let resolved = [];
       let rejected = [];
@@ -95,7 +95,7 @@ function saveData(dataArray, missedNodes, parentNodeId){
         parentNodeId: parentNodeId,
         successNodes: resolvedNodesString,
         errorNodes: rejectedNodesString,
-        noOfMissedNodes: missedNodesString,
+        missedNodes: missedNodesString,
         savedDateTime: new Date()
       })
 

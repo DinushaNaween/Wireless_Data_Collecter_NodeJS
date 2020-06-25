@@ -22,7 +22,7 @@ exports.getDataAcknowledgementById = (req, res) => {
 
       data.successNodes = (Array.from(data.successNodes.split(','))).map((i) => Number(i));
       data.errorNodes = (Array.from(data.errorNodes.split(','))).map((i) => Number(i));
-      data.noOfMissedNodes = (Array.from(data.noOfMissedNodes.split(','))).map((i) => Number(i));
+      data.missedNodes = (Array.from(data.missedNodes.split(','))).map((i) => Number(i));
 
       res.status(200).json({
         state: true,

@@ -4,7 +4,7 @@ const DataAck = function (dataAck) {
   this.parentNodeId = dataAck.parentNodeId;
   this.successNodes = dataAck.successNodes;
   this.errorNodes = dataAck.errorNodes;
-  this.noOfMissedNodes = dataAck.noOfMissedNodes;
+  this.missedNodes = dataAck.missedNodes;
   this.savedDateTime = dataAck.savedDateTime;
 };
 
