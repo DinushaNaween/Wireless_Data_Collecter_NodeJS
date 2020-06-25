@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`parentNode` (
   `parentNodeId` INT NOT NULL AUTO_INCREMENT ,
   `parentNodeName` VARCHAR(45) NULL ,
   `parentNodeLocation` VARCHAR(45) NOT NULL ,
-  `noOfNodes` INT ZEROFILL NOT NULL ,
+  `childNodes` INT VARCHAR(45) NULL ,
   `unitId` INT NOT NULL ,
   `collectionId` INT NOT NULL ,
   `createdUserId` INT NOT NULL ,
@@ -239,7 +239,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`dataAck` (
   `parentNodeId` INT NOT NULL ,
   `successNodes` INT(10) NULL ,
   `errorNodes` INT(10) NULL ,
-  `noOfMissedNodes` INT(10) NULL ,
+  `missedNodes` INT(10) NULL ,
   `savedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`dataAckId`),
   FOREIGN KEY (`parentNodeId`)
