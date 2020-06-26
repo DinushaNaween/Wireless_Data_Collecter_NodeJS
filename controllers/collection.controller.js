@@ -101,7 +101,7 @@ exports.update = (req, res) => {
     });
   } else {
     req.body.lastModifiedDateTime = new Date();
-    req.body.units = req.body.units.join();
+    req.body.units.join();
 
     Collection.updateById(req.params.collectionId, new Collection(req.body), (err, data) => {
       if (err) {

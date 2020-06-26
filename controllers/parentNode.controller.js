@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     let parentNode = new ParentNode({
       parentNodeName: req.body.parentNodeName,
       parentNodeLocation: req.body.parentNodeLocation,
-      childNodes: req.body.childNodes.join(),
+      nodes: req.body.nodes.join(),
       unitId: req.body.unitId,
       collectionId: req.body.collectionId,
       createdUserId: req.body.createdUserId,
@@ -53,7 +53,7 @@ exports.getAll = (req, res) => {
     } else {
       logger.info('getAll success');
 
-      let structuredData = stringToIntArrayBulk(data, 'childNodes');
+      let structuredData = stringToIntArrayBulk(data, 'nodes');
       
       res.status(200).json({
         state: true,
@@ -83,7 +83,7 @@ exports.findById = (req, res) => {
     } else {
       logger.info('findById success');
 
-      data.childNodes = stringToIntArray(data.childNodes);
+      data.nodes = stringToIntArray(data.nodes);
 
       res.status(200).json({
         state: true,
@@ -103,7 +103,7 @@ exports.update = (req, res) => {
     });
   } else {
     req.body.lastModifiedDateTime = new Date();
-    req.body.childNodes = req.body.childNodes.join();
+    req.body.nodes.join();
 
     ParentNode.updateById(req.params.parentNodeId, new ParentNode(req.body), (err, data) => {
       if (err) {
