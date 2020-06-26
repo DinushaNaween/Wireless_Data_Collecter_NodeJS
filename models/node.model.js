@@ -10,7 +10,7 @@ const Node = function (node) {
 
 // create and save new node
 Node.create = (newNode, result) => {
-  sql.query('INSERT INTO node SET ?', newNode, (err, res) => {
+  sql.query('INSERT INTO node SET ?', [newNode], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -40,7 +40,7 @@ Node.getAll = (result) => {
 
 // get node by id
 Node.findById = (nodeId, result) => {
-  sql.query('SELECT * FROM node WHERE nodeId =' + nodeId, (err, res) => {
+  sql.query('SELECT * FROM node WHERE nodeId = ?' , [nodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -50,6 +50,26 @@ Node.findById = (nodeId, result) => {
     if (res.length) {
       if (debug) console.log('Found node: ', res[0]);
       result(null, res[0]);
+      return;
+    }
+
+    result({ kind: 'not_found' }, null);
+    return;
+  });
+};
+
+// Get nodes by parentNodeId
+Node.findByParentNodeId = (parentNodeId, result) => {
+  sql.query('SELECT nodeId FROM node WHERE parentNodeId = ?', [parentNodeId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      if (debug) console.log('Found nodes: ', res);
+      result(null, res);
       return;
     }
 

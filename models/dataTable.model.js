@@ -26,7 +26,7 @@ exports.createNewDataTable = (nodeId, columns, result) => {
   let tableName = 'data_' + nodeId;
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ')');
+    columnsArray.push(`${columns[i].sensorId}_${columns[i].column}` + ' ' + columns[i].type + '(' + columns[i].size + ')');
   }
 
   sqlConnection.query('CREATE TABLE ' + tableName +' (dataId INT NOT NULL AUTO_INCREMENT, nodeId INT NOT NULL, ' + columnsArray.join() + ', ' + 'isValidated INT(2) ZEROFILL NULL, disabled INT(2) ZEROFILL NULL, savedDateTime DATETIME NULL DEFAULT NULL, PRIMARY KEY(dataId), FOREIGN KEY(nodeId) REFERENCES `wdc`.`node` (`nodeId`) ON DELETE NO ACTION ON UPDATE CASCADE) ENGINE = InnoDB DEFAULT CHARACTER SET = utf8', (err, res) => {
@@ -55,7 +55,7 @@ exports.addColumnToTableByTableName = (tableName, columns, result) => {
   let columnsArray = [];
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(' ADD ' + columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ') AFTER nodeId');
+    columnsArray.push(' ADD ' + `${columns[i].sensorId}_${columns[i].column}` + ' ' + columns[i].type + '(' + columns[i].size + ') AFTER nodeId');
   }
 
   sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(', '), (err, res) => {
@@ -85,7 +85,7 @@ exports.modifyColumnByTableName = (tableName, columns, result) => {
   let columnsArray = [];
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(' MODIFY ' + columns[i].column + ' ' + columns[i].type + '(' + columns[i].size + ')')
+    columnsArray.push(' MODIFY ' + `${columns[i].sensorId}_${columns[i].column}` + ' ' + columns[i].type + '(' + columns[i].size + ')')
   }
 
   sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {
@@ -109,11 +109,13 @@ exports.modifyColumnByTableName = (tableName, columns, result) => {
 
 // Drop a columns by table name
 exports.dropColumnByTableName = (tableName, columns, result) => {
+  console.log('drop column');
 
   let columnsArray = [];
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(' DROP COLUMN ' + columns[i]);
+    console.log(`${columns[i].sensorId}_${columns[i].column}`);
+    columnsArray.push(' DROP COLUMN ' + `${columns[i].sensorId}_${columns[i].column}`);
   }
 
   sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {
@@ -140,7 +142,7 @@ exports.renameColumnByTableName = (tableName, columns, result) => {
   let columnsArray = [];
 
   for (let i = 0; i < columns.length; i++) {
-    columnsArray.push(' CHANGE COLUMN ' + columns[i].column + ' ' + columns[i].newName + ' ' + columns[i].type + '(' + columns[i].size + ')');
+    columnsArray.push(' CHANGE COLUMN ' + `${columns[i].sensorId}_${columns[i].column}` + ' ' + columns[i].newName + ' ' + columns[i].type + '(' + columns[i].size + ')');
   }
 
   sqlConnection.query('ALTER TABLE ' + tableName + columnsArray.join(), (err, res) => {

@@ -1,5 +1,6 @@
 const ParentNode = require('../models/parentNode.model');
 const logger = require('../middlewares/logger.middleware');
+const { stringToIntArray, stringToIntArrayBulk } = require('../services/common.service');
 
 // create and save new parent node
 exports.create = (req, res) => {
@@ -13,7 +14,7 @@ exports.create = (req, res) => {
     let parentNode = new ParentNode({
       parentNodeName: req.body.parentNodeName,
       parentNodeLocation: req.body.parentNodeLocation,
-      noOfNodes: req.body.noOfNodes,
+      childNodes: req.body.childNodes.join(),
       unitId: req.body.unitId,
       collectionId: req.body.collectionId,
       createdUserId: req.body.createdUserId,
@@ -32,7 +33,7 @@ exports.create = (req, res) => {
       } else {
         logger.info('parentNode created');
         res.status(200).json({
-          state: true,
+          state: true, 
           created_parentNode: data
         });
       }
@@ -51,9 +52,12 @@ exports.getAll = (req, res) => {
       });
     } else {
       logger.info('getAll success');
+
+      let structuredData = stringToIntArrayBulk(data, 'childNodes');
+      
       res.status(200).json({
         state: true,
-        parentNodes: data
+        parentNodes: structuredData
       });
     }
   });
@@ -78,6 +82,9 @@ exports.findById = (req, res) => {
       }
     } else {
       logger.info('findById success');
+
+      data.childNodes = stringToIntArray(data.childNodes);
+
       res.status(200).json({
         state: true,
         parentNode: data
@@ -96,6 +103,7 @@ exports.update = (req, res) => {
     });
   } else {
     req.body.lastModifiedDateTime = new Date();
+    req.body.childNodes = req.body.childNodes.join();
 
     ParentNode.updateById(req.params.parentNodeId, new ParentNode(req.body), (err, data) => {
       if (err) {

@@ -1,8 +1,9 @@
 const Data = require('../models/data.model');
 const logger = require('../middlewares/logger.middleware');
-const { promise_handler } = require('../services/common.service');
+const DataAck = require('../models/dataAck.model');
+const Node = require('../models/node.model');
+const { promiseHandler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
-const { response } = require('express');
 
 // Save parent node data object. Includes child node data.
 exports.save = (req, res) => {
@@ -30,39 +31,81 @@ exports.save = (req, res) => {
           dataArray.push(req.body.data[i]);
         }
 
-        let response = saveData(dataArray);
-        console.log(response);
+        Node.findByParentNodeId(parentNode.parentNodeId, (err, data) => {
+          if (err) {
+            if (err.kind === 'not_found') {
+              logger.error('Node.findByParentNodeId notFound')
+              ers.status(500).json({
+                state: false,
+                message: 'Not found any nodes with parentNodeId: ' + parentNode.parentNodeId
+              });
+            } else {
+              logger.error('Node.findByParentNodeId', err.message);
+              res.status(500).json({
+                state: false,
+                message: 'Error occured on getting nodes for parentNodeId'
+              });
+            }
+          } else if (data) {
+            let nodesFromDB = [];
+            let nodesFromParentNode = [];
+
+            for (let i = 0; i < data.length; i++) { nodesFromDB.push(data[i].nodeId); }
+            for (let j = 0; j < req.body.data.length; j++) { nodesFromParentNode.push(parseInt(req.body.data[j].nodeId)); }
+
+            const missedNodes = [...new Set(nodesFromDB.filter(node => !nodesFromParentNode.includes(node)))];
+
+            saveData(dataArray, missedNodes, parentNode.parentNodeId);
+          }
+        });
 
         res.status(200).json({
           state: true
-        })
+        });
 
       }
-    })
+    });
   }
-}
+};
 
 // Parent node data array save in relevent data tables.
-function saveData(dataArray){
+function saveData(dataArray, missedNodes, parentNodeId){
   const promises = [];
 
   dataArray.map((data) => {
     promises.push(saveDataObject(data));
   });
 
-  Promise.all(promises.map(promise_handler))
+  Promise.all(promises.map(promiseHandler))
     .then(response => {
       let resolved = [];
       let rejected = [];
+      let missed = Array.from(missedNodes);
 
       response.forEach(value => {
         if (value.status === 'resolved') resolved.push(value.data);
         if (value.status === 'rejected') rejected.push(value.data);
       })
 
-      console.log(`Values: ${JSON.stringify(response)}`);
-      console.log(`Resolved: `, resolved);
-      console.log(`Rejected: `, rejected);
+      let resolvedNodesString = resolved.join();
+      let rejectedNodesString = rejected.join();
+      let missedNodesString = missed.join();
+
+      const newDataAck = new DataAck({
+        parentNodeId: parentNodeId,
+        successNodes: resolvedNodesString,
+        errorNodes: rejectedNodesString,
+        missedNodes: missedNodesString,
+        savedDateTime: new Date()
+      })
+
+      DataAck.saveAcknowledgement(newDataAck, (err, ackData) => {
+        if (err) {
+          console.log(err);
+        } else{
+          console.log(ackData);
+        }
+      })
     })
     .catch(error => {
       console.log(error);
@@ -81,3 +124,5 @@ const saveDataObject = (data) => {
     });
   });
 };
+
+// End of Save parent node data object.
