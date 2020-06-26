@@ -1,5 +1,6 @@
 const Collection = require('../models/collection.model');
 const logger = require('../middlewares/logger.middleware');
+const { stringToIntArray, stringToIntArrayBulk } = require('../services/common.service');
 
 // create and save new collection
 exports.create = (req, res) => {
@@ -13,7 +14,7 @@ exports.create = (req, res) => {
     let collection = new Collection({
       collectionName: req.body.collectionName,
       collectionLocation: req.body.collectionLocation,
-      noOfUnits: req.body.noOfUnits,
+      noOfUnits: req.body.units.join(),
       createdUserId: req.body.createdUserId,
       disabled: req.body.disabled,
       lastModifiedUser: req.body.lastModifiedUser,
@@ -49,9 +50,12 @@ exports.getAll = (req, res) => {
       });
     } else {
       logger.info('getAll success');
+
+      let structuredData = stringToIntArrayBulk(data, units);
+
       res.status(200).json({
         state: true,
-        collections: data
+        collections: structuredData
       });
     }
   });
@@ -76,6 +80,9 @@ exports.findById = (req, res) => {
       }
     } else {
       logger.info('findById success');
+
+      data.units = stringToIntArray(data.units);
+
       res.status(200).json({
         state: true,
         collection: data
@@ -94,6 +101,7 @@ exports.update = (req, res) => {
     });
   } else {
     req.body.lastModifiedDateTime = new Date();
+    req.body.units = req.body.units.join();
 
     Collection.updateById(req.params.collectionId, new Collection(req.body), (err, data) => {
       if (err) {

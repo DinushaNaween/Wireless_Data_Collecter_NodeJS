@@ -99,7 +99,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`collection` (
   `collectionId` INT NOT NULL AUTO_INCREMENT ,
   `collectionName` VARCHAR(45) NOT NULL ,
   `collectionLocation` VARCHAR(45) NOT NULL ,
-  `noOfUnits` INT ZEROFILL NULL ,
+  `units` INT ZEROFILL NULL ,
   `createdUserId` INT NOT NULL ,
   `collectionImageURL` LONGTEXT NULL ,
   `disabled` INT(1) ZEROFILL NULL ,
