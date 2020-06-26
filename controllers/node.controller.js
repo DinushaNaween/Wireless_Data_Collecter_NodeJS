@@ -10,15 +10,22 @@ exports.create = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    let node = new Node({
-      parentNodeId: req.body.parentNodeId,
-      createdUserId: req.body.createdUserId,
-      disabled: req.body.disabled,
-      lastModifiedUser: req.body.lastModifiedUser,
-      lastModifiedDateTime: new Date()
-    });
+    let nodeArray = [];
+
+    for (let i = 0; i < req.body.noOfNodes; i++) {
+      let tempArray = [];
+      tempArray.push(req.body.parentNodeId);      
+      tempArray.push(req.body.createdUserId)
+      tempArray.push(req.body.disabled)
+      tempArray.push(req.body.lastModifiedUser)
+      tempArray.push(new Date())
+
+      nodeArray.push(tempArray);
+    }
   
-    Node.create(node, (err, data) => {
+    console.log(nodeArray);
+
+    Node.create(nodeArray, (err, data) => {
       if (err) {
         logger.error('create', err.message);
         res.status(500).json({
