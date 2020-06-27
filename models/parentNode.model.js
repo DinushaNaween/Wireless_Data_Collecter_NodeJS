@@ -3,7 +3,7 @@ const sql = require('../config/db.config');
 const ParentNode = function (parentNode) {
   this.parentNodeName = parentNode.parentNodeName;
   this.parentNodeLocation = parentNode.parentNodeLocation;
-  this.childNodes = parentNode.childNodes;
+  this.nodes = parentNode.nodes;
   this.unitId = parentNode.unitId;
   this.collectionId = parentNode.collectionId;
   this.createdUserId = parentNode.createdUserId;
@@ -13,17 +13,25 @@ const ParentNode = function (parentNode) {
 };
 
 // create and save new parentNode
-ParentNode.create = (newParentNode, result) => {
-  sql.query('INSERT INTO parentNode SET ?', newParentNode, (err, res) => {
+ParentNode.create = (newParentNodes, result) => {
+  sql.query('INSERT INTO parentNode(parentNodeName, parentNodeLocation, nodes, unitId, collectionId, createdUserId, disabled, lastModifiedUser, lastModifiedDateTime) VALUES ?', [newParentNodes], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
     
-    if (debug) console.log('Created parent node: ', { id: res.insertId, ...newParentNode });
-    result(null, { id: res.insertId, ...newParentNode });
-    return;
+    sql.query('SELECT * FROM parentNode WHERE unitId = ? AND parentNodeId >= ?', [newParentNodes[0][3], res.insertId], (err, newParentNodes) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+      
+      if (debug) console.log('Created parent nodes: ', newParentNodes);
+      result(null, newParentNodes);
+      return;
+    })
   });
 };
 
@@ -64,7 +72,7 @@ ParentNode.findById = (parentNodeId, result) => {
 
 // update a parentNode
 ParentNode.updateById = (parentNodeId, parentNode, result) => {
-  sql.query('UPDATE parentNode SET parentNodeName = ?, parentNodeLocation = ?, childNodes = ?, unitId = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.parentNodeName, parentNode.parentNodeLocation, parentNode.childNodes, parentNode.unitId, parentNode.collectionId, parentNode.createdUserId, parentNode.disabled, parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
+  sql.query('UPDATE parentNode SET parentNodeName = ?, parentNodeLocation = ?, nodes = ?, unitId = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.parentNodeName, parentNode.parentNodeLocation, parentNode.nodes, parentNode.unitId, parentNode.collectionId, parentNode.createdUserId, parentNode.disabled, parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

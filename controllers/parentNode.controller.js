@@ -1,6 +1,7 @@
 const ParentNode = require('../models/parentNode.model');
 const logger = require('../middlewares/logger.middleware');
 const { stringToIntArray, stringToIntArrayBulk } = require('../services/common.service');
+const { updateChildArray } = require('../services/common.service');
 
 // create and save new parent node
 exports.create = (req, res) => {
@@ -11,19 +12,25 @@ exports.create = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    let parentNode = new ParentNode({
-      parentNodeName: req.body.parentNodeName,
-      parentNodeLocation: req.body.parentNodeLocation,
-      childNodes: req.body.childNodes.join(),
-      unitId: req.body.unitId,
-      collectionId: req.body.collectionId,
-      createdUserId: req.body.createdUserId,
-      disabled: req.body.disabled,
-      lastModifiedUser: req.body.lastModifiedUser,
-      lastModifiedDateTime: new Date()
-    });
+    let parentNodeArray = [];
+    
+    for (let i = 0; i < req.body.data.length; i++) {
+      let tempArray = [];
+      const parentNode = req.body.data[i];
+      tempArray.push(parentNode.parentNodeName);
+      tempArray.push(parentNode.parentNodeLocation);
+      tempArray.push(parentNode.nodes.join());
+      tempArray.push(parentNode.unitId);
+      tempArray.push(parentNode.collectionId);
+      tempArray.push(parentNode.createdUserId);
+      tempArray.push(parentNode.disabled);
+      tempArray.push(parentNode.lastModifiedUser);
+      tempArray.push(new Date());
+
+      parentNodeArray.push(tempArray);
+    }
   
-    ParentNode.create(parentNode, (err, data) => {
+    ParentNode.create(parentNodeArray, (err, data) => {
       if (err) {
         logger.error('create', err.message);
         res.status(500).json({
@@ -32,10 +39,24 @@ exports.create = (req, res) => {
         });
       } else {
         logger.info('parentNode created');
-        res.status(200).json({
-          state: true, 
-          created_parentNode: data
-        });
+        
+        let updateData = updateChildArray('unit', 'unitId', 'parentNodes', data[0].unitId, 'parentNodeId', data);
+
+        updateData.then( function(newAddedIds) {
+          res.status(200).json({
+            state: true, 
+            unitNodeUpdate: true,
+            newAddedIds: newAddedIds,
+            createdParentNodes: data
+          });
+        }, function(err) {
+          logger.error('update unit table parentNodes column', err.message);
+          res.status(200).json({
+            state: true, 
+            unitNodeUpdate: false,
+            createdParentNodes: data
+          });
+        })
       }
     });
   }
@@ -53,7 +74,7 @@ exports.getAll = (req, res) => {
     } else {
       logger.info('getAll success');
 
-      let structuredData = stringToIntArrayBulk(data, 'childNodes');
+      let structuredData = stringToIntArrayBulk(data, 'nodes');
       
       res.status(200).json({
         state: true,
@@ -83,7 +104,7 @@ exports.findById = (req, res) => {
     } else {
       logger.info('findById success');
 
-      data.childNodes = stringToIntArray(data.childNodes);
+      data.nodes = stringToIntArray(data.nodes);
 
       res.status(200).json({
         state: true,
@@ -103,7 +124,7 @@ exports.update = (req, res) => {
     });
   } else {
     req.body.lastModifiedDateTime = new Date();
-    req.body.childNodes = req.body.childNodes.join();
+    req.body.nodes.join();
 
     ParentNode.updateById(req.params.parentNodeId, new ParentNode(req.body), (err, data) => {
       if (err) {

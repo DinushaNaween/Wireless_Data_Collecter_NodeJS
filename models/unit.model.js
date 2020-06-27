@@ -3,7 +3,7 @@ const sql = require('../config/db.config');
 const Unit = function (unit) {
   this.unitName = unit.unitName;
   this.unitLocation = unit.unitLocation;
-  this.noOfParentNodes = unit.noOfParentNodes;
+  this.parentNodes = unit.parentNodes;
   this.collectionId = unit.collectionId;
   this.createdUserId = unit.createdUserId;
   this.disabled = unit.disabled;
@@ -63,7 +63,7 @@ Unit.findById = (unitId, result) => {
 
 // update a unit
 Unit.updateById = (unitId, unit, result) => {
-  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, noOfParentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.noOfParentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
+  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, parentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.noOfParentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

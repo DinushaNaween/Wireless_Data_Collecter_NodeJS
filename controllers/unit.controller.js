@@ -1,5 +1,6 @@
 const Unit = require('../models/unit.model');
 const logger = require('../middlewares/logger.middleware');
+const { stringToIntArray, stringToIntArrayBulk } = require('../services/common.service');
 
 // create and save new unit
 exports.create = (req, res) => {  
@@ -13,7 +14,7 @@ exports.create = (req, res) => {
     let unit = new Unit({
       unitName: req.body.unitName,
       unitLocation: req.body.unitLocation,
-      noOfParentNodes: req.body.noOfParentNodes,
+      parentNodes: req.body.parentNodes.join(),
       collectionId: req.body.collectionId,
       createdUserId: req.body.createdUserId,
       disabled: req.body.disabled,
@@ -50,9 +51,12 @@ exports.getAll = (req, res) => {
       });
     } else {
       logger.info('getAll success');
+
+      let structuredData = stringToIntArrayBulk(data, parentNodes)
+
       res.status(200).json({
         state: true,
-        units: data
+        units: structuredData
       });
     }
   });
@@ -77,6 +81,9 @@ exports.findById = (req, res) => {
       }
     } else {
       logger.info('findById success');
+
+      data.parentNodes = stringToIntArray(data.parentNodes);
+
       res.status(200).json({
         state: true,
         unit: data
@@ -95,6 +102,7 @@ exports.update = (req, res) => {
     });
   } else {
     req.body.lastModifiedDateTime = new Date();
+    req.body.parentNodes.join();
 
     Unit.updateById(req.params.unitId, new Unit(req.body), (err, data) => {
       if (err) {

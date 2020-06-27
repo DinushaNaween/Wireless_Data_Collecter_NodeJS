@@ -9,17 +9,25 @@ const Node = function (node) {
 };
 
 // create and save new node
-Node.create = (newNode, result) => {
-  sql.query('INSERT INTO node SET ?', [newNode], (err, res) => {
+Node.create = (nodes, result) => {
+  sql.query('INSERT INTO node(parentNodeId, createdUserId, disabled, lastModifiedUser, lastModifiedDateTime) VALUES ?', [nodes], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
     
-    if (debug) console.log('Created node: ', { id: res.insertId, ...newNode });
-    result(null, { id: res.insertId, ...newNode });
-    return;
+    sql.query('SELECT * FROM node WHERE parentNodeId = ? AND nodeId >= ?',[nodes[0][0], res.insertId], (err, newNodes) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+
+      if (debug) console.log('Created nodes: ', newNodes);
+      result(null, newNodes);
+      return;
+    })
   });
 };
 
