@@ -52,15 +52,7 @@ const updateChildArray = function(tableName, keyAttributeOfTable, columnToUpdate
           }
 
           if (res) {
-            sql.query(`SELECT * FROM ${tableName} WHERE ${keyAttributeOfTable} = ${keyAttributeValue}`, (err, updatedElement) => {
-              if (err) {
-                reject(err.message);
-              }
-
-              if (updatedElement) {
-                resolve(updatedElement);
-              }
-            })
+            resolve(newIds);
           }
         })
       }
