@@ -1,5 +1,6 @@
 const Node = require('../models/node.model');
 const logger = require('../middlewares/logger.middleware');
+const { updateChildArray } = require('../services/common.service');
 
 // create and save new node
 exports.create = (req, res) => {
@@ -22,8 +23,6 @@ exports.create = (req, res) => {
 
       nodeArray.push(tempArray);
     }
-  
-    console.log(nodeArray);
 
     Node.create(nodeArray, (err, data) => {
       if (err) {
@@ -34,9 +33,21 @@ exports.create = (req, res) => {
         });
       } else {
         logger.info('node created');
-        res.status(200).json({
-          state: true,
-          created_node: data
+
+        let updateData = updateChildArray('parentNode', 'parentNodeId', 'nodes', data[0].parentNodeId, 'nodeId', data);
+
+        updateData.then( function(result) {
+          res.status(200).json({
+            state: true,
+            parentNodeUpdate: true,
+            updatedParentNode: result
+          });
+        }, function(err) {
+          res.status(200).json({
+            state: true,
+            parentNodeUpdate: false,
+            createdNodes: data
+          });
         });
       }
     });

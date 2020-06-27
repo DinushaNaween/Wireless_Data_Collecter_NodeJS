@@ -17,15 +17,15 @@ Node.create = (nodes, result) => {
       return;
     }
     
-    sql.query('SELECT * FROM node WHERE parentNodeId = ?',[nodes[0][0]], (err, nodesWithInsertedParentNodeId) => {
+    sql.query('SELECT * FROM node WHERE parentNodeId = ? AND nodeId >= ?',[nodes[0][0], res.insertId], (err, newNodes) => {
       if (err) {
         if (debug) console.log('Error: ', err);
         result(err, null);
         return;
       }
 
-      if (debug) console.log('Created nodes: ', nodesWithInsertedParentNodeId);
-      result(null, nodesWithInsertedParentNodeId);
+      if (debug) console.log('Created nodes: ', newNodes);
+      result(null, newNodes);
       return;
     })
     
