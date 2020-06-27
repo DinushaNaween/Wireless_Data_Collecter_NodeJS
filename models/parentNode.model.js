@@ -13,17 +13,25 @@ const ParentNode = function (parentNode) {
 };
 
 // create and save new parentNode
-ParentNode.create = (newParentNode, result) => {
-  sql.query('INSERT INTO parentNode SET ?', newParentNode, (err, res) => {
+ParentNode.create = (newParentNodes, result) => {
+  sql.query('INSERT INTO parentNode(parentNodeName, parentNodeLocation, nodes, unitId, collectionId, createdUserId, disabled, lastModifiedUser, lastModifiedDateTime) VALUES ?', [newParentNodes], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
     
-    if (debug) console.log('Created parent node: ', { id: res.insertId, ...newParentNode });
-    result(null, { id: res.insertId, ...newParentNode });
-    return;
+    sql.query('SELECT * FROM parentNode WHERE unitId = ? AND parentNodeId >= ?', [newParentNodes[0][3], res.insertId], (err, newParentNodes) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+      
+      if (debug) console.log('Created parent nodes: ', newParentNodes);
+      result(null, newParentNodes);
+      return;
+    })
   });
 };
 

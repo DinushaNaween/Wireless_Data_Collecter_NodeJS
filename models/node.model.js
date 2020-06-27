@@ -28,9 +28,8 @@ Node.create = (nodes, result) => {
       result(null, newNodes);
       return;
     })
-    
   });
-};''
+};
 
 // get all nodes from database
 Node.getAll = (result) => {

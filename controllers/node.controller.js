@@ -30,7 +30,7 @@ exports.create = (req, res) => {
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the node.'
-        });
+        }); 
       } else {
         logger.info('node created');
 
@@ -44,7 +44,7 @@ exports.create = (req, res) => {
             createdNodes: data
           });
         }, function(err) {
-          console.log(err);
+          logger.error('update parent table nodes column', err.message);
           res.status(200).json({
             state: true,
             parentNodeUpdate: false,
@@ -135,7 +135,7 @@ exports.update = (req, res) => {
           updated_node: data
         });
       }
-    })
+    });
   }
 };
 

@@ -53,14 +53,12 @@ const updateChildArray = function(tableName, keyAttributeOfTable, columnToUpdate
 
           if (res) {
             resolve(newIds);
-          }
-        })
+          } 
+        });
       }
-    })
-  })
-
-  
-}
+    });
+  });
+};
 
 module.exports = {
   promiseHandler,
