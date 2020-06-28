@@ -36,11 +36,26 @@ Each node is responsible for their parent node. That means each node sends its s
 3. Create .env file and add following credentials,
 
 ```
-HOST = localhost
-USER = root
-PASSWORD = password
-PORT = 3306
-DB = wdc
+# Database configurations
+HOST = (Host)
+USER = (User)
+PASSWORD = (Your Password)
+PORT = (Port Number)
+DB = (Your Database Name)
+
+# Json Web Token secret key
+JWT_ACCESS_TOKEN_SECRET = (Secret For Access Token)
+JWT_REFRESH_TOKEN_SECRET = (Secret For Refresh Token)
+
+# Mail configurations
+SERVICE = (Email Service)
+MAILADDRESS = (Mail Address For Send Emails)
+MAILPASSWORD = (Password Of Email Address Provided Above)
+
+# Cloudinary configurations
+COLUDINARY_CLOUD_NAME = (Cloudinary Cloud Name)
+COLUDINARY_API_KEY = (Cloudinary API Key)
+COLUDINARY_API_SECRET = (Cloudinary API Secret)
 ```
 
 Rename USER or PASSWORD or any above details according to your mysql credentials.
