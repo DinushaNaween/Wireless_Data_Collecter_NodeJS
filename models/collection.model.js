@@ -62,7 +62,7 @@ Collection.findById = (collectionId, result) => {
 
 // update a collection
 Collection.updateById = (collectionId, collection, result) => {
-  sql.query('UPDATE collection SET collectionName = ?, collectionLocation = ?, units = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.collectionName, collection.collectionLocation, collection.noOfUnits, collection.createdUserId, collection.disabled, collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
+  sql.query('UPDATE collection SET collectionName = ?, collectionLocation = ?, units = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.collectionName, collection.collectionLocation, collection.units, collection.createdUserId, collection.disabled, collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

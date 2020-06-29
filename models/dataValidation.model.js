@@ -35,8 +35,8 @@ DataValidation.getByParentNodeId = (parentNodeId, result) => {
     }
  
     if (res.length) {
-      if (debug) console.log('Found validation: ', res[0]);
-      result(null, res[0]);
+      if (debug) console.log('Found validation: ', res);
+      result(null, res);
       return;
     }
 

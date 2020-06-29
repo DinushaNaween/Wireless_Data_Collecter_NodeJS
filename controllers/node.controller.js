@@ -36,11 +36,11 @@ exports.create = (req, res) => {
 
         let updateData = updateChildArray('parentNode', 'parentNodeId', 'nodes', data[0].parentNodeId, 'nodeId', data);
 
-        updateData.then( function(newAddedIds) {
+        updateData.then( function(newlyAddedIds) {
           res.status(200).json({
             state: true,
             parentNodeUpdate: true,
-            newAddedIds: newAddedIds,
+            newlyAddedIds: newlyAddedIds,
             createdNodes: data
           });
         }, function(err) {

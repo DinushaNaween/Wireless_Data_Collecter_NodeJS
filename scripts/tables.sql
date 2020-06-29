@@ -237,9 +237,9 @@ CREATE TABLE IF NOT EXISTS `wdc`.`sensor` (
 CREATE TABLE IF NOT EXISTS `wdc`.`dataAck` (
   `dataAckId` INT NOT NULL AUTO_INCREMENT ,
   `parentNodeId` INT NOT NULL ,
-  `successNodes` INT(10) NULL ,
-  `errorNodes` INT(10) NULL ,
-  `missedNodes` INT(10) NULL ,
+  `successNodes` LONGTEXT NULL ,
+  `errorNodes` LONGTEXT NULL ,
+  `missedNodes` LONGTEXT NULL ,
   `savedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`dataAckId`),
   FOREIGN KEY (`parentNodeId`)
