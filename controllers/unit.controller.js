@@ -1,6 +1,6 @@
 const Unit = require('../models/unit.model');
 const logger = require('../middlewares/logger.middleware');
-const { stringToIntArray, stringToIntArrayBulk } = require('../services/common.service');
+const { stringToIntArray, stringToIntArrayBulk, updateChildArray } = require('../services/common.service');
 
 // create and save new unit
 exports.create = (req, res) => {  
@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     let unit = new Unit({
       unitName: req.body.unitName,
       unitLocation: req.body.unitLocation,
-      parentNodes: req.body.parentNodes.join(),
+      parentNodes: null,
       collectionId: req.body.collectionId,
       createdUserId: req.body.createdUserId,
       disabled: req.body.disabled,
@@ -30,11 +30,28 @@ exports.create = (req, res) => {
           message: err.message || 'Some error occurred while creating the unit.'
         });
       } else {
-        logger.info('unit created');
-        res.status(200).json({
-          state: true,
-          created_unit: data
-        });
+        logger.info('unit created'); 
+
+        let dataArray = [];
+        dataArray.push(data);
+        console.log(dataArray)
+        let updateData = updateChildArray('collection', 'collectionId', 'units', data.collectionId, 'unitId', dataArray);
+
+        updateData.then( function(newlyAddedId) {
+          res.status(200).json({
+            state: true,
+            collectionUpdate: true,
+            newlyAddedId: newlyAddedId,
+            createdUnit: data 
+          });
+        }, function(err) { 
+          logger.error('update collection table units column', err.message);
+          res.status(200).json({
+            state: true,
+            collectionUpdate: false,
+            createdUnit: data
+          });
+        })
       }
     });
   }

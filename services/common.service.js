@@ -33,18 +33,30 @@ const updateChildArray = function(tableName, keyAttributeOfTable, columnToUpdate
 
   return promise = new Promise( function(resolve, reject) {
     let newIds = [];
-    Array.from(dataSet).forEach(element => {
-      newIds.push(element[dataSetKeyColumnName]);
-    })
 
-    sql.query(`SELECT * FROM ${tableName} WHERE ${keyAttributeOfTable} = ${keyAttributeValue}`, (err, stringArray) => {
+    if (dataSet.length > 1) {
+      Array.from(dataSet).forEach(element => {
+        newIds.push(element[dataSetKeyColumnName]);
+      })
+    } else{
+      newIds.push(dataSet[0][dataSetKeyColumnName]);
+    }
+
+    sql.query(`SELECT * FROM ${tableName} WHERE ${keyAttributeOfTable} = ${keyAttributeValue}`, (err, parentObject) => {
       if (err) {
         reject(err.message);
       } 
 
-      if (stringArray) {
-        let currentArray = stringToIntArray(stringArray[0][columnToUpdate]);
-        let updatedArray = currentArray.concat(newIds);
+      if (parentObject) {
+        let currentString = parentObject[0][columnToUpdate];
+        let updatedArray = [];
+
+        if (currentString == null) {
+          updatedArray = newIds;
+        } else {
+          let currentIntArray = stringToIntArray(currentString);
+          updatedArray = currentIntArray.concat(newIds);
+        }
 
         sql.query(`UPDATE ${tableName} SET ${columnToUpdate} = ?, lastModifiedDateTime = ? WHERE ${keyAttributeOfTable} = ${keyAttributeValue}`,[updatedArray.join(), new Date()], (err, res) => {
           if (err) {

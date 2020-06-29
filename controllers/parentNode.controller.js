@@ -19,7 +19,7 @@ exports.create = (req, res) => {
       const parentNode = req.body.data[i];
       tempArray.push(parentNode.parentNodeName);
       tempArray.push(parentNode.parentNodeLocation);
-      tempArray.push(parentNode.nodes.join());
+      tempArray.push(null);
       tempArray.push(parentNode.unitId);
       tempArray.push(parentNode.collectionId);
       tempArray.push(parentNode.createdUserId);

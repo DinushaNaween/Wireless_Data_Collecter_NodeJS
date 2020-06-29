@@ -2,8 +2,10 @@ const Data = require('../models/data.model');
 const logger = require('../middlewares/logger.middleware');
 const DataAck = require('../models/dataAck.model');
 const Node = require('../models/node.model');
+const DataValidation = require('../models/dataValidation.model');
 const { promiseHandler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
+const { validateData } =  require('../services/dataValidation.service');
 
 // Save parent node data object. Includes child node data.
 exports.save = (req, res) => {
@@ -26,16 +28,17 @@ exports.save = (req, res) => {
         let dataArray = new Array();
         const savedDateTime = new Date();
 
-        for (let i = 0; i < parentNode.noOfNodes ; i++) {
+        for (let i = 0; i < req.body.data.length ; i++) {
           req.body.data[i].savedDateTime = savedDateTime;
           dataArray.push(req.body.data[i]);
+          console.log('dataArray');
         }
 
         Node.findByParentNodeId(parentNode.parentNodeId, (err, data) => {
           if (err) {
             if (err.kind === 'not_found') {
               logger.error('Node.findByParentNodeId notFound')
-              ers.status(500).json({
+              res.status(500).json({
                 state: false,
                 message: 'Not found any nodes with parentNodeId: ' + parentNode.parentNodeId
               });
@@ -56,13 +59,29 @@ exports.save = (req, res) => {
             const missedNodes = [...new Set(nodesFromDB.filter(node => !nodesFromParentNode.includes(node)))];
 
             saveData(dataArray, missedNodes, parentNode.parentNodeId);
+
+            DataValidation.getByParentNodeId(parentNode.parentNodeId, (err, validationData) => {
+              if (err) {
+                if (err.kind === 'not_found') {
+                  logger.error('DataValidation.getByParentNodeId notFound')
+                  res.status(500).json({
+                    state: false,
+                    message: 'Not found any validations for parentNodeId: ' + parentNode.parentNodeId
+                  });
+                } else {
+                  logger.error('DataValidation.getByParentNodeId', err.message);
+                  res.status(500).json({
+                    state: false,
+                    message: 'Error occured on getting validations for parentNodeId'
+                  });
+                }
+              }
+
+              let validationPropsArray = Array.from(validationData);
+              // validateData(parentNode.parentNodeId, req.body.data, validationPropsArray);
+            });
           }
         });
-
-        res.status(200).json({
-          state: true
-        });
-
       }
     });
   }
