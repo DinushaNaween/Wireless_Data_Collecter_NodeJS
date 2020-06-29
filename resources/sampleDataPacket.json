@@ -6,21 +6,27 @@
       "humadity": "",
       "soil_moisture": "",
       "tempurature": "",
-      "timestamp": ""
+      "isValidated": "1",
+      "disabled": "0",
+      "savedDateTime": ""
     },
     {
       "nodeId": "2",
       "humadity": "",
       "soil_moisture": "",
       "tempurature": "",
-      "timestamp": ""
+      "isValidated": "1",
+      "disabled": "0",
+      "savedDateTime": ""
     },
     {
       "nodeId": "3",
       "humadity": "",
       "soil_moisture": "",
       "tempurature": "",
-      "timestamp": ""
+      "isValidated": "1",
+      "disabled": "0",
+      "savedDateTime": ""
     },
     {
       "nodeId": null
