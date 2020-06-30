@@ -10,18 +10,26 @@ const DataValidation = function (dataValidation) {
 };
 
 // Create new dataValidation for parentNode
-DataValidation.create = (newDataValidation, result) => {
+DataValidation.create = (newDataValidations, result) => {
   console.log('model file')
-  sql.query('INSERT INTO dataValidation SET ?', [newDataValidation], (err, res) => {
+  sql.query('INSERT INTO dataValidation(parentNodeId, sensorId, lowerValidLimit, upperValidLimit, lastmodifiedUser, lastModifiedDateTime) VALUES ?', [newDataValidations], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
 
-    if (debug) console.log('Created dataValidation: ', { id: res.insertId, ...newDataValidation });
-    result(null, { id: res.insertId, ...newDataValidation });
-    return;
+    sql.query('SELECT * FROM dataValidation WHERE parentNodeId = ? AND dataValidationId >= ?', [newDataValidations[0][0], res.insertId], (err, dataValidations) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+
+      if (debug) console.log('Created dataValidations: ', dataValidations);
+      result(null, dataValidations);
+      return;
+    })
   });
 };
 
