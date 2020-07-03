@@ -31,7 +31,6 @@ exports.save = (req, res) => {
         for (let i = 0; i < req.body.data.length ; i++) {
           req.body.data[i].savedDateTime = savedDateTime;
           dataArray.push(req.body.data[i]);
-          console.log('dataArray');
         }
 
         Node.findByParentNodeId(parentNode.parentNodeId, (err, data) => {
@@ -48,7 +47,7 @@ exports.save = (req, res) => {
                 state: false,
                 message: 'Error occured on getting nodes for parentNodeId'
               });
-            }
+            } 
           } else if (data) {
             let nodesFromDB = [];
             let nodesFromParentNode = [];
@@ -58,28 +57,51 @@ exports.save = (req, res) => {
 
             const missedNodes = [...new Set(nodesFromDB.filter(node => !nodesFromParentNode.includes(node)))];
 
-            saveData(dataArray, missedNodes, parentNode.parentNodeId);
+            saveData(dataArray, missedNodes, parentNode.parentNodeId)
+              .then((result) => {
+                console.log('result',result);
+                console.log('dataArray', dataArray);
+                let successNodes = result.successNodes.split(',');
 
-            DataValidation.getByParentNodeId(parentNode.parentNodeId, (err, validationData) => {
-              if (err) {
-                if (err.kind === 'not_found') {
-                  logger.error('DataValidation.getByParentNodeId notFound')
-                  res.status(500).json({
-                    state: false,
-                    message: 'Not found any validations for parentNodeId: ' + parentNode.parentNodeId
-                  });
-                } else {
-                  logger.error('DataValidation.getByParentNodeId', err.message);
-                  res.status(500).json({
-                    state: false,
-                    message: 'Error occured on getting validations for parentNodeId'
-                  });
+                for (let i = 0; i < dataArray.length; i++) {
+                  const dataObject = dataArray[i];
+                  if ( !successNodes.includes(dataObject.nodeId) ) {
+                    dataArray.splice(i, 1);
+                  }
                 }
-              }
 
-              let validationPropsArray = Array.from(validationData);
-              // validateData(parentNode.parentNodeId, req.body.data, validationPropsArray);
-            });
+                console.log('successNodes', successNodes);
+                console.log('successDataArray', dataArray);
+
+                DataValidation.getByParentNodeId(parentNode.parentNodeId, (err, validationData) => {
+                  if (err) {
+                    if (err.kind === 'not_found') {
+                      logger.error('DataValidation.getByParentNodeId notFound')
+                      res.status(500).json({
+                        state: false,
+                        message: 'Not found any validations for parentNodeId: ' + parentNode.parentNodeId
+                      });
+                    } else {
+                      logger.error('DataValidation.getByParentNodeId', err.message);
+                      res.status(500).json({
+                        state: false,
+                        message: 'Error occured on getting validations for parentNodeId'
+                      });
+                    }
+                  }
+
+                  validateData(dataArray, Array.from(validationData));
+                });
+
+              }).catch((err) => {
+                console.log(err);
+              });
+
+            
+            
+            res.status(200).json({
+              state: true
+            })
           }
         });
       }
@@ -89,46 +111,52 @@ exports.save = (req, res) => {
 
 // Parent node data array save in relevent data tables.
 function saveData(dataArray, missedNodes, parentNodeId){
-  const promises = [];
 
-  dataArray.map((data) => {
-    promises.push(saveDataObject(data));
-  });
+  return new Promise((resolve, reject) => {
+    const promises = [];
 
-  Promise.all(promises.map(promiseHandler))
-    .then(response => {
-      let resolved = [];
-      let rejected = [];
-      let missed = Array.from(missedNodes);
+    dataArray.map((data) => {
+      promises.push(saveDataObject(data));
+    });
 
-      response.forEach(value => {
-        if (value.status === 'resolved') resolved.push(value.data);
-        if (value.status === 'rejected') rejected.push(value.data);
+    Promise.all(promises.map(promiseHandler))
+      .then(response => {
+        let resolved = [];
+        let rejected = [];
+        let missed = Array.from(missedNodes);
+
+        response.forEach(value => {
+          if (value.status === 'resolved') resolved.push(value.data);
+          if (value.status === 'rejected') rejected.push(value.data);
+        })
+
+        let resolvedNodesString = resolved.join();
+        let rejectedNodesString = rejected.join();
+        let missedNodesString = missed.join();
+
+        const newDataAck = new DataAck({
+          parentNodeId: parentNodeId,
+          successNodes: resolvedNodesString,
+          errorNodes: rejectedNodesString,
+          missedNodes: missedNodesString,
+          savedDateTime: new Date()
+        })
+
+        DataAck.saveAcknowledgement(newDataAck, (err, ackData) => {
+          if (err) {
+            console.log(err);
+            reject(err.message);
+          } else{
+            // console.log(ackData);
+            resolve(ackData);
+          }
+        })
       })
-
-      let resolvedNodesString = resolved.join();
-      let rejectedNodesString = rejected.join();
-      let missedNodesString = missed.join();
-
-      const newDataAck = new DataAck({
-        parentNodeId: parentNodeId,
-        successNodes: resolvedNodesString,
-        errorNodes: rejectedNodesString,
-        missedNodes: missedNodesString,
-        savedDateTime: new Date()
+      .catch(error => {
+        console.log(error);
+        reject(error);
       })
-
-      DataAck.saveAcknowledgement(newDataAck, (err, ackData) => {
-        if (err) {
-          console.log(err);
-        } else{
-          console.log(ackData);
-        }
-      })
-    })
-    .catch(error => {
-      console.log(error);
-    })
+  })
 };
 
 // Save one data packet in one data table.
