@@ -2,6 +2,7 @@ const sql = require('../config/db.config');
 
 // This promice-reflect use to map rejects in Promice.all
 const promiseHandler =  function(promise) {
+  console.log('got promise: ', promise)
   return promise
       .then(data => {
         return {data: data, status: "resolved"}
