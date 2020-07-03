@@ -3,6 +3,7 @@ const sql = require('../config/db.config');
 const DataValidation = function (dataValidation) {
   this.parentNodeId = dataValidation.parentNodeId;
   this.sensorId = dataValidation.sensorId;
+  this.sensorName = dataValidation.sensorName;
   this.lowerValidLimit = dataValidation.lowerValidLimit;
   this.upperValidLimit = dataValidation.upperValidLimit;
   this.lastmodifiedUser = dataValidation.lastmodifiedUser;
@@ -12,7 +13,7 @@ const DataValidation = function (dataValidation) {
 // Create new dataValidation for parentNode
 DataValidation.create = (newDataValidations, result) => {
   console.log('model file')
-  sql.query('INSERT INTO dataValidation(parentNodeId, sensorId, lowerValidLimit, upperValidLimit, lastmodifiedUser, lastModifiedDateTime) VALUES ?', [newDataValidations], (err, res) => {
+  sql.query('INSERT INTO dataValidation(parentNodeId, sensorId, sensorName, lowerValidLimit, upperValidLimit, lastmodifiedUser, lastModifiedDateTime) VALUES ?', [newDataValidations], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

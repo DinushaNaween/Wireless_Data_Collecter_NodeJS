@@ -256,6 +256,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`dataValidation` (
   `dataValidationId` INT NOT NULL AUTO_INCREMENT ,
   `parentNodeId` INT NOT NULL ,
   `sensorId` INT NOT NULL ,
+  `sensorName` VARCHAR(45) NOT NULL,
   `lowerValidLimit` INT(10) NULL ,
   `upperValidLimit` INT(10) NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,

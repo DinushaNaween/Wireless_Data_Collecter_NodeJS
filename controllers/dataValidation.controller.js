@@ -18,6 +18,7 @@ exports.create = (req, res) => {
 
       tempArray.push(req.body.parentNodeId)
       tempArray.push(data.sensorId)
+      tempArray.push(data.sensorName)
       tempArray.push(data.lowerValidLimit)
       tempArray.push(data.upperValidLimit)
       tempArray.push(data.lastmodifiedUser)
