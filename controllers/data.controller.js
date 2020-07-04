@@ -25,12 +25,12 @@ exports.save = (req, res) => {
         });
       } else {
 
-        let dataArray = new Array();
+        let updatedNodes = new Array();
         const savedDateTime = new Date();
 
         for (let i = 0; i < req.body.data.length ; i++) {
           req.body.data[i].savedDateTime = savedDateTime;
-          dataArray.push(req.body.data[i]);
+          updatedNodes.push(req.body.data[i]);
         }
 
         Node.findByParentNodeId(parentNode.parentNodeId, (err, data) => {
@@ -57,48 +57,70 @@ exports.save = (req, res) => {
 
             const missedNodes = [...new Set(nodesFromDB.filter(node => !nodesFromParentNode.includes(node)))];
 
-            saveData(dataArray, missedNodes, parentNode.parentNodeId)
-              .then((result) => {
-                console.log('result',result);
-                console.log('dataArray', dataArray);
-                let successNodes = result.successNodes.split(',');
+            let commonNodes = [];
 
-                for (let i = 0; i < dataArray.length; i++) {
-                  const dataObject = dataArray[i];
-                  if ( !successNodes.includes(dataObject.nodeId) ) {
-                    dataArray.splice(i, 1);
-                  }
+            for (let k = 0; k < nodesFromDB.length; k++) {
+              const nodefromDB = nodesFromDB[k];
+              for (let m = 0; m < updatedNodes.length; m++) {
+                const nodeData = updatedNodes[m];
+                if (nodeData.nodeId == nodefromDB) {
+                  commonNodes.push(nodeData);
                 }
+              }
+            }
+            
+            DataValidation.getByParentNodeId(parentNode.parentNodeId, (err, validationData) => {
+              if (err) {
+                if (err.kind === 'not_found') {
+                  logger.error('DataValidation.getByParentNodeId notFound')
+                  res.status(500).json({
+                    state: false,
+                    message: 'Not found any validations for parentNodeId: ' + parentNode.parentNodeId
+                  });
+                } else {
+                  logger.error('DataValidation.getByParentNodeId', err.message);
+                  res.status(500).json({
+                    state: false,
+                    message: 'Error occured on getting validations for parentNodeId'
+                  });
+                }
+              }
 
-                console.log('successNodes', successNodes);
-                console.log('successDataArray', dataArray);
-
-                DataValidation.getByParentNodeId(parentNode.parentNodeId, (err, validationData) => {
-                  if (err) {
-                    if (err.kind === 'not_found') {
-                      logger.error('DataValidation.getByParentNodeId notFound')
-                      res.status(500).json({
-                        state: false,
-                        message: 'Not found any validations for parentNodeId: ' + parentNode.parentNodeId
-                      });
-                    } else {
-                      logger.error('DataValidation.getByParentNodeId', err.message);
-                      res.status(500).json({
-                        state: false,
-                        message: 'Error occured on getting validations for parentNodeId'
-                      });
-                    }
+              validateData(commonNodes, Array.from(validationData))
+                .then((result) => {
+                  let validatedNodes = result.map(object => object['data'][0]['data'])
+                  
+                  const mergeByNodeId = (validatedNodes, nodesFromReq, prop) => {
+                    nodesFromReq.forEach(sourceElement => {
+                      let targetElement = validatedNodes.find(targetElement => {
+                        return sourceElement[prop] === targetElement[prop];
+                      })
+                      targetElement ? Object.assign(targetElement, sourceElement) : validatedNodes.push(sourceElement);
+                    })
                   }
+                  
+                  mergeByNodeId(validatedNodes, req.body.data, 'nodeId');
 
-                  validateData(dataArray, Array.from(validationData));
+                  saveData(validatedNodes, missedNodes, parentNode.parentNodeId)
+                    .then((result) => {
+                      let successNodes = result.successNodes.split(',');
+
+                      for (let i = 0; i < validatedNodes.length; i++) {
+                        const dataObject = validatedNodes[i];
+                        if ( !successNodes.includes(dataObject.nodeId) ) {
+                          validatedNodes.splice(i, 1);
+                        }
+                      }
+                    })
+                    .catch((err) => {
+                      console.log(err);
+                    });
+                })
+                .catch((err) => {
+                  console.log(err)
                 });
+            });
 
-              }).catch((err) => {
-                console.log(err);
-              });
-
-            
-            
             res.status(200).json({
               state: true
             })
@@ -144,16 +166,16 @@ function saveData(dataArray, missedNodes, parentNodeId){
 
         DataAck.saveAcknowledgement(newDataAck, (err, ackData) => {
           if (err) {
-            console.log(err);
+            logger.error('DataAck.saveAcknowledgement', err.message);
             reject(err.message);
           } else{
-            // console.log(ackData);
+            logger.info('DataAck.saveAcknowledgement success');
             resolve(ackData);
           }
         })
       })
       .catch(error => {
-        console.log(error);
+        logger.error('saveData Promise.all', error);
         reject(error);
       })
   })
@@ -164,8 +186,11 @@ const saveDataObject = (data) => {
   return new Promise((resolve, reject) => {
     Data.save(`data_${data.nodeId}`, data, (err, savedData) => {
       if (err) {
+        logger.error(`Data.save failed to save nodeData with id: ${data.nodeId}`);
+        logger.error('Data.save', err.message);
         reject(data.nodeId);
       } else {
+        logger.info('Data.save success');
         resolve(savedData.nodeId);
       }
     });
