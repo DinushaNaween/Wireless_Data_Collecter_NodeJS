@@ -1,7 +1,10 @@
 const sql = require('../config/db.config');
+const ValidationAck = require('../models/validationAck.model');
+const logger = require('../middlewares/logger.middleware');
 const { promiseHandler } = require('../services/common.service');
+const { loggers } = require('winston');
 
-const validateData = function(data, validationPropsArray) {
+const validateData = function(data, validationPropsArray, parentNodeId) {
 
   return new Promise((resolve, reject) => {
     let dataArray = Array.from(data);
@@ -21,7 +24,7 @@ const validateData = function(data, validationPropsArray) {
     }
 
     const validationsAdder = function(dataObject) {
-      return validator(dataObject, validations)
+      return validator(dataObject, validations, parentNodeId)
     }
 
     dataArray.map((data) => {
@@ -30,17 +33,16 @@ const validateData = function(data, validationPropsArray) {
 
     Promise.all(promises.map(promiseHandler))
       .then(response => {
-        console.log('response = ', response);
         resolve(response);
       })
       .catch(error => {
-        console.log('error = ', error);
+        logger.error('validateData Promise.all', error.message);
         reject(error);
       })
   }) 
 }
 
-const validator = (data, validations) => {
+const validator = (data, validations, parentNodeId) => {
 
   return new Promise((resolve, reject) => {
     try {
@@ -63,6 +65,7 @@ const validator = (data, validations) => {
                 tempElement.state = 'Low';
                 validationStates.push(tempElement);
                 isValidated = false;
+                saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, 'Low');
                 break;
 
               case (dataPropertyValue > validationParameter[2]):
@@ -70,6 +73,7 @@ const validator = (data, validations) => {
                 tempElement.state = 'High';
                 validationStates.push(tempElement);
                 isValidated = false;
+                saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, 'High');
                 break;
 
               case (validationParameter[1] <= dataPropertyValue && dataPropertyValue <= validationParameter[2]):
@@ -95,9 +99,32 @@ const validator = (data, validations) => {
       response.push({ data: data, validationState: validatedDataObjects });
       resolve(response);
     } catch (error) {
+      logger.error('validator try catch', error.message);
       reject('error')
     }
   }) 
+}
+
+function saveValidationAck(parentNodeId, nodeId, dataPropertyName, dataPropertyValue, validationParameter, status) {
+  let newValidationAck = new ValidationAck({
+    parentNodeId: parentNodeId,
+    nodeId: nodeId,
+    dataValidationId: validationParameter[3],
+    sensorName: dataPropertyName,
+    receivedValue: dataPropertyValue,
+    lowerValidLimit: validationParameter[1],
+    upperValidLimit: validationParameter[2],
+    status: status,
+    savedDateTime: new Date()
+  });
+
+  ValidationAck.save(newValidationAck, (err, savedValidationAck) => {
+    if (err) {
+      logger.error('ValidationAck.save', err.message);
+    } else {
+      logger.warn(`Validation error on node with id: ${newValidationAck.nodeId} and savedValidationAck under id: ${savedValidationAck.insertId}`);
+    }
+  })
 }
 
 module.exports = {

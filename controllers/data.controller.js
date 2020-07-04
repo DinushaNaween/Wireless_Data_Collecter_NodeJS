@@ -6,6 +6,7 @@ const DataValidation = require('../models/dataValidation.model');
 const { promiseHandler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
 const { validateData } =  require('../services/dataValidation.service');
+const ParentNode = require('../models/parentNode.model');
 
 // Save parent node data object. Includes child node data.
 exports.save = (req, res) => {
@@ -86,7 +87,7 @@ exports.save = (req, res) => {
                 }
               }
 
-              validateData(commonNodes, Array.from(validationData))
+              validateData(commonNodes, Array.from(validationData), parentNode.parentNodeId)
                 .then((result) => {
                   let validatedNodes = result.map(object => object['data'][0]['data'])
                   
@@ -190,7 +191,7 @@ const saveDataObject = (data) => {
         logger.error('Data.save', err.message);
         reject(data.nodeId);
       } else {
-        logger.info('Data.save success');
+        logger.info(`Data.save node with id: ${data.nodeId} success`);
         resolve(savedData.nodeId);
       }
     });
