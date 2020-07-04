@@ -268,3 +268,33 @@ CREATE TABLE IF NOT EXISTS `wdc`.`dataValidation` (
 	ON UPDATE CASCADE)
   ENGINE = InnoDB
   DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table `wdc`.`validationAck`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`validationAck` (
+  `validationAckId` INT NOT NULL AUTO_INCREMENT ,
+  `parentNodeId` INT NOT NULL ,
+  `nodeId` INT NOT NULL ,
+  `dataValidationId` INT NOT NULL ,
+  `sensorName` VARCHAR(45) NOT NULL,
+  `receivedValue` INT(10) NULL ,
+  `lowerValidLimit` INT(10) NULL ,
+  `upperValidLimit` INT(10) NULL ,
+  `status` VARCHAR(20) NULL ,
+  `savedDateTime` DATETIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`validationAckId`),
+  FOREIGN KEY (`parentNodeId`)
+  REFERENCES `wdc`.`parentNode` (`parentNodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE, 
+  FOREIGN KEY (`nodeId`)
+  REFERENCES `wdc`.`node` (`nodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
+  FOREIGN KEY (`dataValidationId`)
+  REFERENCES `wdc`.`dataValidation` (`dataValidationId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
+  ENGINE = InnoDB
+  DEFAULT CHARACTER SET = utf8;
