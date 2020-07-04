@@ -1,6 +1,4 @@
 const sql = require('../config/db.config');
-const DataValidation = require('../models/dataValidation.model');
-const { response } = require('express');
 const { promiseHandler } = require('../services/common.service');
 
 const validateData = function(data, validationPropsArray) {
@@ -17,6 +15,7 @@ const validateData = function(data, validationPropsArray) {
       tempArray.push(`${validationObject.sensorId}_${validationObject.sensorName}`);
       tempArray.push(validationObject.lowerValidLimit);
       tempArray.push(validationObject.upperValidLimit);
+      tempArray.push(validationObject.dataValidationId);
 
       validations.push(tempArray);
     }
@@ -32,9 +31,11 @@ const validateData = function(data, validationPropsArray) {
     Promise.all(promises.map(promiseHandler))
       .then(response => {
         console.log('response = ', response);
+        resolve(response);
       })
       .catch(error => {
         console.log('error = ', error);
+        reject(error);
       })
   }) 
 }
