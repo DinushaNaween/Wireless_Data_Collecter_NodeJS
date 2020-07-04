@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     let collection = new Collection({
       collectionName: req.body.collectionName,
       collectionLocation: req.body.collectionLocation,
-      noOfUnits: req.body.units.join(),
+      units: null,
       createdUserId: req.body.createdUserId,
       disabled: req.body.disabled,
       lastModifiedUser: req.body.lastModifiedUser,

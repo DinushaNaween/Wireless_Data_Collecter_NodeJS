@@ -237,9 +237,9 @@ CREATE TABLE IF NOT EXISTS `wdc`.`sensor` (
 CREATE TABLE IF NOT EXISTS `wdc`.`dataAck` (
   `dataAckId` INT NOT NULL AUTO_INCREMENT ,
   `parentNodeId` INT NOT NULL ,
-  `successNodes` INT(10) NULL ,
-  `errorNodes` INT(10) NULL ,
-  `missedNodes` INT(10) NULL ,
+  `successNodes` LONGTEXT NULL ,
+  `errorNodes` LONGTEXT NULL ,
+  `missedNodes` LONGTEXT NULL ,
   `savedDateTime` DATETIME NULL DEFAULT NULL ,
   PRIMARY KEY (`dataAckId`),
   FOREIGN KEY (`parentNodeId`)
@@ -256,6 +256,7 @@ CREATE TABLE IF NOT EXISTS `wdc`.`dataValidation` (
   `dataValidationId` INT NOT NULL AUTO_INCREMENT ,
   `parentNodeId` INT NOT NULL ,
   `sensorId` INT NOT NULL ,
+  `sensorName` VARCHAR(45) NOT NULL,
   `lowerValidLimit` INT(10) NULL ,
   `upperValidLimit` INT(10) NULL ,
   `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
@@ -263,6 +264,36 @@ CREATE TABLE IF NOT EXISTS `wdc`.`dataValidation` (
   PRIMARY KEY (`dataValidationId`),
   FOREIGN KEY (`parentNodeId`)
   REFERENCES `wdc`.`parentNode` (`parentNodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
+  ENGINE = InnoDB
+  DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
+-- Table `wdc`.`validationAck`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`validationAck` (
+  `validationAckId` INT NOT NULL AUTO_INCREMENT ,
+  `parentNodeId` INT NOT NULL ,
+  `nodeId` INT NOT NULL ,
+  `dataValidationId` INT NOT NULL ,
+  `sensorName` VARCHAR(45) NOT NULL,
+  `receivedValue` INT(10) NULL ,
+  `lowerValidLimit` INT(10) NULL ,
+  `upperValidLimit` INT(10) NULL ,
+  `status` VARCHAR(20) NULL ,
+  `savedDateTime` DATETIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`validationAckId`),
+  FOREIGN KEY (`parentNodeId`)
+  REFERENCES `wdc`.`parentNode` (`parentNodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE, 
+  FOREIGN KEY (`nodeId`)
+  REFERENCES `wdc`.`node` (`nodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
+  FOREIGN KEY (`dataValidationId`)
+  REFERENCES `wdc`.`dataValidation` (`dataValidationId`)
 	ON DELETE NO ACTION
 	ON UPDATE CASCADE)
   ENGINE = InnoDB

@@ -20,8 +20,8 @@ Unit.create = (newUnit, result) => {
       return;
     }
     
-    if (debug) console.log('Created unit: ', { id: res.insertId, ...newUnit });
-    result(null, { id: res.insertId, ...newUnit });
+    if (debug) console.log('Created unit: ', { unitId: res.insertId, ...newUnit });
+    result(null, { unitId: res.insertId, ...newUnit });
     return;
   });
 };
@@ -63,7 +63,7 @@ Unit.findById = (unitId, result) => {
 
 // update a unit
 Unit.updateById = (unitId, unit, result) => {
-  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, parentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.noOfParentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
+  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, parentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.parentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

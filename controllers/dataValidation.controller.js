@@ -8,17 +8,26 @@ exports.create = (req, res) => {
       state: false,
       message: 'Content can not be empty!'
     });
-  } else {
-    let dataValidation = new DataValidation({
-      parentNodeId: req.body.parentNodeId,
-      sensorId: req.body.sensorId,
-      lowerValidLimit: req.body.lowerValidLimit,
-      upperValidLimit: req.body.upperValidLimit,
-      lastmodifiedUser: req.body.lastmodifiedUser,
-      lastModifiedDateTime: new Date()
-    });
+  } else { 
 
-    DataValidation.create(dataValidation, (err, data) => {
+    let dataValidationArray = [];
+
+    for (let i = 0; i < req.body.data.length; i++) {
+      const data = req.body.data[i];
+      let tempArray = [];
+
+      tempArray.push(req.body.parentNodeId)
+      tempArray.push(data.sensorId)
+      tempArray.push(data.sensorName)
+      tempArray.push(data.lowerValidLimit)
+      tempArray.push(data.upperValidLimit)
+      tempArray.push(data.lastmodifiedUser)
+      tempArray.push(new Date())
+
+      dataValidationArray.push(tempArray);
+    }
+
+    DataValidation.create(dataValidationArray, (err, data) => {
       if (err) {
         logger.error('create', err.message);
         res.status(500).json({
