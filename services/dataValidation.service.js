@@ -47,39 +47,34 @@ const validator = (data, validations, parentNodeId) => {
   return new Promise((resolve, reject) => {
     try {
       let validatedDataObjects = [];
+      let validatedDataObject = {};
       let isValidated = new Boolean(true);
+      
+      validatedDataObject['nodeId'] = data.nodeId;
 
       for (let i = 1; i < Object.keys(data).length - 3; i++) {
-        let validationStates = [];
         let dataPropertyName = Object.keys(data)[i]
         let dataPropertyValue = data[dataPropertyName];
-        
+      
         for (let j = 0; j < validations.length; j++) {
           const validationParameter = validations[j];
           
           if (dataPropertyName == validationParameter[0]) {
-            let tempElement = {};
             switch (true) {
               case (dataPropertyValue < validationParameter[1]):
-                tempElement.propertyName = dataPropertyName;
-                tempElement.state = 'Low';
-                validationStates.push(tempElement);
+                validatedDataObject[dataPropertyName] = 'Low';
                 isValidated = false;
                 saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, 'Low');
                 break;
 
               case (dataPropertyValue > validationParameter[2]):
-                tempElement.propertyName = dataPropertyName;
-                tempElement.state = 'High';
-                validationStates.push(tempElement);
+                validatedDataObject[dataPropertyName] = 'High';
                 isValidated = false;
                 saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, 'High');
                 break;
 
               case (validationParameter[1] <= dataPropertyValue && dataPropertyValue <= validationParameter[2]):
-                tempElement.propertyName = dataPropertyName;
-                tempElement.state = 'OK';
-                validationStates.push(tempElement);
+                validatedDataObject[dataPropertyName] = 'OK';
                 break;
             
               default:
@@ -87,9 +82,8 @@ const validator = (data, validations, parentNodeId) => {
             }
           }
         }
-
-        validatedDataObjects.push(validationStates[0]);
       }
+      validatedDataObjects.push(validatedDataObject);
 
       if (isValidated) {
         data.isValidated = '1';

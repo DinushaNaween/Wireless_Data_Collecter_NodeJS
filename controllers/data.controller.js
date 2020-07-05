@@ -6,7 +6,6 @@ const DataValidation = require('../models/dataValidation.model');
 const { promiseHandler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
 const { validateData } =  require('../services/dataValidation.service');
-const ParentNode = require('../models/parentNode.model');
 
 // Save parent node data object. Includes child node data.
 exports.save = (req, res) => {
@@ -89,7 +88,8 @@ exports.save = (req, res) => {
 
               validateData(commonNodes, Array.from(validationData), parentNode.parentNodeId)
                 .then((result) => {
-                  let validatedNodes = result.map(object => object['data'][0]['data'])
+                  let validatedNodes = result.map(object => object['data'][0]['data']);
+                  let validatedNodesData = result.map(object => object['data'][0]['validationState'][0])
                   
                   const mergeByNodeId = (validatedNodes, nodesFromReq, prop) => {
                     nodesFromReq.forEach(sourceElement => {
@@ -112,19 +112,34 @@ exports.save = (req, res) => {
                           validatedNodes.splice(i, 1);
                         }
                       }
+
+                      res.status(200).json({
+                        state: true,
+                        saved: true,
+                        validated: true,
+                        savedDataAck: result,
+                        validatedDataAck: validatedNodesData
+                      });
                     })
                     .catch((err) => {
-                      console.log(err);
+                      logger.error('saveData.catch', err.message);
+
+                      res.status(200).json({
+                        state: false,
+                        saved: false,
+                        validated: true,
+                        validatedDataAck: validatedNodesData
+                      });
                     });
                 })
                 .catch((err) => {
-                  console.log(err)
+                  logger.error('validateData.catch', err.message);
+
+                  res.status(200).json({
+                    state: false,
+                  });
                 });
             });
-
-            res.status(200).json({
-              state: true
-            })
           }
         });
       }
@@ -197,5 +212,4 @@ const saveDataObject = (data) => {
     });
   });
 };
-
 // End of Save parent node data object.
