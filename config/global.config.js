@@ -1,2 +1,2 @@
-global.debug = false;
+global.debug = true;
 global.SALTROUNDS = 10;
