@@ -29,7 +29,8 @@ exports.save = (req, res) => {
         const savedDateTime = new Date();
 
         for (let i = 0; i < req.body.data.length ; i++) {
-          req.body.data[i].savedDateTime = savedDateTime;
+          req.body.timestamp = new Date();
+          req.body.data[i].savedDateTime = req.body.timestamp;
           updatedNodes.push(req.body.data[i]);
         }
 

@@ -52,7 +52,7 @@ const validator = (data, validations, parentNodeId) => {
       
       validatedDataObject['nodeId'] = data.nodeId;
 
-      for (let i = 1; i < Object.keys(data).length - 3; i++) {
+      for (let i = 1; i < Object.keys(data).length; i++) {
         let dataPropertyName = Object.keys(data)[i]
         let dataPropertyValue = data[dataPropertyName];
       
@@ -64,13 +64,13 @@ const validator = (data, validations, parentNodeId) => {
               case (dataPropertyValue < validationParameter[1]):
                 validatedDataObject[dataPropertyName] = 'Low';
                 isValidated = false;
-                saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, 'Low');
+                saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, data.savedDateTime, 'Low');
                 break;
 
               case (dataPropertyValue > validationParameter[2]):
                 validatedDataObject[dataPropertyName] = 'High';
                 isValidated = false;
-                saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, 'High');
+                saveValidationAck(parentNodeId, data.nodeId, dataPropertyName, dataPropertyValue, validationParameter, data.savedDateTime, 'High');
                 break;
 
               case (validationParameter[1] <= dataPropertyValue && dataPropertyValue <= validationParameter[2]):
@@ -99,7 +99,7 @@ const validator = (data, validations, parentNodeId) => {
   }) 
 }
 
-function saveValidationAck(parentNodeId, nodeId, dataPropertyName, dataPropertyValue, validationParameter, status) {
+function saveValidationAck(parentNodeId, nodeId, dataPropertyName, dataPropertyValue, validationParameter, savedDataTime, status) {
   let newValidationAck = new ValidationAck({
     parentNodeId: parentNodeId,
     nodeId: nodeId,
@@ -109,7 +109,7 @@ function saveValidationAck(parentNodeId, nodeId, dataPropertyName, dataPropertyV
     lowerValidLimit: validationParameter[1],
     upperValidLimit: validationParameter[2],
     status: status,
-    savedDateTime: new Date()
+    savedDateTime: savedDataTime
   });
 
   ValidationAck.save(newValidationAck, (err, savedValidationAck) => {
