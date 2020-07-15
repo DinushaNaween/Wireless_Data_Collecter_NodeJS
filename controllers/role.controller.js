@@ -12,8 +12,8 @@ exports.create = (req, res) => {
   } else {
     let role = new Role({
       roleName: req.body.roleName,
-      disabled: req.body.disabled,
-      lastModifiedUser: req.body.lastModifiedUser,
+      disabled: 0,
+      lastModifiedUser: null,
       lastModifiedDateTime: new Date()
     });
   
