@@ -1,6 +1,6 @@
 # Wireless Data Collecter
 
-Wireless Data Collector is a express + mysql API application created for collect data from greenhouses. This application contains bunch of different kinds of API endpoints to interact with mysql database. As [Wireless Data Collector - DB Schema.pdf](https://github.com/DinushaNaween/Wireless_Data_Collector_NodeJS/blob/master/Wireless%20Data%20Collector%20-%20DB%20Schema.pdf) shows, this API contains,
+Wireless Data Collector is a express + mysql API application created for collect data from greenhouses. This application contains bunch of different kinds of API endpoints to interact with mysql database. As [Wireless Data Collector - DB Schema.pdf](https://github.com/DinushaNaween/Wireless_Data_Collecter_NodeJS/blob/master/resources/Wireless%20Data%20Collector%20-%20DB%20Schema.pdf) shows, this API contains,
 
 1. Users
 2. User Roles
