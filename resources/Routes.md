@@ -3,7 +3,7 @@
  This file contains all the routes that are given through this api application.
 
 ### Role
-### <a name="privilege">Privilege</a>
+### <a name="privilege">Privilege Routes</a>
 
 **1. Create role**
 - *Method - path*
