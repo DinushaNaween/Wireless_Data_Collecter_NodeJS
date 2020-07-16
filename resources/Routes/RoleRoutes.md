@@ -131,6 +131,13 @@
 ```
   DELETE - '/role'
 ```
+- *Success response*
+```json
+  {
+    "state":true,
+    "message":"All roles deleted successfully"
+  }
+```
 #### *7. Disable role by id*
 - *Method & path*
 ```

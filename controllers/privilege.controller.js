@@ -12,8 +12,8 @@ exports.create = (req, res) => {
   } else {
     let privilege = new Privilege({
       privilegeDescription: req.body.privilegeDescription,
-      disabled: req.body.disabled,
-      lastModifiedUser: req.body.lastModifiedUser,
+      disabled: 0,
+      lastModifiedUser: null,
       lastModifiedDateTime: new Date()
     });
   
@@ -90,6 +90,12 @@ exports.update = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
+    let privilege = new Privilege({
+      privilegeDescription: req.body.privilegeDescription,
+      disabled: 0,
+      lastModifiedUser: null,
+      lastModifiedDateTime: new Date()
+    });
     req.body.lastModifiedDateTime = new Date();
 
     Privilege.updateById(req.params.privilegeId, new Privilege(req.body), (err, data) => {
