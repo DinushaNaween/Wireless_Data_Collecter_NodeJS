@@ -90,9 +90,14 @@ exports.update = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    req.body.lastModifiedDateTime = new Date();
+    let role = new Role({
+      roleName: req.body.roleName,
+      disabled: 0,
+      lastModifiedUser: req.body.lastModifiedUser,
+      lastModifiedDateTime: new Date()
+    });
 
-    Role.updateById(req.params.roleId, new Role(req.body), (err, data) => {
+    Role.updateById(req.params.roleId, role, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
           logger.error('updateById notFound');

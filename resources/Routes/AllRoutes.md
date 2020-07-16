@@ -138,7 +138,7 @@
 ---
 ## 2. <ins>Data Acknowledgement</ins>
 
-##### *2. Get data acknowledgement by id*
+##### *1. Get data acknowledgement by id*
 
 ---
 ## 2. <ins>Table</ins>
