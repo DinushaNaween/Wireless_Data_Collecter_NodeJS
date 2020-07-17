@@ -1,7 +1,7 @@
 
 # <ins>Role Routes</ins>
 
-#### 1. Create role
+### 1. Create role
 - *Method & path*
 ```
   POST - '/role'  
@@ -26,7 +26,7 @@
   }
 ```
 
-#### *2. Get role by id*
+### *2. Get role by id*
 - *Method & path*
 ```
   GET - '/role/:roleId'
@@ -48,7 +48,7 @@
     }
   }
 ```
-#### *3. Get all roles*
+### *3. Get all roles*
 - *Method & path*
 ```
   GET - '/role'
@@ -81,7 +81,7 @@
       }]
   }
 ```
-#### *4. Update role by id*
+### *4. Update role by id*
 - *Method & path*
 ```
   PUT - '/role/:roleId'
@@ -110,7 +110,7 @@
     }
   }
 ```
-#### *5. Delete role by id*
+### *5. Delete role by id*
 - *Method & path*
 ```
   DELETE - '/role/:roleId'
@@ -126,7 +126,7 @@
     "message":"Role deleted successfully"
   }
 ```
-#### *6. Delete all role*
+### *6. Delete all role*
 - *Method & path*
 ```
   DELETE - '/role'
@@ -138,7 +138,7 @@
     "message":"All roles deleted successfully"
   }
 ```
-#### *7. Disable role by id*
+### *7. Disable role by id*
 - *Method & path*
 ```
   PUT - '/role/disable/:roleId'

@@ -114,8 +114,8 @@ RolePrivilege.removeAll = result => {
 };
 
 // disable a role privilege
-RolePrivilege.disable = (rolePrivilegeId, rolePrivilege, result) => {
-  sql.query('UPDATE rolePrivilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [rolePrivilege.lastModifiedUser, rolePrivilege.lastModifiedDateTime, rolePrivilegeId], (err, res) => {
+RolePrivilege.disable = (rolePrivilegeId, lastModifiedUser, result) => {
+  sql.query('UPDATE rolePrivilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [lastModifiedUser, new Date(), rolePrivilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

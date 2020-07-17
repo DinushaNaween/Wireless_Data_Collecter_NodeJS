@@ -1,7 +1,7 @@
 
 # <ins>Privilege Routes</ins>
 
-#### 1. Create privilege
+### 1. Create privilege
 - *Method & path*
 ```
   POST - '/privilege'  
@@ -26,7 +26,7 @@
   }
 ```
 
-#### *2. Get privilege by id*
+### *2. Get privilege by id*
 - *Method & path*
 ```
   GET - '/privilege/:privilegeId'
@@ -48,7 +48,7 @@
     }
   }
 ```
-#### *3. Get all privileges*
+### *3. Get all privileges*
 - *Method & path*
 ```
   GET - '/privilege'
@@ -81,7 +81,7 @@
       }]
   }
 ```
-#### *4. Update privilege by id*
+### *4. Update privilege by id*
 - *Method & path*
 ```
   PUT - '/privilege/:privilegeId'
@@ -109,7 +109,7 @@
     }
   }
 ```
-#### *5. Delete privilege by id*
+### *5. Delete privilege by id*
 - *Method & path*
 ```
   DELETE - '/privilege/:privilegeId'
@@ -125,7 +125,7 @@
     "message":"Privilege deleted successfully"
   }
 ```
-#### *6. Delete all privilege*
+### *6. Delete all privilege*
 - *Method & path*
 ```
   DELETE - '/privilege'
@@ -137,7 +137,7 @@
     "message":"All privileges deleted successfully"
   }
 ```
-#### *7. Disable privilege by id*
+### *7. Disable privilege by id*
 - *Method & path*
 ```
   PUT - '/privilege/disable/:privilegeId'
