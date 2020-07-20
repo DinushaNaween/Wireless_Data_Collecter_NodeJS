@@ -2,6 +2,7 @@ const User = require('../models/user.model');
 const AuthToken = require('../controllers/authToken.controller');
 const logger = require('../middlewares/logger.middleware');
 
+const { checkRole } = require('../services/authentication.service');
 const { hash, compare } = require('bcrypt');
 const { createAccessAndRefreshTokens } = require('../middlewares/jwtAuth.middleware');
 const { sendVerificationCode } = require('../services/mail.service');
@@ -600,37 +601,45 @@ exports.removeAll = (req, res) => {
 
 // Disable a user
 exports.disable = (req, res) => {
-  if (req.body.constructor === Object && Object.keys(req.body).length === 0) {
-    logger.error('empty req.body');
-    res.status(400).send({
-      state: false,
-      message: 'Content can not be empty!'
-    });
-  } else {
-    req.body.lastModifiedDateTime = new Date();
+  checkRole(req.body.loggedUser, 'Admin', (err, state) => {
+    if (err) {
+      logger.error('User.disable.checkRole', err.message);
+      res.status(500).json({
+        state: false,
+        message: 'Error on checking role'
+      })
+    }
 
-    User.disable(req.params.userId, req.body, (err, data) => {
-      if (err) {
-        if (err.kind === 'not_found') {
-          logger.error('disable notFound');
-          res.status(404).json({
-            state: false,
-            message: 'Not found user with id ' + req.params.userId
-          });
+    if (state === 'matched') {
+      User.disable(req.params.userId, req.body, (err, data) => {
+        if (err) {
+          if (err.kind === 'not_found') {
+            logger.error('disable notFound');
+            res.status(404).json({
+              state: false,
+              message: 'Not found user with id ' + req.params.userId
+            });
+          } else {
+            logger.error('disable', err.message);
+            res.status(500).json({
+              state: false,
+              message: 'Error updating user with id ' + req.params.userId
+            });
+          }
         } else {
-          logger.error('disable', err.message);
-          res.status(500).json({
-            state: false,
-            message: 'Error updating user with id ' + req.params.userId
+          logger.info('disable success');
+          res.status(200).json({
+            state: true,
+            message: 'Disabled user with id: ' + data.id + '.'
           });
         }
-      } else {
-        logger.info('disable success');
-        res.status(200).json({
-          state: true,
-          message: 'Disabled user with id: ' + data.id + '.'
-        });
-      }
-    });
-  }
+      });
+    } else {
+      logger.warn('User.disable.checkRole not autherized person');
+      res.status(400).json({
+        state: false,
+        message: 'Not autherized person to diable user'
+      });
+    }
+  });
 };

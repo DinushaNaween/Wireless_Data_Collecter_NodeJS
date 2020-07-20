@@ -129,7 +129,6 @@ exports.tokenAuthentication = (req, res, next) => {
                       this.createAccessToken(refreshTokenPayload.user[0], (err, accessToken) => {
                         if (err) {
                           logger.error('createAccessToken for refreshToken', err.message);
-                          if (debug) console.log(err.message);
                           res.status(400).json({
                             state: false,
                             error_code: 7,
@@ -140,9 +139,8 @@ exports.tokenAuthentication = (req, res, next) => {
                         if (accessToken) {
                           logger.info('New accessToken created');  
                           res.set('authorization', `Bearer ${accessToken}`);
-                          console.log(req.headers['authorization'].split(' ')[1]);
-                          req.body.loggedUserId = refreshTokenPayload.user[0].userId
-                          next()
+                          req.body.loggedUser = refreshTokenPayload.user[0];
+                          next();
                         }
                       });
                     }
@@ -166,8 +164,9 @@ exports.tokenAuthentication = (req, res, next) => {
           });
         }
       } else{
-        if (debug) console.log(accessTokenPayload);
-        next()
+        logger.info('Valid AccessToken found');
+        req.body.loggedUser = accessTokenPayload.user[0];
+        next();
       }
     });
   } else {

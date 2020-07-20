@@ -81,7 +81,7 @@ module.exports = app => {
   // Disable a user
   app.put('/user/disable/:userId', function (req, res, next) {
     reqLog(req, 'user.disable');
-    next()
+    tokenAuthentication(req, res, next);
   },
     user.disable
   );
