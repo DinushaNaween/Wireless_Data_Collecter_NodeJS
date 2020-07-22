@@ -7,6 +7,7 @@ exports.create = (req, res) => {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
   } else {
@@ -22,6 +23,7 @@ exports.create = (req, res) => {
         logger.error('create', err.message);
         res.status(500).json({
           state: false,
+          error_code: 2,
           message: err.message || 'Some error occurred while creating the role.'
         });
       } else {
@@ -42,6 +44,7 @@ exports.getAll = (req, res) => {
       logger.error('getAll', err.message);
       res.status(500).json({
         state: false,
+        error_code: 2,
         message: err.message || 'Some error occurred while retrieving the roles.'
       });
     } else {
@@ -62,12 +65,14 @@ exports.findById = (req, res) => {
         logger.error('findById notFound');
         res.status(404).json({
           state: false,
+          error_code: 3,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
         logger.error('findById', err.message);
         res.status(500).json({
           state: false,
+          error_code: 2,
           message: 'Error retrieving role with id ' + req.params.roleId
         });
       }
@@ -87,6 +92,7 @@ exports.update = (req, res) => {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
   } else {
@@ -103,12 +109,14 @@ exports.update = (req, res) => {
           logger.error('updateById notFound');
           res.status(404).json({
             state: false,
+            error_code: 3,
             message: 'Not found role with id ' + req.params.roleId
           });
         } else {
           logger.error('updateById', err.message);
           res.status(500).json({
             state: false,
+            error_code: 2,
             message: 'Error updating role with id ' + req.params.roleId
           });
         }
@@ -131,12 +139,14 @@ exports.remove = (req, res) => {
         logger.error('remove notFound');
         res.status(404).json({
           state: false,
+          error_code: 3,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
         logger.error('remove', err.message);
         res.status(500).json({
           state: false,
+          error_code: 2,
           message: 'Could not delete role with id ' + req.params.roleId
         });
       }
@@ -157,6 +167,7 @@ exports.removeAll = (req, res) => {
       logger.error('removeAll', err.message);
       res.status(500).json({
         state: false,
+        error_code: 2,
         message: err.message || 'Some error occurred while deleting all roles.'
       });
     } else {
@@ -175,6 +186,7 @@ exports.disable = (req, res) => {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
   } else {
@@ -186,12 +198,14 @@ exports.disable = (req, res) => {
           logger.error('disable notFound');
           res.status(404).json({
             state: false,
+            error_code: 3,
             message: 'Not found role with id ' + req.params.roleId
           });
         } else {
           logger.error('disable', err.message);
           res.status(500).json({
             state: false,
+            error_code: 2,
             message: 'Error updating role with id ' + req.params.roleId
           });
         }

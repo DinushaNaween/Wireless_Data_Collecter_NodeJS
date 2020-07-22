@@ -25,6 +25,24 @@
     }
   }
 ```
+- *Error responses*
+  - *Empty response body*
+  ```json
+    {
+      "state": false,
+      "error_code": 1,
+      "message": 'Content can not be empty!'
+    }
+  ```
+
+  - *Error while creating role*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": err.message
+    }
+  ```
 
 ### *2. Get role by id*
 - *Method & path*
@@ -48,6 +66,15 @@
     }
   }
 ```
+- *Error responses*
+  - *Error while retrieving roles*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": err.message
+    }
+  ```
 ### *3. Get all roles*
 - *Method & path*
 ```
@@ -81,6 +108,24 @@
       }]
   }
 ```
+- *Error responses*
+  - *Role not found*
+  ```json
+    {
+      "state": false,
+      "error_code": 3,
+      "message": "Not found role with id 33"
+    }
+  ```
+
+  - *Error while retrieving role*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": err.message
+    }
+  ```
 ### *4. Update role by id*
 - *Method & path*
 ```
@@ -110,6 +155,31 @@
     }
   }
 ```
+- *Error responses*
+  - *Empty response body*
+  ```json
+    {
+      "state": false,
+      "error_code": 1,
+      "message": "Content can not be empty!"
+    }
+  ```
+  - *Role not found*
+  ```json
+    {
+      "state": false,
+      "error_code": 3,
+      "message": "Not found role with id 33"
+    }
+  ```
+  - *Error while updating role*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": "Error updating role with id 3"
+    }
+  ```
 ### *5. Delete role by id*
 - *Method & path*
 ```
@@ -126,6 +196,24 @@
     "message":"Role deleted successfully"
   }
 ```
+- *Error responses*
+  - *Role not found*
+  ```json
+    {
+      "state": false,
+      "error_code": 3,
+      "message": "Not found role with id 33"
+    }
+  ```
+
+  - *Error while removing role*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": "Could not delete role with id 33"
+    }
+  ```
 ### *6. Delete all role*
 - *Method & path*
 ```
@@ -138,6 +226,15 @@
     "message":"All roles deleted successfully"
   }
 ```
+- *Error responses*
+  - *Error while removing roles*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": err.message
+    }
+  ```
 ### *7. Disable role by id*
 - *Method & path*
 ```
@@ -161,3 +258,30 @@ roleId
     "message":"Disabled role with id: 3."
   }
 ```
+- *Error responses*
+  - *Empty response body*
+  ```json
+    {
+      "state": false,
+      "error_code": 1,
+      "message": 'Content can not be empty!'
+    }
+  ```
+
+  - *Role not found*
+  ```json
+    {
+      "state": false,
+      "error_code": 3,
+      "message": "Not found role with id 33"
+    }
+  ```
+
+  - *Error while disabling role*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": err.message
+    }
+  ```
