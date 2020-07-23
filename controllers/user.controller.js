@@ -37,8 +37,8 @@ exports.create = (req, res) => {
                 loginPassword: hash,
                 roleId: req.body.roleId,
                 userImageURL: req.body.userImageURL,
-                disabled: req.body.disabled,
-                lastModifiedUser: req.body.lastModifiedUser,
+                disabled: 0,
+                lastModifiedUser: null,
                 lastModifiedDateTime: new Date()
               });
 
@@ -269,8 +269,9 @@ exports.update = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
+    req.body.disabled = 0;
     req.body.lastModifiedDateTime = new Date();
-
+    
     User.updateById(req.params.userId, new User(req.body), (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
