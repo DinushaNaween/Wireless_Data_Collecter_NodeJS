@@ -24,7 +24,7 @@ Role.create = (newRole, result) => {
 
 // get all roles from database
 Role.getAll = (result) => {
-  sql.query('SELECT * FROM role', (err, res) => {
+  sql.query('SELECT * FROM role WHERE disabled = 0', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -39,7 +39,7 @@ Role.getAll = (result) => {
 
 // get role by id
 Role.findById = (roleId, result) => {
-  sql.query('SELECT * FROM role WHERE roleId = ?', [roleId], (err, res) => {
+  sql.query('SELECT * FROM role WHERE roleId = ? AND disabled = 0', [roleId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -113,8 +113,8 @@ Role.removeAll = result => {
 };
 
 // disable a role
-Role.disable = (roleId, role, result) => {
-  sql.query('UPDATE role SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [role.lastModifiedUser, role.lastModifiedDateTime, roleId], (err, res) => {
+Role.disable = (roleId, reqBody, result) => {
+  sql.query('UPDATE role SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [reqBody.loggedUser.userId, new Date(), roleId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -127,6 +127,26 @@ Role.disable = (roleId, role, result) => {
     }
 
     if (debug) console.log('Disabled role: ', { id: roleId });
+    result(null, { id: roleId });
+    return;
+  })
+};
+
+// enable a role
+Role.enable = (roleId, reqBody, result) => {
+  sql.query('UPDATE role SET disabled = 0, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [reqBody.loggedUser.userId, new Date(), roleId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.affectedRows == 0) {
+      result({ kind: 'not_found' }, null);
+      return;
+    }
+
+    if (debug) console.log('Enabled role: ', { id: roleId });
     result(null, { id: roleId });
     return;
   })

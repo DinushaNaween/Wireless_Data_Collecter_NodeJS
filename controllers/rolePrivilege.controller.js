@@ -13,8 +13,8 @@ exports.create = (req, res) => {
     let rolePrivilege = new RolePrivilege({
       roleId: req.body.roleId,
       privilegeId: req.body.privilegeId,
-      disabled: req.body.disabled,
-      lastModifiedUser: req.body.lastModifiedUser,
+      disabled: 0,
+      lastModifiedUser: null,
       lastModifiedDateTime: new Date()
     });
   
@@ -91,9 +91,15 @@ exports.update = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    req.body.lastModifiedDateTime = new Date();
+    let rolePrivilege = new RolePrivilege({
+      roleId: req.body.roleId,
+      privilegeId: req.body.privilegeId,
+      disabled: 0,
+      lastModifiedUser: req.body.lastModifiedUser,
+      lastModifiedDateTime: new Date()
+    });
 
-    RolePrivilege.updateById(req.params.rolePrivilegeId, new RolePrivilege(req.body), (err, data) => {
+    RolePrivilege.updateById(req.params.rolePrivilegeId, rolePrivilege, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
           logger.error('updateById notFound');
@@ -174,9 +180,8 @@ exports.disable = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    req.body.lastModifiedDateTime = new Date();
 
-    RolePrivilege.disable(req.params.rolePrivilegeId, req.body, (err, data) => {
+    RolePrivilege.disable(req.params.rolePrivilegeId, req.body.lastModifiedUser, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
           logger.error('disable notFound');

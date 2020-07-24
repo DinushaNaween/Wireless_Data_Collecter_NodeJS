@@ -1,6 +1,7 @@
 module.exports = app => {
 
   const user = require('../controllers/user.controller');
+  
   const { reqLog } = require('../middlewares/logger.middleware');
   const { tokenAuthentication } = require('../middlewares/jwtAuth.middleware');
   const { multerUpload } = require('../middlewares/multer.middleware');
@@ -81,7 +82,7 @@ module.exports = app => {
   // Disable a user
   app.put('/user/disable/:userId', function (req, res, next) {
     reqLog(req, 'user.disable');
-    next()
+    tokenAuthentication(req, res, next);
   },
     user.disable
   );

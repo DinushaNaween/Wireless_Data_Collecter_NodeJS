@@ -68,7 +68,8 @@ exports.tokenAuthentication = (req, res, next) => {
       logger.error('Authorization found without token');
       res.status(400).json({
         state: false,
-        message: 'Login required 1'
+        error_code: 1,
+        message: 'Login required'
       });
     }
     verify(token, process.env.JWT_ACCESS_TOKEN_SECRET, (err, accessTokenPayload) => {
@@ -77,7 +78,8 @@ exports.tokenAuthentication = (req, res, next) => {
           logger.error('invalid accessToken');
           res.status(400).json({
             state: false,
-            message: 'Login required 1'
+            error_code: 2,
+            message: 'Login required'
           });
         } else if (err.message == 'jwt expired') {
           const refreshToken = req.cookies.refreshtoken;
@@ -89,7 +91,8 @@ exports.tokenAuthentication = (req, res, next) => {
                 if (debug) console.log(err.message);
                 res.status(400).json({
                   state: false,
-                  message: 'Login required 1'
+                  error_code: 3,
+                  message: 'Login required'
                 });
               } 
 
@@ -101,13 +104,15 @@ exports.tokenAuthentication = (req, res, next) => {
                       if (debug) console.log('No token found in DB');
                       res.status(400).json({
                         state: false,
-                        message: 'Login required 7'
+                        error_code: 4,
+                        message: 'Login required'
                       });
                     } else {
                       if (debug) console.log(err.message);
                       res.status(400).json({
                         state: false,
-                        message: 'Login required 5'
+                        error_code: 5,
+                        message: 'Login required'
                       });
                     }
                   }
@@ -117,24 +122,25 @@ exports.tokenAuthentication = (req, res, next) => {
                       logger.error('refreshTokens not same');
                       res.status(400).json({
                         state: false,
-                        message: 'Login required 6'
+                        error_code: 6,
+                        message: 'Login required'
                       });
                     } else {
                       this.createAccessToken(refreshTokenPayload.user[0], (err, accessToken) => {
                         if (err) {
                           logger.error('createAccessToken for refreshToken', err.message);
-                          if (debug) console.log(err.message);
                           res.status(400).json({
                             state: false,
-                            message: 'Login required 2'
+                            error_code: 7,
+                            message: 'Login required'
                           }); 
                         }
 
                         if (accessToken) {
                           logger.info('New accessToken created');  
                           res.set('authorization', `Bearer ${accessToken}`);
-                          console.log(req.headers['authorization'].split(' ')[1])
-                          next()
+                          req.body.loggedUser = refreshTokenPayload.user[0];
+                          next();
                         }
                       });
                     }
@@ -145,26 +151,30 @@ exports.tokenAuthentication = (req, res, next) => {
           } else{
             res.status(400).json({
               state: false,
-              message: 'Login required 3'
+              error_code: 8,
+              message: 'Login required'
             });
           } 
         } else{
           logger.error('accessToken verify', err.message);
           res.status(400).json({
             state: false,
-            message: 'Login required 1'
+            error_code: 9,
+            message: 'Login required'
           });
         }
       } else{
-        if (debug) console.log(accessTokenPayload);
-        next()
+        logger.info('Valid AccessToken found');
+        req.body.loggedUser = accessTokenPayload.user[0];
+        next();
       }
     });
   } else {
     logger.debug('Authorization header not found');
     res.status(400).json({
       state: false,
-      message: 'Login required 4'
+      error_code: 10,
+      message: 'Login required'
     });
   };
 };

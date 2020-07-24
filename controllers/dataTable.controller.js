@@ -1,6 +1,9 @@
 const DataTable = require('../models/dataTable.model');
 const logger = require('../middlewares/logger.middleware');
 
+const { findById } = require('../models/node.model');
+const { createNodeSensor, removeNodeSensor } = require('../models/nodeSensor.model');
+
 // Create new data table for a new node
 exports.createNewDataTable = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
@@ -10,18 +13,42 @@ exports.createNewDataTable = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    DataTable.createNewDataTable(req.body.nodeId, req.body.columns, (err, data) => {
+    findById(req.body.nodeId, (err, node) => {
       if (err) {
-        logger.error('createNewDataTable', err.message);
+        logger.error('node findById', err.message);
         res.status(500).json({
           state: false,
-          message: err.message || 'Some error occurred while creating the data table.'
+          message: err.message || 'Not found node for nodeId: ' + req.body.nodeId
         });
-      } else {
-        logger.info('createNewDataTable success');
-        res.status(200).json({
-          state: true,
-          table_data: data
+      } 
+
+      if (node) {
+        createNodeSensor(req.body.nodeId, req.body.columns, (err, data) => {
+          if (err) {
+            logger.error('createNodeSensor', err.message);
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Error occured while creating nodeSensor'
+            });
+          }
+          
+          if (data) {
+            DataTable.createNewDataTable(req.body.nodeId, req.body.columns, (err, data) => {
+              if (err) {
+                logger.error('createNewDataTable', err.message);
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while creating the data table.'
+                });
+              } else {
+                logger.info('createNewDataTable success');
+                res.status(200).json({
+                  state: true,
+                  table_data: data
+                });
+              }
+            });
+          }
         });
       }
     });
@@ -37,18 +64,42 @@ exports.addColumnToTableByTableName = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    DataTable.addColumnToTableByTableName(req.params.tableName, req.body.columns, (err, data) => {
+    findById(req.params.tableName.split('_')[1], (err, node) => {
       if (err) {
-        logger.error('addColumnToTableByTableName', err.message);
+        logger.error('node findById', err.message);
         res.status(500).json({
           state: false,
-          message: err.message || 'Some error occurred while updating the data table.'
+          message: err.message || 'Not found node for nodeId: ' + req.params.tableName.split('_')[1]
         });
-      } else {
-        logger.info('addColumnToTableByTableName success');
-        res.status(200).json({
-          state: true,
-          table_data: data
+      } 
+
+      if (node) {
+        createNodeSensor(req.params.tableName.split('_')[1], req.body.columns, (err, nodeSensor) => {
+          if (err) {
+            logger.error('createNodeSensor', err.message);
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Error occured while creating nodeSensor'
+            });
+          }
+
+          if (nodeSensor) {
+            DataTable.addColumnToTableByTableName(req.params.tableName, req.body.columns, (err, data) => {
+              if (err) {
+                logger.error('addColumnToTableByTableName', err.message);
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while updating the data table.'
+                });
+              } else {
+                logger.info('addColumnToTableByTableName success');
+                res.status(200).json({
+                  state: true,
+                  table_data: data
+                });
+              }
+            });
+          }
         });
       }
     });
@@ -91,18 +142,42 @@ exports.dropColumnByTableName = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    DataTable.dropColumnByTableName(req.params.tableName, req.body.columns, (err, data) => {
+    findById(req.params.tableName.split('_')[1], (err, node) => {
       if (err) {
-        logger.error('dropColumnByTableName', err.message);
+        logger.error('node findById', err.message);
         res.status(500).json({
           state: false,
-          message: err.message || 'Some error occurred while updating the data table.'
+          message: err.message || 'Not found node for nodeId: ' + req.params.tableName.split('_')[1]
         });
-      } else {
-        logger.info('dropColumnByTableName success');
-        res.status(200).json({
-          state: true,
-          table_data: data
+      } 
+
+      if (node) {
+        removeNodeSensor(req.params.tableName.split('_')[1], req.body.columns, (err, nodeSensor) => {
+          if (err) {
+            logger.error('createNodeSensor', err.message);
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Error occured while creating nodeSensor'
+            });
+          }
+
+          if (nodeSensor) {
+            DataTable.dropColumnByTableName(req.params.tableName, req.body.columns, (err, data) => {
+              if (err) {
+                logger.error('dropColumnByTableName', err.message);
+                res.status(500).json({
+                  state: false,
+                  message: err.message || 'Some error occurred while updating the data table.'
+                });
+              } else {
+                logger.info('dropColumnByTableName success');
+                res.status(200).json({
+                  state: true,
+                  table_data: data
+                });
+              }
+            });
+          }
         });
       }
     });
