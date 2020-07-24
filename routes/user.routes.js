@@ -1,6 +1,7 @@
 module.exports = app => {
 
   const user = require('../controllers/user.controller');
+  
   const { reqLog } = require('../middlewares/logger.middleware');
   const { tokenAuthentication } = require('../middlewares/jwtAuth.middleware');
   const { multerUpload } = require('../middlewares/multer.middleware');

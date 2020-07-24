@@ -29,7 +29,8 @@
 ##### *4. Update role by id*
 ##### *5. Delete role by id*
 ##### *6. Delete all roles*
-##### *7. Disable role by id*
+##### *7. Disable a role by id*
+##### *8. Enable a role by id*
  
 
 ---

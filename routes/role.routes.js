@@ -1,7 +1,9 @@
 module.exports = app => {
 
   const role = require('../controllers/role.controller');
+
   const { reqLog } = require('../middlewares/logger.middleware');
+  const { tokenAuthentication } = require('../middlewares/jwtAuth.middleware');
 
   // Create new role
   app.post('/role', function (req, res, next) {
@@ -54,8 +56,16 @@ module.exports = app => {
   // Disable a role
   app.put('/role/disable/:roleId', function (req, res, next) {
     reqLog(req, 'role.disable');
-    next()
+    tokenAuthentication(req, res, next)
   },
     role.disable
+  );
+
+  // Enable a role
+  app.put('/role/enable/:roleId', function (req, res, next) {
+    reqLog(req, 'role.enable');
+    tokenAuthentication(req, res, next)
+  },
+    role.enable
   );
 }

@@ -235,22 +235,23 @@
       "message": err.message
     }
   ```
-### *7. Disable role by id*
+### *7. Disable a role by id*
 - *Method & path*
 ```
   PUT - '/role/disable/:roleId'
 ```
 - *Request params*
 ```
-roleId
+  roleId
 ```
-- *Request body*
-```json
-  {
-    "lastModifiedUser": "1",
-    "lastModifiedDateTime": "2020-03-11T17:58:14.361+0000"
-  }
+- *Request headers*
 ```
+  Authorization  =>  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjpbeyJ1c2VySWQiOjEsImVtYWlsIj
+  Cookie         =>  refreshtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjpbeyJ1c2VySWQiOjEsImVtYWlsIjo
+```
+- ###### *Logged user's accessToken must be in request headers with `Bearer` suffix.*
+- ###### *Logged user's refreshToken must be in browser Cookie named `refreshToken`*
+
 - *Success response*
 ```json
   {
@@ -278,6 +279,49 @@ roleId
   ```
 
   - *Error while disabling role*
+  ```json
+    {
+      "state": false,
+      "error_code": 2,
+      "message": err.message
+    }
+  ```
+
+### *8. Enable a role by id*
+- *Method & path*
+```
+  PUT - '/role/enable/:roleId'
+```
+- *Request params*
+```
+  roleId
+```
+- *Request headers*
+```
+  Authorization  =>  Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjpbeyJ1c2VySWQiOjEsImVtYWlsIj
+  Cookie         =>  refreshtoken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjpbeyJ1c2VySWQiOjEsImVtYWlsIjo
+```
+- ###### *Logged user's accessToken must be in request headers with `Bearer` suffix.*
+- ###### *Logged user's refreshToken must be in browser Cookie named `refreshToken`*
+
+- *Success response*
+```json
+  {
+    "state":true,
+    "message":"Enabled role with id: 3."
+  }
+```
+- *Error responses*
+  - *Role not found*
+  ```json
+    {
+      "state": false,
+      "error_code": 3,
+      "message": "Not found role with id 3"
+    }
+  ```
+
+  - *Error while enabling role*
   ```json
     {
       "state": false,
