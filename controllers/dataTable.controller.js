@@ -1,5 +1,6 @@
 const DataTable = require('../models/dataTable.model');
 const logger = require('../middlewares/logger.middleware');
+const { findById } = require('../models/node.model');
 
 // Create new data table for a new node
 exports.createNewDataTable = (req, res) => {
@@ -10,21 +11,34 @@ exports.createNewDataTable = (req, res) => {
       message: 'Content can not be empty!'
     });
   } else {
-    DataTable.createNewDataTable(req.body.nodeId, req.body.columns, (err, data) => {
+
+    findById(req.body.nodeId, (err, node) => {
       if (err) {
-        logger.error('createNewDataTable', err.message);
+        logger.error('node findById', err.message);
         res.status(500).json({
           state: false,
-          message: err.message || 'Some error occurred while creating the data table.'
-        });
-      } else {
-        logger.info('createNewDataTable success');
-        res.status(200).json({
-          state: true,
-          table_data: data
+          message: err.message || 'Not found node for nodeId: ' + req.body.nodeId
+        })
+      } 
+
+      if (node) {
+        DataTable.createNewDataTable(req.body.nodeId, req.body.columns, (err, data) => {
+          if (err) {
+            logger.error('createNewDataTable', err.message);
+            res.status(500).json({
+              state: false,
+              message: err.message || 'Some error occurred while creating the data table.'
+            });
+          } else {
+            logger.info('createNewDataTable success');
+            res.status(200).json({
+              state: true,
+              table_data: data
+            });
+          }
         });
       }
-    });
+    })
   }
 };
 

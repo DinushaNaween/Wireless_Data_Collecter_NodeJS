@@ -31,7 +31,7 @@
     {
       "state": false,
       "error_code": 1,
-      "message": 'Content can not be empty!'
+      "message": "Content can not be empty!"
     }
   ```
 
@@ -264,7 +264,7 @@ roleId
     {
       "state": false,
       "error_code": 1,
-      "message": 'Content can not be empty!'
+      "message": "Content can not be empty!"
     }
   ```
 
