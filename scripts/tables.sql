@@ -232,6 +232,28 @@ CREATE TABLE IF NOT EXISTS `wdc`.`sensor` (
   DEFAULT CHARACTER SET = utf8;
 
 -- -----------------------------------------------------
+-- Table `wdc`.`nodeSensor`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `wdc`.`nodeSensor` (
+  `nodeSensorId` INT NOT NULL AUTO_INCREMENT ,
+  `nodeId` INT NOT NULL ,
+  `sensorId` INT NOT NULL ,
+  `disabled` INT(1) ZEROFILL NULL ,
+  `lastModifiedUser` VARCHAR(30) NULL DEFAULT NULL ,
+  `lastModifiedDateTime` DATETIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`nodeSensorId`),
+  FOREIGN KEY (`nodeId`)
+  REFERENCES `wdc`.`node` (`nodeId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE,
+  FOREIGN KEY (`sensorId`)
+  REFERENCES `wdc`.`sensor` (`sensorId`)
+	ON DELETE NO ACTION
+	ON UPDATE CASCADE)
+  ENGINE = InnoDB
+  DEFAULT CHARACTER SET = utf8;
+
+-- -----------------------------------------------------
 -- Table `wdc`.`dataAck`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wdc`.`dataAck` (

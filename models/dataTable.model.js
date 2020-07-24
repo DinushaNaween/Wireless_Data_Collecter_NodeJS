@@ -1,5 +1,6 @@
-const { createConnection } = require('mysql');
 const tableService = require('../services/table.service');
+
+const { createConnection } = require('mysql');
 
 const USER = process.env.USER;
 const PASSWORD = process.env.PASSWORD;
