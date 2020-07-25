@@ -1,6 +1,8 @@
 const AuthToken = require('../models/authToken.model');
 const logger = require('./logger.middleware');
+const authenticationService = require('../services/authentication.service');
 
+const { findById } = require('../models/role.model');
 const { sign, verify } = require('jsonwebtoken');
 
 // Create access token
@@ -177,4 +179,80 @@ exports.tokenAuthentication = (req, res, next) => {
       message: 'Login required'
     });
   };
+};
+
+// Check if super admin
+exports.checkIfSuperAdmin = (req, res, next) => {
+
+  authenticationService.checkRole(req.body.loggedUser, 'super_admin', (err, result) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('authenticationService.checkRole findById notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found role with id ' + req.params.roleId
+        });
+      } else {
+        logger.error('authenticationService.checkRole findById', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: 'Error retrieving role with id ' + req.params.roleId
+        });
+      }
+    }
+
+    if (result) {
+      if (result.state === 'matched') {
+        logger.info('Super Admin access granted');
+        next();
+      } else {
+        logger.warn(`Super Admin access denied for user with userId ${req.body.loggedUser.userId}`);
+        res.status(403).json({
+          state: false,
+          error_code: 4,
+          message: `Super Admin access denied for user with userId ${req.body.loggedUser.userId}`
+        });
+      }
+    }
+  })
+};
+
+// Check if admin
+exports.checkIfAdmin = (req, res, next) => {
+
+  authenticationService.checkRole(req.body.loggedUser, 'admin', (err, result) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('authenticationService.checkRole findById notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found role with id ' + req.params.roleId
+        });
+      } else {
+        logger.error('authenticationService.checkRole findById', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: 'Error retrieving role with id ' + req.params.roleId
+        });
+      }
+    }
+
+    if (result) {
+      if (result.state === 'matched') {
+        logger.info('Admin access granted');
+        next();
+      } else {
+        logger.warn(`Admin access denied for user with userId ${req.body.loggedUser.userId}`);
+        res.status(403).json({
+          state: false,
+          error_code: 4,
+          message: `Admin access denied for user with userId ${req.body.loggedUser.userId}`
+        });
+      }
+    }
+  })
 };
