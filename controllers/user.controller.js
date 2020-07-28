@@ -601,7 +601,7 @@ exports.removeAll = (req, res) => {
 
 // Disable a user
 exports.disable = (req, res) => {
-  checkRole(req.body.loggedUser, 'Admin', (err, state) => {
+  checkRole(req.loggedUser, 'Admin', (err, state) => {
     if (err) {
       logger.error('User.disable.checkRole', err.message);
       res.status(500).json({

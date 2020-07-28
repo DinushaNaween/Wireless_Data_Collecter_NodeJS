@@ -6,7 +6,7 @@ const { sign, verify } = require('jsonwebtoken');
 
 // Create access token
 exports.createAccessToken = (payload, result) => {
-  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '1m' }, (err, token) => {
+  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '1d' }, (err, token) => {
     if (err) {
       logger.error('createAccessToken', err.message);
       result(err, null);
@@ -141,7 +141,7 @@ exports.tokenAuthentication = (req, res, next) => {
                         if (accessToken) {
                           logger.info('New accessToken created');  
                           res.set('authorization', `Bearer ${accessToken}`);
-                          req.body.loggedUser = refreshTokenPayload.user[0];
+                          req.loggedUser = refreshTokenPayload.user[0];
                           next();
                         }
                       });
@@ -167,7 +167,8 @@ exports.tokenAuthentication = (req, res, next) => {
         }
       } else{
         logger.info('Valid AccessToken found');
-        req.body.loggedUser = accessTokenPayload.user[0];
+        req.loggedUser = accessTokenPayload.user[0];
+        console.log('1');
         next();
       }
     });
@@ -184,7 +185,7 @@ exports.tokenAuthentication = (req, res, next) => {
 // Check if super admin
 exports.checkIfSuperAdmin = (req, res, next) => {
 
-  authenticationService.checkRole(req.body.loggedUser, 'super_admin', (err, result) => {
+  authenticationService.checkRole(req.loggedUser, 'super_admin', (err, result) => {
     if (err) {
       if (err.kind === 'not_found') {
         logger.error('authenticationService.checkRole findById notFound');
@@ -198,7 +199,7 @@ exports.checkIfSuperAdmin = (req, res, next) => {
         res.status(500).json({
           state: false,
           error_code: 2,
-          message: 'Error retrieving role with id ' + req.params.roleId
+          message: err.message || 'Error retrieving role with id ' + req.params.roleId
         });
       }
     }
@@ -206,13 +207,14 @@ exports.checkIfSuperAdmin = (req, res, next) => {
     if (result) {
       if (result.state === 'matched') {
         logger.info('Super Admin access granted');
+        console.log('2');
         next();
       } else {
-        logger.warn(`Super Admin access denied for user with userId ${req.body.loggedUser.userId}`);
+        logger.warn(`Super Admin access denied for user with userId ${req.loggedUser.userId}`);
         res.status(403).json({
           state: false,
           error_code: 4,
-          message: `Super Admin access denied for user with userId ${req.body.loggedUser.userId}`
+          message: `Super Admin access denied for user with userId ${req.loggedUser.userId}`
         });
       }
     }
@@ -222,7 +224,7 @@ exports.checkIfSuperAdmin = (req, res, next) => {
 // Check if admin
 exports.checkIfAdmin = (req, res, next) => {
 
-  authenticationService.checkRole(req.body.loggedUser, 'admin', (err, result) => {
+  authenticationService.checkRole(req.loggedUser, 'admin', (err, result) => {
     if (err) {
       if (err.kind === 'not_found') {
         logger.error('authenticationService.checkRole findById notFound');
@@ -246,11 +248,11 @@ exports.checkIfAdmin = (req, res, next) => {
         logger.info('Admin access granted');
         next();
       } else {
-        logger.warn(`Admin access denied for user with userId ${req.body.loggedUser.userId}`);
+        logger.warn(`Admin access denied for user with userId ${req.loggedUser.userId}`);
         res.status(403).json({
           state: false,
           error_code: 4,
-          message: `Admin access denied for user with userId ${req.body.loggedUser.userId}`
+          message: `Admin access denied for user with userId ${req.loggedUser.userId}`
         });
       }
     }
