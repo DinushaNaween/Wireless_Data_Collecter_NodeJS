@@ -162,7 +162,6 @@ exports.login = (req, res) => {
           }
 
           if (result) {
-            console.log(user[0])
             createAccessAndRefreshTokens({ user }, (err, tokens) => {
               if (err) {
                 logger.error('jwt.sign');

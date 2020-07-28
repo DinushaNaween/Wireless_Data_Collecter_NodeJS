@@ -2,12 +2,11 @@ const AuthToken = require('../models/authToken.model');
 const logger = require('./logger.middleware');
 const authenticationService = require('../services/authentication.service');
 
-const { findById } = require('../models/role.model');
 const { sign, verify } = require('jsonwebtoken');
 
 // Create access token
 exports.createAccessToken = (payload, result) => {
-  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' }, (err, token) => {
+  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '1m' }, (err, token) => {
     if (err) {
       logger.error('createAccessToken', err.message);
       result(err, null);
@@ -128,7 +127,8 @@ exports.tokenAuthentication = (req, res, next) => {
                         message: 'Login required'
                       });
                     } else {
-                      this.createAccessToken(refreshTokenPayload.user[0], (err, accessToken) => {
+                      let user = refreshTokenPayload.user[0];
+                      this.createAccessToken({ user }, (err, accessToken) => {
                         if (err) {
                           logger.error('createAccessToken for refreshToken', err.message);
                           res.status(400).json({

@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     let role = new Role({
       roleName: req.body.roleName,
       disabled: 0,
-      lastModifiedUser: null,
+      lastModifiedUser: req.body.loggedUser.userId,
       lastModifiedDateTime: new Date()
     });
   
@@ -115,11 +115,14 @@ exports.update = (req, res) => {
         }
       }
 
+      console.log('---------------------------------------')
+      console.log(req.body.loggedUser);
+
       if (roleData) {
         let role = new Role({
           roleName: req.body.roleName,
           disabled: 0,
-          lastModifiedUser: req.body.lastModifiedUser,
+          lastModifiedUser: req.body.loggedUser.userId,
           lastModifiedDateTime: new Date()
         });
 

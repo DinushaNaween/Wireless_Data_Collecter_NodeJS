@@ -7,6 +7,7 @@ exports.create = (req, res) => {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
   } else {
@@ -22,6 +23,7 @@ exports.create = (req, res) => {
         logger.error('create', err.message);
         res.status(500).json({
           state: false,
+          error_code: 2,
           message: err.message || 'Some error occurred while creating the privilege.'
         });
       } else {
@@ -42,6 +44,7 @@ exports.getAll = (req, res) => {
       logger.error('getAll', err.message);
       res.status(500).json({
         state: false,
+        error_code: 2,
         message: err.message || 'Some error occurred while retrieving the privileges.'
       });
     } else {
@@ -62,12 +65,14 @@ exports.findById = (req, res) => {
         logger.error('findById notFound');
         res.status(404).json({
           state: false,
+          error_code: 3,
           message: 'Not found privilege with id ' + req.params.privilegeId
         });
       } else {
         logger.error('findById', err.message);
         res.status(500).json({
           state: false,
+          error_code: 2,
           message: 'Error retrieving privilege with id ' + req.params.privilegeId
         });
       }
@@ -87,9 +92,11 @@ exports.update = (req, res) => {
     logger.error('empty req.body');
     res.status(400).json({
       state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
   } else {
+
     let privilege = new Privilege({
       privilegeDescription: req.body.privilegeDescription,
       disabled: 0,
@@ -98,18 +105,20 @@ exports.update = (req, res) => {
     });
     req.body.lastModifiedDateTime = new Date();
 
-    Privilege.updateById(req.params.privilegeId, new Privilege(req.body), (err, data) => {
+    Privilege.updateById(req.params.privilegeId, privilege, (err, data) => {
       if (err) {
         if (err.kind === 'not_found') {
           logger.error('updateById notFound');
           res.status(404).json({
             state: false,
+            error_code: 3,
             message: 'Not found privilege with id ' + req.params.privilegeId
           });
         } else {
           logger.error('updateById', err.message);
           res.status(500).json({
             state: false,
+            error_code: 2,
             message: 'Error updating privilege with id ' + req.params.privilegeId
           });
         }
