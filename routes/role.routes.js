@@ -17,15 +17,23 @@ module.exports = app => {
   // Get all roles
   app.get('/role', function (req, res, next) {
     reqLog(req, 'role.getAll');
-    next()
+    next();
   },
     role.getAll
+  );
+
+  // Get all disabled roles
+  app.get('/role/disable/', function (req, res, next) {
+    reqLog(req, 'role.getAllDisabled');
+    next();
+  },
+    role.getAllDisabled
   );
 
   // Find role by id
   app.get('/role/:roleId', function (req, res, next) {
     reqLog(req, 'role.findById');
-    next()
+    next();
   },
     role.findById
   );
