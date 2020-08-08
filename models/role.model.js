@@ -45,7 +45,7 @@ Role.getAllDisabled = (result) => {
       return;
     }
 
-    if (res.length) {
+    if (res.length) { 
       if (debug) console.log('Found role: ', res);
       result(null, res[0]);
       return;
@@ -132,8 +132,8 @@ Role.removeAll = result => {
 };
 
 // disable a role
-Role.disable = (roleId, reqBody, result) => {
-  sql.query('UPDATE role SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [reqBody.loggedUser.userId, new Date(), roleId], (err, res) => {
+Role.disable = (roleId, req, result) => {
+  sql.query('UPDATE role SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [req.loggedUser.userId, new Date(), roleId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -152,8 +152,8 @@ Role.disable = (roleId, reqBody, result) => {
 };
 
 // enable a role
-Role.enable = (roleId, reqBody, result) => {
-  sql.query('UPDATE role SET disabled = 0, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [reqBody.loggedUser.userId, new Date(), roleId], (err, res) => {
+Role.enable = (roleId, req, result) => {
+  sql.query('UPDATE role SET disabled = 0, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [req.loggedUser.userId, new Date(), roleId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);

@@ -234,7 +234,7 @@ exports.removeAll = (req, res) => {
 
 // disable a role
 exports.disable = (req, res) => {
-  Role.disable(req.params.roleId, req.body, (err, data) => {
+  Role.disable(req.params.roleId, req, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
         logger.error('disable notFound');
@@ -249,7 +249,7 @@ exports.disable = (req, res) => {
           state: false,
           error_code: 2,
           message: 'Error updating role with id ' + req.params.roleId
-        });
+        }); 
       }
     } else {
       logger.info('disable success');
@@ -263,7 +263,7 @@ exports.disable = (req, res) => {
 
 // enable a role
 exports.enable = (req, res) => {
-  Role.enable(req.params.roleId, req.body, (err, data) => {
+  Role.enable(req.params.roleId, req, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
         logger.error('enable notFound');
