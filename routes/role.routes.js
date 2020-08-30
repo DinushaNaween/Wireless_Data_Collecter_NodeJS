@@ -3,12 +3,13 @@ module.exports = app => {
   const role = require('../controllers/role.controller');
 
   const { reqLog } = require('../middlewares/logger.middleware');
-  const { tokenAuthentication } = require('../middlewares/jwtAuth.middleware');
+  const { tokenAuthentication, checkIfSuperAdmin, checkIfAdmin } = require('../middlewares/jwtAuth.middleware');
 
   // Create new role
   app.post('/role', function (req, res, next) {
     reqLog(req, 'role.create');
-    next()
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
   },
     role.create
   );
@@ -16,15 +17,23 @@ module.exports = app => {
   // Get all roles
   app.get('/role', function (req, res, next) {
     reqLog(req, 'role.getAll');
-    next()
+    next();
   },
     role.getAll
+  );
+
+  // Get all disabled roles
+  app.get('/role/disable/', function (req, res, next) {
+    reqLog(req, 'role.getAllDisabled');
+    next();
+  },
+    role.getAllDisabled
   );
 
   // Find role by id
   app.get('/role/:roleId', function (req, res, next) {
     reqLog(req, 'role.findById');
-    next()
+    next();
   },
     role.findById
   );
@@ -32,7 +41,8 @@ module.exports = app => {
   // Update role by id
   app.put('/role/:roleId', function (req, res, next) {
     reqLog(req, 'role.update');
-    next()
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
   },
     role.update
   );
@@ -40,7 +50,8 @@ module.exports = app => {
   // Delete role by id
   app.delete('/role/:roleId', function (req, res, next) {
     reqLog(req, 'role.remove');
-    next()
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
   },
     role.remove
   );
@@ -48,7 +59,8 @@ module.exports = app => {
   // Delete all roles
   app.delete('/role', function (req, res, next) {
     reqLog(req, 'role.removeAll');
-    next()
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
   },
     role.removeAll
   );
@@ -56,7 +68,8 @@ module.exports = app => {
   // Disable a role
   app.put('/role/disable/:roleId', function (req, res, next) {
     reqLog(req, 'role.disable');
-    tokenAuthentication(req, res, next)
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
   },
     role.disable
   );
@@ -64,7 +77,8 @@ module.exports = app => {
   // Enable a role
   app.put('/role/enable/:roleId', function (req, res, next) {
     reqLog(req, 'role.enable');
-    tokenAuthentication(req, res, next)
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
   },
     role.enable
   );

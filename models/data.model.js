@@ -14,3 +14,18 @@ exports.save = (tableName, data, result) => {
     return;
   })
 }
+
+// Get data from data table
+exports.getAll = (tableName, result) => {
+  sql.query(`SELECT * FROM ${tableName}`, (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err.message);
+      result(err, null);
+      return;
+    }
+
+    if (debug) console.log('Data: ', res);
+    result(null, res);
+    return;
+  })
+}

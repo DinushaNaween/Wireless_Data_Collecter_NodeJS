@@ -1,11 +1,12 @@
 const AuthToken = require('../models/authToken.model');
 const logger = require('./logger.middleware');
+const authenticationService = require('../services/authentication.service');
 
 const { sign, verify } = require('jsonwebtoken');
 
 // Create access token
 exports.createAccessToken = (payload, result) => {
-  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '15m' }, (err, token) => {
+  sign(payload, process.env.JWT_ACCESS_TOKEN_SECRET, { expiresIn: '1d' }, (err, token) => {
     if (err) {
       logger.error('createAccessToken', err.message);
       result(err, null);
@@ -126,7 +127,8 @@ exports.tokenAuthentication = (req, res, next) => {
                         message: 'Login required'
                       });
                     } else {
-                      this.createAccessToken(refreshTokenPayload.user[0], (err, accessToken) => {
+                      let user = refreshTokenPayload.user[0];
+                      this.createAccessToken({ user }, (err, accessToken) => {
                         if (err) {
                           logger.error('createAccessToken for refreshToken', err.message);
                           res.status(400).json({
@@ -139,7 +141,7 @@ exports.tokenAuthentication = (req, res, next) => {
                         if (accessToken) {
                           logger.info('New accessToken created');  
                           res.set('authorization', `Bearer ${accessToken}`);
-                          req.body.loggedUser = refreshTokenPayload.user[0];
+                          req.loggedUser = refreshTokenPayload.user[0];
                           next();
                         }
                       });
@@ -165,7 +167,8 @@ exports.tokenAuthentication = (req, res, next) => {
         }
       } else{
         logger.info('Valid AccessToken found');
-        req.body.loggedUser = accessTokenPayload.user[0];
+        req.loggedUser = accessTokenPayload.user[0];
+        console.log('1');
         next();
       }
     });
@@ -177,4 +180,81 @@ exports.tokenAuthentication = (req, res, next) => {
       message: 'Login required'
     });
   };
+};
+
+// Check if super admin
+exports.checkIfSuperAdmin = (req, res, next) => {
+
+  authenticationService.checkRole(req.loggedUser, 'super_admin', (err, result) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('authenticationService.checkRole findById notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found role with id ' + req.params.roleId
+        });
+      } else {
+        logger.error('authenticationService.checkRole findById', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: err.message || 'Error retrieving role with id ' + req.params.roleId
+        });
+      }
+    }
+
+    if (result) {
+      if (result.state === 'matched') {
+        logger.info('Super Admin access granted');
+        console.log('2');
+        next();
+      } else {
+        logger.warn(`Super Admin access denied for user with userId ${req.loggedUser.userId}`);
+        res.status(403).json({
+          state: false,
+          error_code: 4,
+          message: `Super Admin access denied for user with userId ${req.loggedUser.userId}`
+        });
+      }
+    }
+  })
+};
+
+// Check if admin
+exports.checkIfAdmin = (req, res, next) => {
+
+  authenticationService.checkRole(req.loggedUser, 'admin', (err, result) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('authenticationService.checkRole findById notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found role with id ' + req.params.roleId
+        });
+      } else {
+        logger.error('authenticationService.checkRole findById', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: 'Error retrieving role with id ' + req.params.roleId
+        });
+      }
+    }
+
+    if (result) {
+      if (result.state === 'matched') {
+        logger.info('Admin access granted');
+        next();
+      } else {
+        logger.warn(`Admin access denied for user with userId ${req.loggedUser.userId}`);
+        res.status(403).json({
+          state: false,
+          error_code: 4,
+          message: `Admin access denied for user with userId ${req.loggedUser.userId}`
+        });
+      }
+    }
+  })
 };

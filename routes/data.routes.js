@@ -10,4 +10,12 @@ module.exports = app => {
   }, 
     data.save
   );
+
+  // Get all data from a data table
+  app.get('/data/:tableName', function (req, res, next) {
+    reqLog(req, 'data.getAll');
+    next()
+  },
+    data.getAll
+  );
 }

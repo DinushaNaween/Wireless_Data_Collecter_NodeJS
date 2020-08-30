@@ -214,3 +214,23 @@ const saveDataObject = (data) => {
   });
 };
 // End of Save parent node data object.
+
+// Get all data from data table
+exports.getAll = (req, res) => {
+  Data.getAll(req.params.tableName, (err, data) => {
+    if (err) {
+      logger.error('getAll', err.message);
+      res.status(500).json({
+        state: false,
+        error_code: 2,
+        message: err.message || 'Some error occurred while retrieving the data from table.'
+      });
+    } else {
+      logger.info('getAll success');
+      res.status(200).json({
+        state: true,
+        data: data
+      });
+    }
+  })
+}

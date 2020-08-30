@@ -14,7 +14,7 @@ exports.create = (req, res) => {
     let role = new Role({
       roleName: req.body.roleName,
       disabled: 0,
-      lastModifiedUser: null,
+      lastModifiedUser: req.loggedUser.userId,
       lastModifiedDateTime: new Date()
     });
   
@@ -52,6 +52,36 @@ exports.getAll = (req, res) => {
       res.status(200).json({
         state: true,
         roles: data
+      });
+    }
+  });
+};
+
+// get all disabled roles
+exports.getAllDisabled = (req, res) => {
+  Role.getAllDisabled((err, data) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('getAllDisabled notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found any disabled role'
+        });
+      } else {
+        logger.error('getAllDisabled', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: err.message || 'Some error occurred while retrieving the disabled roles.'
+        });
+      }
+      
+    } else {
+      logger.info('getAllDisabled success');
+      res.status(200).json({
+        state: true,
+        disabled_roles: data
       });
     }
   });
@@ -119,7 +149,7 @@ exports.update = (req, res) => {
         let role = new Role({
           roleName: req.body.roleName,
           disabled: 0,
-          lastModifiedUser: req.body.lastModifiedUser,
+          lastModifiedUser: req.loggedUser.userId,
           lastModifiedDateTime: new Date()
         });
 
@@ -204,7 +234,7 @@ exports.removeAll = (req, res) => {
 
 // disable a role
 exports.disable = (req, res) => {
-  Role.disable(req.params.roleId, req.body, (err, data) => {
+  Role.disable(req.params.roleId, req, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
         logger.error('disable notFound');
@@ -219,7 +249,7 @@ exports.disable = (req, res) => {
           state: false,
           error_code: 2,
           message: 'Error updating role with id ' + req.params.roleId
-        });
+        }); 
       }
     } else {
       logger.info('disable success');
@@ -233,7 +263,7 @@ exports.disable = (req, res) => {
 
 // enable a role
 exports.enable = (req, res) => {
-  Role.enable(req.params.roleId, req.body, (err, data) => {
+  Role.enable(req.params.roleId, req, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
         logger.error('enable notFound');
