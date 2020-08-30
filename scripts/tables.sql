@@ -1,7 +1,7 @@
 -- -----------------------------------------------------
 -- Schema wdc (Wireless Data Collector)
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `wdc` DEFAULT CHARACTER SET utf8;
+CREATE SCHEMA sql12362064 IF NOT EXISTS DEFAULT CHARACTER SET utf8;
 USE `wdc`;
 
 -- -----------------------------------------------------

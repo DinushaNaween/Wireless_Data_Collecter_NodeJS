@@ -129,6 +129,7 @@
 ## 2. <ins>Data Routes</ins>
 
 ##### *1. Save data packet*
+##### *2. Get all data from a data table*
 
 ---
 ## 2. <ins>Data Validation</ins>
