@@ -6,6 +6,8 @@ const logger = require('./middlewares/logger.middleware');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
+const PORT = process.env.SERVER_PORT;
+
 const app = express();
 
 app.use(cookieParser());
@@ -27,7 +29,7 @@ app.use((req, res, next)=>{
 
 app.use(
   cors({
-    origin: 'http://localhost:8080',
+    origin: `http://localhost:${PORT}`,
     credentials: true
   })
 )
@@ -52,10 +54,10 @@ require('./routes/data.routes')(app);
 require('./routes/dataValidation.routes')(app);
 require('./routes/dataAck.routes')(app);
 
-app.listen(8080, (err, result) => {
+app.listen(PORT, (err, result) => {
   if (err) {
     logger.error('error on starting server', err.message);
   } else {
-    logger.info('server started listning on port 8080');
+    logger.info(`server started listning on port ${PORT}`);
   }
 }); 
