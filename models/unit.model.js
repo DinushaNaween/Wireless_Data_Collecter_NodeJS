@@ -1,4 +1,5 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const Unit = function (unit) {
   this.unitName = unit.unitName;

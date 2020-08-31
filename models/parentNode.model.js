@@ -1,4 +1,5 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const ParentNode = function (parentNode) {
   this.parentNodeName = parentNode.parentNodeName;

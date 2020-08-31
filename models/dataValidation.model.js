@@ -1,4 +1,5 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const DataValidation = function (dataValidation) {
   this.parentNodeId = dataValidation.parentNodeId;
