@@ -77,8 +77,15 @@ Node.findByParentNodeId = (parentNodeId, result) => {
     }
 
     if (res.length) {
+
+      let nodeIds = [];
+
+      for (let i = 0; i < res.length; i++) {
+        nodeIds.push(res[i].nodeId)
+      }
+
       if (debug) console.log('Found nodes: ', res);
-      result(null, res);
+      result(null, nodeIds);
       return;
     }
 

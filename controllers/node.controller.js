@@ -102,6 +102,33 @@ exports.findById = (req, res) => {
   });
 };
 
+// Get nodes by parentNodeId
+exports.findByParentNodeId = (req, res) => {
+  Node.findByParentNodeId(req.params.parentNodeId, (err, data) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('findByParentNodeId notFound');
+        res.status(404).json({
+          state: false,
+          message: 'Not found any node for parent node Id: ' + req.params.parentNodeId
+        });
+      } else {
+        logger.info('findByParentNodeId', err.message);
+        res.status(500).json({
+          state: false,
+          message: 'Error getting nodeIds'
+        });
+      }
+    } else {
+      logger.info('findByParentNodeId success');
+      res.status(200).json({
+        state: true,
+        nodes: data
+      });
+    }
+  });
+};
+
 // update a node
 exports.update = (req, res) => {
   if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
