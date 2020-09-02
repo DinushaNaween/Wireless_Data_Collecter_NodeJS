@@ -232,5 +232,71 @@ exports.getAll = (req, res) => {
         data: data
       });
     }
+  });
+};
+
+// Get all data by parentNodeId
+exports.getByParentNodeId = (req, res) => {
+  Node.findByParentNodeId(req.params.parentNodeId, (err, nodeIds) => {
+    getDataCollection(nodeIds)
+      .then(result => {
+        logger.info('getDataCollection success');
+        res.status(200).json({
+          state: true,
+          data: result
+        });
+      })
+      .catch(error => {
+        logger.error('getAll', error.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: error.message || 'Some error occurred while getDataCollection'
+        });
+      })
   })
 }
+
+// Create data array
+function getDataCollection(nodeIds){
+  return new Promise((resolve, reject) => {
+    const promises = [];
+
+    nodeIds.map((nodeId) => {
+      promises.push(getData(nodeId));
+    });
+
+    Promise.all(promises.map(promiseHandler))
+      .then(response => {
+        let resolved = [];
+        let rejected = [];
+
+        response.forEach(value => {
+          if (value.status === 'resolved') resolved.push(value.data);
+          if (value.status === 'rejected') rejected.push(value.data);
+        });
+
+        resolve(resolved);
+      })
+      .catch(error => {
+        logger.error('getDataCollection promise.all', error.message);
+        reject(error.message);
+      })
+  })
+}
+
+// Get data from table
+const getData = (nodeId) => {
+  return new Promise((resolve, reject) => {
+    Data.getDataByNodeId(nodeId, (err, nodeData) => {
+      if (err) {
+        logger.error(`Get data by tablename failed for tablename: ${nodeId}`);
+        logger.error('')
+        reject(nodeId);
+      } else {
+        logger.info(`Got data from tablename: ${nodeId}`)
+        resolve(nodeData);
+      }
+    });
+  });
+};
