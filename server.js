@@ -56,8 +56,8 @@ require('./routes/dataAck.routes')(app);
 
 app.listen(PORT, (err, result) => {
   if (err) {
-    logger.error('error on starting server', err.message);
+    // logger.error('error on starting server', err.message);
   } else {
-    logger.info(`server started listning on port ${PORT}`);
+    // logger.info(`server started listning on port ${PORT}`);
   }
 }); 
