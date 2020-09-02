@@ -27,6 +27,14 @@ module.exports = app => {
     node.findById
   );
 
+  // Get nodes by parentNodeId
+  app.get('/node/getAllByParentNode/:parentNodeId', function (req, res, next) {
+    reqLog(req, 'node.findByParentNodeId');
+    next()
+  },
+  node.findByParentNodeId
+  );
+
   // Update node by id
   app.put('/node/:nodeId', function (req, res, next) {
     reqLog(req, 'node.update');

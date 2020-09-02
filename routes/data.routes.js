@@ -18,4 +18,12 @@ module.exports = app => {
   },
     data.getAll
   );
+
+  // Get data by parent node Id
+  app.get('/data/getByParentNode/:parentNodeId', function (req, res, next) {
+    reqLog(req, 'data.getByParentNodeId');
+    next()
+  },
+    data.getByParentNodeId
+  );
 }
