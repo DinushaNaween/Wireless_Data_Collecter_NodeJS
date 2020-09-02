@@ -2,8 +2,8 @@ const tableService = require('../services/table.service');
 
 const { createConnection } = require('mysql');
 
-const HOST = process.env.HOST;
-// const HOST = '127.0.0.1';
+// const HOST = process.env.HOST;
+const HOST = '127.0.0.1';
 const USER = process.env.USER;
 const PASSWORD = process.env.PASSWORD;
 const PORT = process.env.PORT;
@@ -172,7 +172,7 @@ exports.getAllDataTables = (result) => {
 
   let tableNames = [];
 
-  sqlConnection.query('SELECT table_name FROM information_schema.tables WHERE table_name LIKE \"data_%\"', (err, res) => {
+  sqlConnection.query('SELECT table_name FROM information_schema.tables WHERE table_name LIKE \"%data_%\" AND table_name NOT LIKE \"%dataa%\" AND table_name NOT LIKE \"%datav%\"', (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
