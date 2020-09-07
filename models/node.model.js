@@ -28,7 +28,7 @@ Node.create = (nodes, result) => {
       if (debug) console.log('Created nodes: ', newNodes);
       result(null, newNodes);
       return;
-    })
+    });
   });
 };
 
