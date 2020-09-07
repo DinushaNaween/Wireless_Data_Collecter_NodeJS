@@ -9,6 +9,7 @@ const NodeSensor = function (nodeSensor) {
   this.lastModifiedDateTime = nodeSensor.lastModifiedDateTime;
 };
 
+// Save new nodeSensor data
 NodeSensor.createNodeSensor = (nodeId, columns, result) => {
   let columnsArray = [];
   let modifiedDateTime = new Date();
@@ -31,12 +32,41 @@ NodeSensor.createNodeSensor = (nodeId, columns, result) => {
       return;
     }
 
-    if (debug) console.log('NodeSensor: ', err);
-    result(null, res);
+    sql.query('SELECT * FROM nodeSensor WHERE nodeId = ? AND nodeSensorId >= ?', [nodeId, res.insertId], (err, newNodeSensors) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+      
+      if (debug) console.log('Created NodeSensors: ', err);
+      result(null, res);
+      return;
+    });
+  });
+};
+
+// Get node sensor data by nodeid
+NodeSensor.getNodeSensorDataByNodeId = (nodeId, result) => {
+  sql.query('SELECT * FROM nodeSensor WHERE nodeId = ?', [nodeId], (err, data) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+      if (debug) console.log('Found nodeSensor data: ', res);
+      result(null, res);
+      return;
+    }
+
+    result({ kind: 'not_found' }, null);
     return;
   });
 };
 
+// Remove node sensor data
 NodeSensor.removeNodeSensor = (nodeId, columns, result) => {
   let deleteArray = [];
 
@@ -58,7 +88,7 @@ NodeSensor.removeNodeSensor = (nodeId, columns, result) => {
     if (debug) console.log('NodeSensor: ', err);
     result(null, res);
     return;
-  })
-}
+  });
+};
 
 module.exports = NodeSensor;
