@@ -9,4 +9,4 @@ app.listen(PORT, (err, result) => {
   } else {
     logger.info(`server started listning on port ${PORT}`);
   }
-}); 
+});   

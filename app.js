@@ -1,5 +1,6 @@
 require('dotenv').config();
 require('./config/global.config');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 const logger = require('./middlewares/logger.middleware');

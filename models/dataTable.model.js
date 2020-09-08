@@ -2,8 +2,8 @@ const tableService = require('../services/table.service');
 
 const { createConnection } = require('mysql');
 
-// const HOST = process.env.HOST;
-const HOST = '127.0.0.1';
+const HOST = process.env.HOST;
+// const HOST = '127.0.0.1'; 
 const USER = process.env.USER;
 const PASSWORD = process.env.PASSWORD;
 const PORT = process.env.PORT;
