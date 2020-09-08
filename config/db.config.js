@@ -15,14 +15,14 @@ const connection = createConnection({
   database: DB  
 });
 
-connection.connect(error => {
-  if(error) {
-    logger.error('error connecting to mysql', error);
-    throw error; 
-  } 
+// connection.connect(error => {
+//   if(error) {
+//     logger.error('error connecting to mysql', error);
+//     throw error; 
+//   } 
 
-  console.log('Successfully connected to the database \'wdc\'');
-});
+//   console.log('Successfully connected to the database \'wdc\'');
+// });
 
 module.exports = {
   connection

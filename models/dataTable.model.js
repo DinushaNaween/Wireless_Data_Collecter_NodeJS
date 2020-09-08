@@ -2,26 +2,26 @@ const tableService = require('../services/table.service');
 
 const { createConnection } = require('mysql');
 
-const HOST = process.env.HOST;
-// const HOST = '127.0.0.1'; 
-const USER = process.env.USER;
-const PASSWORD = process.env.PASSWORD;
-const PORT = process.env.PORT;
-const DB = process.env.DB;
+// const HOST = process.env.HOST;
+// // const HOST = '127.0.0.1'; 
+// const USER = process.env.USER;
+// const PASSWORD = process.env.PASSWORD;
+// const PORT = process.env.PORT;
+// const DB = process.env.DB;
 
-const sqlConnection = createConnection({
-  host: HOST,
-  user: USER,
-  password: PASSWORD,
-  port: PORT,
-  database: DB
-}); 
+// const sqlConnection = createConnection({
+//   host: HOST,
+//   user: USER,
+//   password: PASSWORD,
+//   port: PORT,
+//   database: DB
+// }); 
 
-sqlConnection.connect(error => {
-  if(error) throw error; 
+// sqlConnection.connect(error => {
+//   if(error) throw error; 
 
-  console.log('Successfully connected to the database \'wdc\'');
-}); 
+//   console.log('Successfully connected to the database \'wdc\'');
+// }); 
 
 // Create new data table for a new node
 exports.createNewDataTable = (nodeId, columns, result) => {
