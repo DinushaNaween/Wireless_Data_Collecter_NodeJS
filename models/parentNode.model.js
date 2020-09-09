@@ -1,9 +1,10 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const ParentNode = function (parentNode) {
   this.parentNodeName = parentNode.parentNodeName;
   this.parentNodeLocation = parentNode.parentNodeLocation;
-  this.noOfNodes = parentNode.noOfNodes;
+  this.nodes = parentNode.nodes;
   this.unitId = parentNode.unitId;
   this.collectionId = parentNode.collectionId;
   this.createdUserId = parentNode.createdUserId;
@@ -13,16 +14,25 @@ const ParentNode = function (parentNode) {
 };
 
 // create and save new parentNode
-ParentNode.create = (newParentNode, result) => {
-  sql.query('INSERT INTO parentNode SET ?', newParentNode, (err, res) => {
+ParentNode.create = (newParentNodes, result) => {
+  sql.query('INSERT INTO parentNode(parentNodeName, parentNodeLocation, nodes, unitId, collectionId, createdUserId, disabled, lastModifiedUser, lastModifiedDateTime) VALUES ?', [newParentNodes], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
     
-    if (debug) console.log('Created parent node: ', { id: res.insertId, ...newParentNode });
-    result(null, { id: res.insertId, ...newParentNode });
+    sql.query('SELECT * FROM parentNode WHERE unitId = ? AND parentNodeId >= ?', [newParentNodes[0][3], res.insertId], (err, newParentNodes) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+      
+      if (debug) console.log('Created parent nodes: ', newParentNodes);
+      result(null, newParentNodes);
+      return;
+    })
   });
 };
 
@@ -37,7 +47,7 @@ ParentNode.getAll = (result) => {
 
     if (debug) console.log('Parent nodes: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -57,12 +67,13 @@ ParentNode.findById = (parentNodeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
 // update a parentNode
 ParentNode.updateById = (parentNodeId, parentNode, result) => {
-  sql.query('UPDATE parentNode SET parentNodeName = ?, parentNodeLocation = ?, noOfNodes = ?, unitId = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.parentNodeName, parentNode.parentNodeLocation, parentNode.noOfNodes, parentNode.unitId, parentNode.collectionId, parentNode.createdUserId, parentNode.disabled, parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
+  sql.query('UPDATE parentNode SET parentNodeName = ?, parentNodeLocation = ?, nodes = ?, unitId = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE parentNodeId = ?', [parentNode.parentNodeName, parentNode.parentNodeLocation, parentNode.nodes, parentNode.unitId, parentNode.collectionId, parentNode.createdUserId, parentNode.disabled, parentNode.lastModifiedUser, parentNode.lastModifiedDateTime, parentNodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -76,6 +87,7 @@ ParentNode.updateById = (parentNodeId, parentNode, result) => {
 
     if (debug) console.log('Updated parent node: ', { id: parentNodeId, ...parentNode });
     result(null, { id: parentNodeId, ...parentNode });
+    return;
   });
 };
 
@@ -95,6 +107,7 @@ ParentNode.remove = (parentNodeId, result) => {
 
     if (debug) console.log('Deleted parent node with id: ', parentNodeId);
     result(null, res);
+    return;
   });
 };
 
@@ -109,6 +122,7 @@ ParentNode.removeAll = result => {
 
     if (debug) console.log('Deleted %s parent nodes.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -128,6 +142,7 @@ ParentNode.disable = (parentNodeId, parentNode, result) => {
 
     if (debug) console.log('Disabled parent node: ', { id: parentNodeId });
     result(null, { id: parentNodeId });
+    return;
   })
 };
 

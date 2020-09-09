@@ -1,4 +1,5 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const RolePrivilege = function (rolePrivilege) {
   this.roleId = rolePrivilege.roleId;
@@ -19,6 +20,7 @@ RolePrivilege.create = (newRolePrivilege, result) => {
     
     if (debug) console.log('Created role privilege: ', { id: res.insertId, ...newRolePrivilege });
     result(null, { id: res.insertId, ...newRolePrivilege });
+    return;
   });
 };
 
@@ -33,7 +35,7 @@ RolePrivilege.getAll = (result) => {
 
     if (debug) console.log('Role privileges: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -53,6 +55,7 @@ RolePrivilege.findById = (rolePrivilegeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -72,6 +75,7 @@ RolePrivilege.updateById = (rolePrivilegeId, rolePrivilege, result) => {
 
     if (debug) console.log('Updated role privilege: ', { id: rolePrivilegeId, ...rolePrivilege });
     result(null, { id: rolePrivilegeId, ...rolePrivilege });
+    return;
   });
 };
 
@@ -91,6 +95,7 @@ RolePrivilege.remove = (rolePrivilegeId, result) => {
 
     if (debug) console.log('Deleted role privilege with id: ', rolePrivilegeId);
     result(null, res);
+    return;
   });
 };
 
@@ -105,12 +110,13 @@ RolePrivilege.removeAll = result => {
 
     if (debug) console.log('Deleted %s role privileges.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
 // disable a role privilege
-RolePrivilege.disable = (rolePrivilegeId, rolePrivilege, result) => {
-  sql.query('UPDATE rolePrivilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [rolePrivilege.lastModifiedUser, rolePrivilege.lastModifiedDateTime, rolePrivilegeId], (err, res) => {
+RolePrivilege.disable = (rolePrivilegeId, lastModifiedUser, result) => {
+  sql.query('UPDATE rolePrivilege SET disabled = 1, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE roleId = ?', [lastModifiedUser, new Date(), rolePrivilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -124,6 +130,7 @@ RolePrivilege.disable = (rolePrivilegeId, rolePrivilege, result) => {
 
     if (debug) console.log('Disabled role privilege: ', { id: rolePrivilegeId });
     result(null, { id: rolePrivilegeId });
+    return;
   })
 };
 

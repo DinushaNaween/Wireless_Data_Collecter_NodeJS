@@ -1,9 +1,10 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const Unit = function (unit) {
   this.unitName = unit.unitName;
   this.unitLocation = unit.unitLocation;
-  this.noOfParentNodes = unit.noOfParentNodes;
+  this.parentNodes = unit.parentNodes;
   this.collectionId = unit.collectionId;
   this.createdUserId = unit.createdUserId;
   this.disabled = unit.disabled;
@@ -20,8 +21,9 @@ Unit.create = (newUnit, result) => {
       return;
     }
     
-    if (debug) console.log('Created unit: ', { id: res.insertId, ...newUnit });
-    result(null, { id: res.insertId, ...newUnit });
+    if (debug) console.log('Created unit: ', { unitId: res.insertId, ...newUnit });
+    result(null, { unitId: res.insertId, ...newUnit });
+    return;
   });
 };
 
@@ -56,12 +58,13 @@ Unit.findById = (unitId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
 // update a unit
 Unit.updateById = (unitId, unit, result) => {
-  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, noOfParentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.noOfParentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
+  sql.query('UPDATE unit SET unitName = ?, unitLocation = ?, parentNodes = ?, collectionId = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE unitId = ?', [unit.unitName, unit.unitLocation, unit.parentNodes, unit.collectionId, unit.createdUserId, unit.disabled, unit.lastModifiedUser, unit.lastModifiedDateTime, unitId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -75,6 +78,7 @@ Unit.updateById = (unitId, unit, result) => {
 
     if (debug) console.log('Updated unit: ', { id: unitId, ...unit });
     result(null, { id: unitId, ...unit });
+    return;
   });
 };
 
@@ -94,6 +98,7 @@ Unit.remove = (unitId, result) => {
 
     if (debug) console.log('Deleted unit with id: ', unitId);
     result(null, res);
+    return;
   });
 };
 
@@ -108,6 +113,7 @@ Unit.removeAll = result => {
 
     if (debug) console.log('Deleted %s units.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -127,6 +133,7 @@ Unit.disable = (unitId, unit, result) => {
 
     if (debug) console.log('Disabled unit: ', { id: unitId });
     result(null, { id: unitId });
+    return;
   })
 };
 

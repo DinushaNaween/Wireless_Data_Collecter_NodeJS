@@ -1,6 +1,6 @@
 # Wireless Data Collecter
 
-Wireless Data Collector is a express + mysql API application created for collect data from greenhouses. This application contains bunch of different kinds of API endpoints to interact with mysql database. As [Wireless Data Collector - DB Schema.pdf](https://github.com/DinushaNaween/Wireless_Data_Collector_NodeJS/blob/master/Wireless%20Data%20Collector%20-%20DB%20Schema.pdf) shows, this API contains,
+Wireless Data Collector is a express + mysql API application created for collect data from greenhouses. This application contains bunch of different kinds of API endpoints to interact with mysql database. As [Wireless Data Collector - DB Schema.pdf](https://github.com/DinushaNaween/Wireless_Data_Collecter_NodeJS/blob/master/resources/Wireless%20Data%20Collector%20-%20DB%20Schema.pdf) shows, this API contains,
 
 1. Users
 2. User Roles
@@ -36,11 +36,26 @@ Each node is responsible for their parent node. That means each node sends its s
 3. Create .env file and add following credentials,
 
 ```
-HOST = localhost
-USER = root
-PASSWORD = password
-PORT = 3306
-DB = wdc
+# Database configurations
+HOST = (Host)
+USER = (User)
+PASSWORD = (Your Password)
+PORT = (Port Number)
+DB = (Your Database Name)
+
+# Json Web Token secret key
+JWT_ACCESS_TOKEN_SECRET = (Secret For Access Token)
+JWT_REFRESH_TOKEN_SECRET = (Secret For Refresh Token)
+
+# Mail configurations
+SERVICE = (Email Service)
+MAILADDRESS = (Mail Address For Send Emails)
+MAILPASSWORD = (Password Of Email Address Provided Above)
+
+# Cloudinary configurations
+COLUDINARY_CLOUD_NAME = (Cloudinary Cloud Name)
+COLUDINARY_API_KEY = (Cloudinary API Key)
+COLUDINARY_API_SECRET = (Cloudinary API Secret)
 ```
 
 Rename USER or PASSWORD or any above details according to your mysql credentials.

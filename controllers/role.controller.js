@@ -1,37 +1,89 @@
 const Role = require('../models/role.model');
+const logger = require('../middlewares/logger.middleware');
 
 // create and save new role
 exports.create = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
+    res.status(400).json({
+      state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
+  } else {
+    let role = new Role({
+      roleName: req.body.roleName,
+      disabled: 0,
+      lastModifiedUser: req.loggedUser.userId,
+      lastModifiedDateTime: new Date()
+    });
+  
+    Role.create(role, (err, data) => {
+      if (err) {
+        logger.error('create', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: err.message || 'Some error occurred while creating the role.'
+        });
+      } else {
+        logger.info('role created');
+        res.status(200).json({
+          state: true,
+          created_role: data
+        });
+      }
+    });
   }
-
-  const role = new Role({
-    roleName: req.body.roleName,
-    disabled: req.body.disabled,
-    lastModifiedUser: req.body.lastModifiedUser,
-    lastModifiedDateTime: new Date()
-  });
-
-  Role.create(role, (err, data) => {
-    if (err) {
-      res.status(500).send({
-        message: err.message || 'Some error occurred while creating the role.'
-      });
-    } else res.send(data);
-  });
 };
 
 // get all roles from database
 exports.getAll = (req, res) => {
   Role.getAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      logger.error('getAll', err.message);
+      res.status(500).json({
+        state: false,
+        error_code: 2,
         message: err.message || 'Some error occurred while retrieving the roles.'
       });
-    } else res.send(data);
+    } else {
+      logger.info('getAll success');
+      res.status(200).json({
+        state: true,
+        roles: data
+      });
+    }
+  });
+};
+
+// get all disabled roles
+exports.getAllDisabled = (req, res) => {
+  Role.getAllDisabled((err, data) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('getAllDisabled notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found any disabled role'
+        });
+      } else {
+        logger.error('getAllDisabled', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: err.message || 'Some error occurred while retrieving the disabled roles.'
+        });
+      }
+      
+    } else {
+      logger.info('getAllDisabled success');
+      res.status(200).json({
+        state: true,
+        disabled_roles: data
+      });
+    }
   });
 };
 
@@ -40,41 +92,95 @@ exports.findById = (req, res) => {
   Role.findById(req.params.roleId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        logger.error('findById notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
-        res.status(500).send({
+        logger.error('findById', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
           message: 'Error retrieving role with id ' + req.params.roleId
         });
       }
-    } else res.send(data);
+    } else {
+      logger.info('findById success');
+      res.status(200).json({
+        state: true,
+        role: data
+      });
+    }
   });
 };
 
 // update a role
 exports.update = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
+  if(req.body.constructor === Object && Object.keys(req.body).length === 0) {
+    logger.error('empty req.body');
+    res.status(400).json({
+      state: false,
+      error_code: 1,
       message: 'Content can not be empty!'
     });
-  }
+  } else {
+    Role.findById(req.params.roleId, (err, roleData) => {
+      if (err) {
+        if (err.kind === 'not_found') {
+          logger.error('findById notFound');
+          res.status(404).json({
+            state: false,
+            error_code: 3,
+            message: 'Not found role with id ' + req.params.roleId
+          });
+        } else {
+          logger.error('findById', err.message);
+          res.status(500).json({
+            state: false,
+            error_code: 2,
+            message: 'Error retrieving role with id ' + req.params.roleId
+          });
+        }
+      }
 
-  req.body.lastModifiedDateTime = new Date();
-
-  Role.updateById(req.params.roleId, new Role(req.body), (err, data) => {
-    if (err) {
-      if (err.kind === 'not_found') {
-        res.status(404).send({
-          message: 'Not found role with id ' + req.params.roleId
+      if (roleData) {
+        let role = new Role({
+          roleName: req.body.roleName,
+          disabled: 0,
+          lastModifiedUser: req.loggedUser.userId,
+          lastModifiedDateTime: new Date()
         });
-      } else {
-        res.status(500).send({
-          message: 'Error updating role with id ' + req.params.roleId
+
+        Role.updateById(req.params.roleId, role, (err, data) => {
+          if (err) {
+            if (err.kind === 'not_found') {
+              logger.error('updateById notFound');
+              res.status(404).json({
+                state: false,
+                error_code: 3,
+                message: 'Not found role with id ' + req.params.roleId
+              });
+            } else {
+              logger.error('updateById', err.message);
+              res.status(500).json({
+                state: false,
+                error_code: 2,
+                message: 'Error updating role with id ' + req.params.roleId
+              });
+            }
+          } else {
+            logger.info('update success');
+            res.status(200).json({
+              state: true,
+              updated_role: data
+            });
+          }
         });
       }
-    } else res.send(data);
-  })
+    });
+  }
 };
 
 // delete a role by id
@@ -82,15 +188,27 @@ exports.remove = (req, res) => {
   Role.remove(req.params.roleId, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        logger.error('remove notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
-        res.status(500).send({
+        logger.error('remove', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
           message: 'Could not delete role with id ' + req.params.roleId
         });
       }
-    } else res.send({ message: 'Role deleted successfully!' })
+    } else {
+      logger.info('remove success');
+      res.status(200).json({
+        state: true,
+        message: 'Role deleted successfully'
+      });
+    }
   });
 };
 
@@ -98,34 +216,76 @@ exports.remove = (req, res) => {
 exports.removeAll = (req, res) => {
   Role.removeAll((err, data) => {
     if (err) {
-      res.status(500).send({
+      logger.error('removeAll', err.message);
+      res.status(500).json({
+        state: false,
+        error_code: 2,
         message: err.message || 'Some error occurred while deleting all roles.'
       });
-    } else res.send({ message: 'All roles deleted successfully.' })
-  })
+    } else {
+      logger.info('removeAll success');
+      res.status(200).json({
+        state: true,
+        message: 'All roles deleted successfully'
+      });
+    }
+  });
 };
 
 // disable a role
 exports.disable = (req, res) => {
-  if (!req.body) {
-    res.status(400).send({
-      message: 'Content can not be empty!'
-    });
-  }
-
-  req.body.lastModifiedDateTime = new Date();
-
-  Role.disable(req.params.roleId, req.body, (err, data) => {
+  Role.disable(req.params.roleId, req, (err, data) => {
     if (err) {
       if (err.kind === 'not_found') {
-        res.status(404).send({
+        logger.error('disable notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
           message: 'Not found role with id ' + req.params.roleId
         });
       } else {
-        res.status(500).send({
+        logger.error('disable', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
+          message: 'Error updating role with id ' + req.params.roleId
+        }); 
+      }
+    } else {
+      logger.info('disable success');
+      res.status(200).json({
+        state: true,
+        message: 'Disabled role with id: ' + data.id +'.'
+      });
+    }
+  });
+};
+
+// enable a role
+exports.enable = (req, res) => {
+  Role.enable(req.params.roleId, req, (err, data) => {
+    if (err) {
+      if (err.kind === 'not_found') {
+        logger.error('enable notFound');
+        res.status(404).json({
+          state: false,
+          error_code: 3,
+          message: 'Not found role with id ' + req.params.roleId
+        });
+      } else {
+        logger.error('enable', err.message);
+        res.status(500).json({
+          state: false,
+          error_code: 2,
           message: 'Error updating role with id ' + req.params.roleId
         });
       }
-    } else res.send({ message: 'Disabled role with id: ' + data.id +'.' });
-  })
+    } else {
+      logger.info('enable role success');
+      res.status(200).json({
+        state: true,
+        message: 'Enabled role with id: ' + data.id +'.'
+      });
+    }
+  });
 };

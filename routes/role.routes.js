@@ -2,24 +2,84 @@ module.exports = app => {
 
   const role = require('../controllers/role.controller');
 
-  // create new role
-  app.post('/role', role.create);
+  const { reqLog } = require('../middlewares/logger.middleware');
+  const { tokenAuthentication, checkIfSuperAdmin, checkIfAdmin } = require('../middlewares/jwtAuth.middleware');
 
-  // get all roles
-  app.get('/role', role.getAll);
+  // Create new role
+  app.post('/role', function (req, res, next) {
+    reqLog(req, 'role.create');
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
+  },
+    role.create
+  );
 
-  // find role by id
-  app.get('/role/:roleId', role.findById);
+  // Get all roles
+  app.get('/role', function (req, res, next) {
+    reqLog(req, 'role.getAll');
+    next();
+  },
+    role.getAll
+  );
 
-  // update role by id
-  app.put('/role/:roleId', role.update);
+  // Get all disabled roles
+  app.get('/role/disable/', function (req, res, next) {
+    reqLog(req, 'role.getAllDisabled');
+    next();
+  },
+    role.getAllDisabled
+  );
 
-  // delete role by id
-  app.delete('/role/:roleId', role.remove);
+  // Find role by id
+  app.get('/role/:roleId', function (req, res, next) {
+    reqLog(req, 'role.findById');
+    next();
+  },
+    role.findById
+  );
 
-  // delete all roles
-  app.delete('/role', role.removeAll);
+  // Update role by id
+  app.put('/role/:roleId', function (req, res, next) {
+    reqLog(req, 'role.update');
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
+  },
+    role.update
+  );
 
-  // disable a role
-  app.put('/role/disable/:roleId', role.disable);
+  // Delete role by id
+  app.delete('/role/:roleId', function (req, res, next) {
+    reqLog(req, 'role.remove');
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
+  },
+    role.remove
+  );
+
+  // Delete all roles
+  app.delete('/role', function (req, res, next) {
+    reqLog(req, 'role.removeAll');
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
+  },
+    role.removeAll
+  );
+
+  // Disable a role
+  app.put('/role/disable/:roleId', function (req, res, next) {
+    reqLog(req, 'role.disable');
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
+  },
+    role.disable
+  );
+
+  // Enable a role
+  app.put('/role/enable/:roleId', function (req, res, next) {
+    reqLog(req, 'role.enable');
+    tokenAuthentication(req, res, next);
+    checkIfSuperAdmin(req, res, next);
+  },
+    role.enable
+  );
 }

@@ -1,4 +1,5 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const Privilege = function(privilege) {
   this.privilegeDescription = privilege.privilegeDescription;
@@ -9,7 +10,7 @@ const Privilege = function(privilege) {
 
 // create and save new privilege
 Privilege.create = (newPrivilege, result) => {
-  sql.query('INSERT INTO privilege set ?', newPrivilege, (err, res) => {
+  sql.query('INSERT INTO privilege SET ?', newPrivilege, (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -18,6 +19,7 @@ Privilege.create = (newPrivilege, result) => {
 
     if (debug) console.log('Created privilege: ', { id: res.insertId, ...newPrivilege });
     result(null, { id: res.insertId, ...newPrivilege });
+    return;
   });
 };
 
@@ -32,13 +34,13 @@ Privilege.getAll = (result) => {
 
     if (debug) console.log('Privileges: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
 // get privilege by id
 Privilege.findById = (privilegeId, result) => {
-  sql.query('SELECT * FROM privilege WHERE privilegeId =' + privilegeId, (err, res) => {
+  sql.query('SELECT * FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -52,6 +54,7 @@ Privilege.findById = (privilegeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -71,12 +74,13 @@ Privilege.updateById = (privilegeId, privilege, result) => {
 
     if (debug) console.log('updated privilege: ', { id: privilegeId, ...privilege });
     result(null, { id: privilegeId, ...privilege });
+    return;
   });
 };
 
 // delete a privilege by id
 Privilege.remove = (privilegeId, result) => {
-  sql.query('DELETE FROM privilege WHERE privilegeId = ?', privilegeId, (err, res) => {
+  sql.query('DELETE FROM privilege WHERE privilegeId = ?', [privilegeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -90,6 +94,7 @@ Privilege.remove = (privilegeId, result) => {
 
     if (debug) console.log('Deleted privilege with id: ', privilegeId);
     result(null, res);
+    return;
   });
 };
 
@@ -104,6 +109,7 @@ Privilege.removeAll = result => {
 
     if (debug) console.log('Deleted %s privileges.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -123,6 +129,7 @@ Privilege.disable = (privilegeId, privilege, result) => {
 
     if (debug) console.log('Disabled privilege: ', { id: privilegeId });
     result(null, { id: privilegeId });
+    return;
   })
 };
 

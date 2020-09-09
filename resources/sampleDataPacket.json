@@ -1,0 +1,27 @@
+{
+  "parentNodeId": "1",
+  "data": [
+    {
+      "nodeId": "1",
+      "humadity": "",
+      "soil_moisture": "",
+      "tempurature": ""
+    },
+    {
+      "nodeId": "2",
+      "humadity": "",
+      "soil_moisture": "",
+      "tempurature": ""
+    },
+    {
+      "nodeId": "3",
+      "humadity": "",
+      "soil_moisture": "",
+      "tempurature": ""
+    },
+    {
+      "nodeId": null
+    }
+  ],
+  "timestamp": ""
+}

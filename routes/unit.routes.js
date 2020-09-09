@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const unit = require('../controllers/unit.controller');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
-  // create new unit
-  app.post('/unit', unit.create);
+  // Create new unit
+  app.post('/unit', function (req, res, next) {
+    reqLog(req, 'unit.create');
+    next()
+  },
+    unit.create
+  );
 
-  // get all units
-  app.get('/unit', unit.getAll);
+  // Get all units
+  app.get('/unit', function (req, res, next) {
+    reqLog(req, 'unit.getAll');
+    next()
+  },
+    unit.getAll
+  );
 
-  // find unit by id
-  app.get('/unit/:unitId', unit.findById);
+  // Find unit by id
+  app.get('/unit/:unitId', function (req, res, next) {
+    reqLog(req, 'unit.findById');
+    next()
+  },
+    unit.findById
+  );
 
-  // update unit by id
-  app.put('/unit/:unitId', unit.update);
+  // Update unit by id
+  app.put('/unit/:unitId', function (req, res, next) {
+    reqLog(req, 'unit.update');
+    next()
+  },
+    unit.update
+  );
 
-  // delete unit by id
-  app.delete('/unit/:unitId', unit.remove);
+  // Delete unit by id
+  app.delete('/unit/:unitId', function (req, res, next) {
+    reqLog(req, 'unit.remove');
+    next()
+  },
+    unit.remove
+  );
 
-  // delete all units
-  app.delete('/unit', unit.removeAll);
+  // Delete all units
+  app.delete('/unit', function (req, res, next) {
+    reqLog(req, 'unit.removeAll');
+    next()
+  },
+    unit.removeAll
+  );
 
-  // disable a unit
-  app.put('/unit/disable/:unitId', unit.disable);
+  // Disable a unit
+  app.put('/unit/disable/:unitId', function (req, res, next) {
+    reqLog(req, 'unit.disable');
+    next()
+  },
+    unit.disable
+  );
 }

@@ -1,25 +1,61 @@
 module.exports = app => {
 
   const privilege = require('../controllers/privilege.controller');
+  const { reqLog } = require('../middlewares/logger.middleware');
 
-  // create new privilege
-  app.post('/privilege', privilege.create);
+  // Create new privilege
+  app.post('/privilege', function (req, res, next) {
+    reqLog(req, 'privilege.create');
+    next()
+  },
+    privilege.create
+  );
 
-  // get all privileges
-  app.get('/privilege', privilege.getAll);
+  // Get all privileges
+  app.get('/privilege', function (req, res, next) {
+    reqLog(req, 'privilege.getAll');
+    next()
+  },
+    privilege.getAll
+  );
 
-  // find privilege by id
-  app.get('/privilege/:privilegeId', privilege.findById);
+  // Find privilege by id
+  app.get('/privilege/:privilegeId', function (req, res, next) {
+    reqLog(req, 'privilege.findById');
+    next()
+  },
+    privilege.findById
+  );
 
-  // update privilege by id
-  app.put('/privilege/:privilegeId', privilege.update);
+  // Update privilege by id
+  app.put('/privilege/:privilegeId', function (req, res, next) {
+    reqLog(req, 'privilege.update');
+    next()
+  },
+    privilege.update
+  );
 
-  // delete privilege by id
-  app.delete('/privilege/:privilegeId', privilege.remove);
+  // Delete privilege by id
+  app.delete('/privilege/:privilegeId', function (req, res, next) {
+    reqLog(req, 'privilege.remove');
+    next()
+  },
+    privilege.remove
+  );
 
-  // delete all privileges
-  app.delete('/privilege', privilege.removeAll);
+  // Delete all privileges
+  app.delete('/privilege', function (req, res, next) {
+    reqLog(req, 'privilege.removeAll');
+    next()
+  },
+    privilege.removeAll
+  );
 
-  // disable a privilege
-  app.put('/privilege/disable/:privilegeId', privilege.disable);
+  // Disable a privilege
+  app.put('/privilege/disable/:privilegeId', function (req, res, next) {
+    reqLog(req, 'privilege.disable');
+    next()
+  },
+    privilege.disable
+  );
 }

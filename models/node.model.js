@@ -1,4 +1,5 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const Node = function (node) {
   this.parentNodeId = node.parentNodeId;
@@ -9,16 +10,25 @@ const Node = function (node) {
 };
 
 // create and save new node
-Node.create = (newNode, result) => {
-  sql.query('INSERT INTO node SET ?', newNode, (err, res) => {
+Node.create = (nodes, result) => {
+  sql.query('INSERT INTO node(parentNodeId, createdUserId, disabled, lastModifiedUser, lastModifiedDateTime) VALUES ?', [nodes], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
       return;
     }
     
-    if (debug) console.log('Created node: ', { id: res.insertId, ...newNode });
-    result(null, { id: res.insertId, ...newNode });
+    sql.query('SELECT * FROM node WHERE parentNodeId = ? AND nodeId >= ?',[nodes[0][0], res.insertId], (err, newNodes) => {
+      if (err) {
+        if (debug) console.log('Error: ', err);
+        result(err, null);
+        return;
+      }
+
+      if (debug) console.log('Created nodes: ', newNodes);
+      result(null, newNodes);
+      return;
+    });
   });
 };
 
@@ -33,13 +43,13 @@ Node.getAll = (result) => {
 
     if (debug) console.log('Nodes: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
 // get node by id
 Node.findById = (nodeId, result) => {
-  sql.query('SELECT * FROM node WHERE nodeId =' + nodeId, (err, res) => {
+  sql.query('SELECT * FROM node WHERE nodeId = ?' , [nodeId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -53,6 +63,34 @@ Node.findById = (nodeId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
+  });
+};
+
+// Get nodes by parentNodeId
+Node.findByParentNodeId = (parentNodeId, result) => {
+  sql.query('SELECT nodeId FROM node WHERE parentNodeId = ?', [parentNodeId], (err, res) => {
+    if (err) {
+      if (debug) console.log('Error: ', err);
+      result(err, null);
+      return;
+    }
+
+    if (res.length) {
+
+      let nodeIds = [];
+
+      for (let i = 0; i < res.length; i++) {
+        nodeIds.push(res[i].nodeId)
+      }
+
+      if (debug) console.log('Found nodes: ', res);
+      result(null, nodeIds);
+      return;
+    }
+
+    result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
@@ -72,6 +110,7 @@ Node.updateById = (nodeId, node, result) => {
 
     if (debug) console.log('Updated node: ', { id: nodeId, ...node });
     result(null, { id: nodeId, ...node });
+    return;
   });
 };
 
@@ -91,6 +130,7 @@ Node.remove = (nodeId, result) => {
 
     if (debug) console.log('Deleted node with id: ', nodeId);
     result(null, res);
+    return;
   });
 };
 
@@ -105,6 +145,7 @@ Node.removeAll = result => {
 
     if (debug) console.log('Deleted %s nodes.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -124,6 +165,7 @@ Node.disable = (nodeId, node, result) => {
 
     if (debug) console.log('Disabled node: ', { id: nodeId });
     result(null, { id: nodeId });
+    return;
   })
 };
 

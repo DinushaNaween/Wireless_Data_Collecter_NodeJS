@@ -1,9 +1,10 @@
-const sql = require('../config/db.config');
+const mysql = require('../config/db.config');
+const sql = mysql.connection;
 
 const Collection = function (collection) {
   this.collectionName = collection.collectionName;
   this.collectionLocation = collection.collectionLocation;
-  this.noOfUnits = collection.noOfUnits;
+  this.units = collection.units;
   this.createdUserId = collection.createdUserId;
   this.disabled = collection.disabled;
   this.lastModifiedUser = collection.lastModifiedUser;
@@ -21,6 +22,7 @@ Collection.create = (newCollection, result) => {
     
     if (debug) console.log('Created collection: ', { id: res.insertId, ...newCollection });
     result(null, { id: res.insertId, ...newCollection });
+    return;
   });
 };
 
@@ -35,7 +37,7 @@ Collection.getAll = (result) => {
 
     if (debug) console.log('Collections: ', res);
     result(null, res);
-    return
+    return;
   });
 };
 
@@ -55,12 +57,13 @@ Collection.findById = (collectionId, result) => {
     }
 
     result({ kind: 'not_found' }, null);
+    return;
   });
 };
 
 // update a collection
 Collection.updateById = (collectionId, collection, result) => {
-  sql.query('UPDATE collection SET collectionName = ?, collectionLocation = ?, noOfUnits = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.collectionName, collection.collectionLocation, collection.noOfUnits, collection.createdUserId, collection.disabled, collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
+  sql.query('UPDATE collection SET collectionName = ?, collectionLocation = ?, units = ?, createdUserId = ?, disabled = ?, lastModifiedUser = ?, lastModifiedDateTime = ? WHERE collectionId = ?', [collection.collectionName, collection.collectionLocation, collection.units, collection.createdUserId, collection.disabled, collection.lastModifiedUser, collection.lastModifiedDateTime, collectionId], (err, res) => {
     if (err) {
       if (debug) console.log('Error: ', err);
       result(err, null);
@@ -74,6 +77,7 @@ Collection.updateById = (collectionId, collection, result) => {
 
     if (debug) console.log('Updated collection: ', { id: collectionId, ...collection });
     result(null, { id: collectionId, ...collection });
+    return;
   });
 };
 
@@ -93,6 +97,7 @@ Collection.remove = (collectionId, result) => {
 
     if (debug) console.log('Deleted collection with id: ', collectionId);
     result(null, res);
+    return;
   });
 };
 
@@ -107,6 +112,7 @@ Collection.removeAll = result => {
 
     if (debug) console.log('Deleted %s collections.', res.affectedRows);
     result(null, res);
+    return;
   });
 };
 
@@ -126,6 +132,7 @@ Collection.disable = (collectionId, collection, result) => {
 
     if (debug) console.log('Disabled collection: ', { id: collectionId });
     result(null, { id: collectionId });
+    return;
   })
 };
 
