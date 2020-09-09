@@ -7,11 +7,22 @@ const logger = require('./middlewares/logger.middleware');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
+
+const { connection } = require('./config/db.config');
 const PORT = process.env.SERVER_PORT;
 
 const app = express();
 
-app.use(cookieParser());
+connection.connect(error => {
+  if(error) {
+    logger.error('error connecting to mysql', error);
+    throw error; 
+  }
+
+  console.log('Successfully connected to the database \'wdc\'');
+});
+
+app.use(cookieParser()); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
