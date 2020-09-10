@@ -40,12 +40,12 @@ app.use((req, res, next)=>{
   next();
 });
 
-app.use(
-  cors({
-    origin: `http://localhost:${PORT}`,
-    credentials: true
-  })
-)
+// app.use(
+//   cors({
+//     origin: `http://localhost:${PORT}`,
+//     credentials: true
+//   })
+// )
 
 app.get('/', (req, res) => {
   console.log('Welcome to Data Collector...');
