@@ -13,11 +13,11 @@ const PASSWORD = '123456789'
 const PORT = '3306'
 const DB = 'freedb_wdc'
 
-console.log(HOST);
-console.log(USER);
-console.log(PASSWORD);
-console.log(PORT);
-console.log(DB);
+console.log(process.env.HOST);
+console.log(process.env.USER);
+console.log(process.env.PASSWORD);
+console.log(process.env.PORT);
+console.log(process.env.DB);
 
 const connection = createConnection({
   host: HOST,
