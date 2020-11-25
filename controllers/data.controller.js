@@ -3,6 +3,7 @@ const logger = require('../middlewares/logger.middleware');
 const DataAck = require('../models/dataAck.model');
 const Node = require('../models/node.model');
 const DataValidation = require('../models/dataValidation.model');
+
 const { promiseHandler } = require('../services/common.service');
 const { findById } = require('../models/parentNode.model');
 const { validateData } =  require('../services/dataValidation.service');
@@ -18,7 +19,7 @@ exports.save = (req, res) => {
   } else {
     findById(req.body.parentNodeId, (err, parentNode) => {
       if (err) {
-        logger.error('createNewDataTable', err.message);
+        logger.error('createNewDataTable', err.message); 
         res.status(500).json({
           state: false,
           message: err.message || 'Some error occurred while creating the data table.'
@@ -26,7 +27,6 @@ exports.save = (req, res) => {
       } else {
 
         let updatedNodes = new Array();
-        const savedDateTime = new Date();
 
         for (let i = 0; i < req.body.data.length ; i++) {
           req.body.timestamp = new Date();
@@ -300,3 +300,4 @@ const getData = (nodeId) => {
     });
   });
 };
+

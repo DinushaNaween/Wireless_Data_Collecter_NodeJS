@@ -2,18 +2,18 @@ const tableService = require('../services/table.service');
 
 const { createConnection } = require('mysql');
 
-// const HOST = process.env.HOST;
-// // const HOST = '127.0.0.1'; 
-// const USER = process.env.USER;
-// const PASSWORD = process.env.PASSWORD;
-// const PORT = process.env.PORT;
-// const DB = process.env.DB;
+const HOST = process.env.HOST;
+// const HOST = '127.0.0.1'; 
+const USER = process.env.USER;
+const PASSWORD = process.env.PASSWORD;
+const PORT = process.env.PORT;
+const DB = process.env.DB;
 
-const HOST = 'freedb.tech';
-const USER = 'freedb_teamgreen'
-const PASSWORD = '123456789'
-const PORT = '3306'
-const DB = 'freedb_wdc'
+// const HOST = 'freedb.tech';
+// const USER = 'freedb_teamgreen'
+// const PASSWORD = '123456789'
+// const PORT = '3306'
+// const DB = 'freedb_wdc'
 
 const sqlConnection = createConnection({
   host: HOST,
